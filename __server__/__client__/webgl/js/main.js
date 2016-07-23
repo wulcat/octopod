@@ -119,6 +119,7 @@ class Camera {
     }
 
     Update() {
+
         if(this.follow != null) {
                 if(this.follow.x - this.xView + this.xDeadZone > this.wView)
                     this.xView = this.follow.x - (this.wView - this.xDeadZone);
@@ -146,26 +147,73 @@ class Camera {
 }
 
 class Body {
-    constructor(bound , position , size , rotation ) {
+    constructor(bound , position , size , angle ) {
         this.Transform = new Transform() ;
+
         this.Transform.position = position || new Vector2(0,0) ;
         this.Transform.size = size || new Vector2(1,1) ;
-        this.Transform.rotation = rotation || 0 ;
-        this.Bound =bound || new Vector2(50,50) ;
+        this.Transform.angle = angle || 0 ;
+
+        this.Bound = bound || new Vector2(50,50) ;
         this.newTransform = new Transform() ;
+
     }
     Translate(vec) {
         this.Transform.position.x += vec.x ;
         this.Transform.position.y += vec.y ;
-        console.log(this.Transform.position);
+    }
+    Rotate(angle) {
+        // this.
     }
     Draw(ctx , xView , yView) {
-        var _position = this.Transform.position ;
-        // ctx.save() ;
-        // ctx.beginPath)()
-        ctx.fillStyle = "black" ;
+    
+        var width = this.Bound.x ;
+        var height = this.Bound.y ;
+        
+      
+        var x = this.Transform.position.x - width/2 - xView ;
+        var y = this.Transform.position.y - height/2 - yView ;
 
-        ctx.fillRect((_position.x-this.Bound.x/2) - xView, (_position.y-this.Bound.y/2) - yView, this.Bound.x, this.Bound.y);
+        var pStart = new Vector2(x , y-height/2) ;
+        var p1 = new Vector2(x+width/2 , y-height/2) ;
+        var p2 = new Vector2(x+width/2 , y);
+        var radius = p1.x-pStart.x ;
+        var r = 50 ;
+        ctx.save() ;
+        ctx.translate(x+width/2,y+height/2);
+        ctx.rotate(this.Transform.angle) ;
+        
+        ctx.beginPath() ;
+        // ctx.moveTo(pStart.x , pStart.y-r);
+
+        // ctx.arcTo(p1.x+r , p1.y-r , p2.x +r, p2.y , radius);
+        
+        // ctx.arcTo(p2.x +r , p2.y+height/2 +r , x , y+height/2 +r, radius);
+
+        // ctx.arcTo(x-width/2-r,y+height/2+r,x-width/2-r,y,radius);
+
+        // ctx.arcTo(x-width/2-r,y-height/2-r , x+width/2 ,y-height/2-r,radius);
+        // ctx.lineTo(pStart.x,pStart.y-r);
+        // ctx.closePath();
+        // ctx.shadowBlur = 20 ;
+        // ctx.shadowColor = "blue";
+        ctx.fillStyle = "blue";
+        ctx.fill();
+
+        ctx.fillRect(-width/2, -height/2, this.Bound.x, this.Bound.y);
+        ctx.restore() ;
+        // ctx.fillRect(x-width/2,y,5,5);
+        // ctx.fillRect(x-width/2,y+height/2,5,5);
+
+      
+        //ctx.beginPath();
+
+        //ctx.moveTo(this.Transform.position.x + this.Bound.x/2 , this.Transform.position.x + this.Bound.x/2);               // Create a starting point
+             // Create a horizontal line
+      //  ctx.arcTo(this.Transform.position.x - this.Bound.x/2 -xView, this.Transform.position.x - this.Bound.x/2 -yView , 150, 70, 50);  // Create an arc
+
+        //ctx.stroke();  
+        
         // ctx.restore();		
     }
 }
@@ -180,56 +228,20 @@ class Map {
     Generate() {
         var canvas = document.createElement('canvas') ;
         canvas.id = "canvas"
-        // canvas.style.display = "none" ;
+
         canvas.width = this.width ;
         canvas.height = this.height ;
         
         var ctx = canvas.getContext("2d");
 
-        // ctx.canvas.width = this.width ;
-        // ctx.canvas.height = this.height ;
-
-        // var rows = ~~(this.width/44) + 1;
-        // var columns = ~~(this.height/44) + 1;
-        // var rows = 500 ;
-        // var columns = 300 ;
-
-        // var color = "black" ;
-        // ctx.save() ;
-        // ctx.fillStyle = "black" ;
-
-        // ctx.beginPath() ;
-        // ctx.rect(0,0,this.width , this.height) ;
-        // ctx.fillStyle = color ;
-        // ctx.fill() ;
-        // ctx.closePath() ;
-        
-        // for(var x = 0 , i=0 ; i < rows ; x+=44 , i++) {
-        //     ctx.beginPath() ;
-
-        //     for(var y = 0 , j=  0 ; j < columns ; y+=44 , j++) {
-        //         ctx.rect (x,y,40,40) ;
-        //     }
-        //     ctx.fillStyle = color ;
-        //     ctx.fill() ;
-        //     ctx.closePath() ;
-        // }
-        // var doo = document.getElementById("imgg");
-
-        // ctx.restore() ;
-        // ctx.drawImage(doo , this.width , this.height);
-        // var ptr = ctx.createPattern(doo , 'repeat') ;
-        // ctx.fillStyle = ptr ;
-        // ctx.fillRect(0,0,this.width, this.height);
         ctx.shadowBlur=20;
         ctx.shadowColor="#66ccff";
-         var bound = 100; 
+
         var startX = 0  ;
-        // var startY = player.Transform.position.y - window.innerHeight /2 - bound ;
-        // var startX = 100 ;
         var startY = 0 ;
+
         var distance = 50 ;
-        var length = 100 ;
+        var length = this.width/distance ;
         var heights = 40 ;
         ctx.beginPath();
         for(var k = 0 ; k < length ; k++) {
@@ -252,59 +264,22 @@ class Map {
             startX = k*100 ;
             startY = -50 ;
         }
+
+        ctx.closePath();
         ctx.strokeStyle="#66ccff";
         ctx.stroke() ;
-        
-        // ctx.fillStyle = ptr ;
-        // ctx.fillRect(0,0,this.width, this.height);
 
         this.image = new Image() ;
         this.image.src = ctx.canvas.toDataURL("image/png") ;
-        // this.image.src = "https://dl.dropboxusercontent.com/u/139992952/stackoverflow/game.jpg" ;
-        // this.image = ptr ;
-        // this.image.width = 5000 ;
-        // this.image.height = this.height;
-        // console.log(this.image);
         ctx = null ;
     }
 
     Draw(ctx , xView , yView) {
-        // var sx , sy , dx , dy ;
-        // var sWidth , sHeight , dWidth , dHeight ;
-
-        // sx = xView ;
-        // sy = yView ;
-
-        // sWidth = ctx.canvas.width ;
-        // sHeight = ctx.canvas.height ;
-
-        // if(this.image.width - sx < sWidth) {
-        //     sWidth = this.image.width - sx ;
-        // }
-        // if(this.image.height - sy < sHeight) {
-        //     sHeight = this.image.height - sy ;
-        // }
-
-        // dx = 0 ;
-        // dy = 0 ;
-
-        // dWidth = sWidth ;
-        // dHeight = sHeight ;
-        // ctx.beginPath() ;
-        
-        // elements.canvas.width = elements.canvas.width ;
-        // elements.canvas.height = elements.canvas.height ;
-        // var sdf = new Image() ;
-        
+        ctx.shadowBlur=20;
+        ctx.shadowColor="#66ccff";
+        ctx.strokeStyle="#66ccff";
         ctx.clearRect( 0 , 0 , elements.canvas.width , elements.canvas.height);
-      
-       
         ctx.drawImage(this.image , xView , yView , elements.canvas.width , elements.canvas.height , 0 ,0 ,elements.canvas.width ,elements.canvas.height);
-        // ctx.fill();
-        // ctx.drawImage(this.image , sx , sy , sWidth , sHeight , dx , dy , dWidth , dHeight);
-         
-        
-        ctx.stroke();
     }
 }
 
@@ -379,7 +354,8 @@ function Init() {
     }
     socket.on('Direction' , function(angle , position) {
         // var newRotation = angle ;
-        player.newTransform.rotation = angle ;
+        player.newTransform.angle = angle ;
+        console.log(angle);
         player.newTransform.position = position ;
         // var newPosition = position ;
     });
@@ -429,9 +405,9 @@ window.onload = function() {
     var STEP = INTERVAL/1000 ;
 
     room = {
-        width : 5000 ,
-        height : 3000 ,
-        map : new Map(5000, 3000)
+        width : 7000 ,
+        height : 7000 ,
+        map : new Map(7000, 7000)
     };
 
     room.map.Generate() ;
@@ -468,25 +444,55 @@ function Lerp (s,e,t) {
         r = ps * s + pe * e ;
         return r ;
 }
-var __interpolateMoveSpeed = 2 ;
+function LerpAngle(start, end , amount)
+    {
+        var difference = Math.abs(end - start);
+        if (difference > 180)
+        {
+            // We need to add on to one of the values.
+            if (end > start)
+            {
+                // We'll add it on to start...
+                start += 360;
+            }
+            else
+            {
+                // Add it on to end.
+                end += 360;
+            }
+        }
+
+        // Interpolate it.
+        var value = (start + ((end - start) * amount));
+
+        // Wrap it..
+        var rangeZero = 360;
+
+        if (value >= 0 && value <= 360)
+            return value;
+
+        return (value % rangeZero);
+    }
+
+var __interpolateMoveSpeed = 1.5 ;
+var __interpolateAngleSpeed = 1.5 ;
+var test = true ;
 function Update() {
+    player.Transform.angle = (LerpAngle(player.Transform.angle * 180/Math.PI , player.newTransform.angle , __interpolateAngleSpeed * 0.05 )* Math.PI/180 );
     
     if(isNaN(player.Transform.position.x) || isNaN(player.Transform.position.y)) {
-        player.Transform.position.x = player.newTransform.position.x + window.innerWidth/2 ;
-        player.Transform.position.y = player.newTransform.position.y + window.innerHeight/2 ;
+        // player.Transform.position.x = player.newTransform.position.x + window.innerWidth/2 ;
+        // player.Transform.position.y = player.newTransform.position.y + window.innerHeight/2 ;
     }
     else {
-        player.Transform.position.x = Lerp(player.Transform.position.x , player.newTransform.position.x + window.innerWidth/2 , __interpolateMoveSpeed * 0.05) ;
-        player.Transform.position.y = Lerp(player.Transform.position.y , player.newTransform.position.y + window.innerHeight/2 , __interpolateMoveSpeed * 0.05) ;
+        // player.Transform.position.x = Lerp(player.Transform.position.x , player.newTransform.position.x + window.innerWidth/2 , __interpolateMoveSpeed * 0.05) ;
+        // player.Transform.position.y = Lerp(player.Transform.position.y , player.newTransform.position.y + window.innerHeight/2 , __interpolateMoveSpeed * 0.05) ;
     }
-    // player.Translate(new Vector2(5,5)) ;
-    
-    
-    camera.Update();
-    room.map.Draw(elements.ctx , camera.xView , camera.yView) ;
-    // elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height); 
 
-    
+    // player.Translate(new Vector2(5,5)) ;
+    camera.Update();
+
+    room.map.Draw(elements.ctx , camera.xView , camera.yView) ;
     player.Draw(elements.ctx , camera.xView , camera.yView) ;
 }
 
