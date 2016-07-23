@@ -8,6 +8,7 @@ class Player {
         this.id = socketId ;
         this.name = name ;
         this.Transform = new Component.Transform() ;
+        this.status = false ;
 
     }
     Init(moveSpeed , jerkSpeed , jerkMax) {
@@ -19,6 +20,9 @@ class Player {
         // this.RotWidthMax = RotWidth ;
         // this.RotWidthMin = 3 ;
         this.__angle = 0 ;
+    }
+    setMap() {
+
     }
     Start(time) {
         if(time == null) time = 500 ;

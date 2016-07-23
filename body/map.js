@@ -3,13 +3,18 @@ var Mathfw = require('../module/mathfw.js');
 var Body = require('../module/body.js');
 var Geometry = require('../module/geometry.js');
 class Map {
-    constructor(rect) {
+    constructor(rect , type , id) {
         this.rect = rect ;
         this.foods= [] ;
         this.players = [] ;
+        this.type = type ;
+        this.id = id ;
     }
-    Join(id) {
+    addPlayer(id , auth) {
         this.players.push(id);
+    }
+    GetMap(type) {
+        return this.id + this.type ;
     }
     AddFood() {
         var x , y ;
