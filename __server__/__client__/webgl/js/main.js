@@ -77,13 +77,20 @@ class Transform {
     }
 }
 //___________________________________________________________________
-class NodeIK {
+class TentacleNode {
     constructor(x,y) {
         this.x = this.ox = x || 0 ;
         this.y = this.oy = y || 0 ;
 
         this.vx = 0 ;
         this.vy = 0 ;
+    }
+}
+class FoodNode {
+    constructor() {
+        this.center = new Vector2() ;
+        this.start = new Vector2() ;
+        this.end = new Vector2() ;
     }
 }
 //___________________________________________________________________
@@ -141,8 +148,9 @@ class Elements {
     constructor() {
         this.canvas ;
         this.ctx ; 
-        this.control_contatiner ;
+        this.control_container ;
         this.ad_container ;
+        this.display_container ;
     }
 }
 
@@ -227,7 +235,7 @@ class Drawf {
         function parse(pts, cache, l, tension) {
 
             for (var i = 2, t; i < l; i += 2) {
-
+                // tension = -tension;
                 var pt1 = pts[i],
                     pt2 = pts[i+1],
                     pt3 = pts[i+2],
@@ -279,7 +287,7 @@ class Tentacle {
         // this.theta = [] ;
 
         for(var i = 0 ; i < this.length ; i++) {
-            this.nodes.push(new NodeIK());
+            this.nodes.push(new TentacleNode());
         }
     }
     Target(target , scale) {
@@ -310,7 +318,7 @@ class Tentacle {
         var px = 0 ;
         var py = 0 
         var node ;
-        // var node = new NodeIK() ;
+        // var node = new TentacleNode() ;
         var prev = this.nodes[0] ;
 
         var radius = r*this.radius ;
@@ -636,114 +644,134 @@ class Food {
     constructor(position , scale , radius , shear) {
         this.position = position || new Vector2() ;
         this.scale = scale || new Vector2() ;
+        this.angle = 0 ;
 
         this.radius = radius || 0 ;
-        this.nodes = [] ;
-        for(var i = 0 ; i < shear ; i++) {
-            this.nodes.push(new NodeIK());
+        this.nodesRoot = [] ;
+        this.nodesJoint = [] ;
+        this.newNodesRoot = [] ;
+        this.newNodesJoint = [] ;
+        for(var i = 0 ; i < 6 ; i++) {
+            this.nodesRoot.push(new Vector2());
+            this.newNodesRoot.push(new Vector2());
         }
+        for(var i = 0 ; i <= this.nodesRoot.length ; i++) {
+            this.nodesJoint.push(new Vector2());
+            this.newNodesJoint.push(new Vector2());
+        }
+        this.tension = 1.8 ;
+        this.numOfSeg = 60 ;
+        this.newFormCount = 0 ;
     }
     Update() {
-        var node , prev , s ;
-        s = this.nodes.length;
-        for(var i = 0 ; i < s; i ++) {
-            node = this.nodes[i] ;
-            // var r = Mathf.RandomFloat(10,this.radius) ;
-            var x = this.radius * Math.cos(Mathf.AngleToRad(i*360/s)) ;
-            var y = this.radius * Math.sin(Mathf.AngleToRad(i*360/s)) ;
-            // var x = cx+(radius+amplitude*Math.cos(sineCount*angle))*Math.cos(angle);
-            // var y = cy+(radius+amplitude*Math.cos(sineCount*angle))*Math.sin(angle);
+        this.newFormCount += 1;
+        var nodeRoot , nodeJoint , prevnodeRoot , angle , amp , startAngle , length ,start , end;
 
-            node.x = x ;
-            node.y = y ;
+        length = this.nodesRoot.length ;
+        amp = 10 ;
+        startAngle = Mathf.AngleToRad(Mathf.RandomFloat(4 , 45)) ;
+        nodeRoot = this.nodesRoot[0] ;
 
-            // node.x += Math.sin(Mathf.AngleToRad(i*this.nodes.length)) ;
-            // node.y += Math.sin(Mathf.AngleToRad(i*this.nodes.length)) ;
+        if(this.newFormCount > 30) {
+            this.newFormCount = 0 ;
+            for(var i = 0 ; i < length ; i++) {
+                if(i==0) angle = startAngle ;
+                else if (i==length -1) {
+                    angle = startAngle - (startAngle + Math.PI*2 - angle)/2 ;  
+                }
+                else {
+                    var eta = angle + Mathf.AngleToRad((360 - Mathf.RadToAngle(angle))/(length-i)) ;
+                    angle = Mathf.RandomFloat(angle , eta) + Mathf.AngleToRad(10) ;
+                }
+                var x = (this.radius + amp*Math.sin(angle) ) * Math.cos(angle) ;
+                var y = (this.radius + amp*Math.sin(angle) ) * Math.sin(angle) ;
+                
+                nodeRoot.x = x ;
+                nodeRoot.y = y ;
 
-            prev = node ;
+                nodeRoot = this.nodesRoot[i+1] ;
+            }
+            
+            start = this.nodesRoot[length-1] ;
+            end = this.nodesRoot[0];
+
+            for(var i = 1 ; i <= length ; i++) {
+                var amp , m , a ;
+                amp = 3 ;
+                m = new Vector2() ;
+                a = new Vector2() ;
+
+                m.x = ( start.x + end.x )*2/3 ;
+                m.y = ( start.y + end.y )*2/3 ;
+                
+                a.x = ( start.x + end.x )/2 ;
+                a.y = ( start.y + end.y )/2 ;
+
+                a.x = Mathf.RandomFloat(m.x , m.x+a.x) ;
+                a.y = Mathf.RandomFloat(m.y , m.y+a.y) ;
+
+                this.nodesJoint[i-1].x = a.x ;
+                this.nodesJoint[i-1].y = a.y ;
+
+                start = end ;
+                end = this.nodesRoot[i];
+            }
         }
-        // this.nodes[s] = this.radius * Math.cos(Mathf.AngleToRad(360)) ;
-        // this.nodes[s] = this.radius * Math.sin(Mathf.AngleToRad(360)) ;
+        else {
+            var start , center , end ;
+            for(var i = 0 ; i < this.nodesRoot.length ; i++) {
+                this.newNodesRoot[i] = Vector2.Lerp(this.newNodesRoot[i] , this.nodesRoot[i] , 0.01);
+                this.newNodesRoot[i] = Vector2.Lerp(this.newNodesRoot[i] , this.nodesRoot[i] , 0.01);
+            }
+            for(var i = 0 ; i <= this.nodesRoot.length ; i++) {
+                this.newNodesJoint[i] = Vector2.Lerp(this.newNodesJoint[i] , this.nodesJoint[i] , 0.01);    
+            }
+            // this.newNodesRoot[0] = Vector2.Lerp(this.newNodesRoot[0] , this.nodesRoot[0] , 0.1);
+            // this.newNodesJoint[0] = Vector2.Lerp(this.newNodesJoint[0] , this.newNodesJoint[0] , 0.1);
+            // this.newNodesRoot[1] = Vector2.Lerp(this.newNodesRoot[1] , this.nodesRoot[1] , 0.1);
+        }
     }
     Draw(ctx , xView , yView) {
-        // var r = Mathf.RandomFloat(2,this.radius) ;
-        
-
-        var angle_sin = Math.sin(0) * this.scale.x;
-        var angle_cos = Math.cos(0) * this.scale.y;
+        this.angle += 0.01 ;
+        var angle_sin = Math.sin(this.angle) * this.scale.x;
+        var angle_cos = Math.cos(this.angle) * this.scale.y;
         
         ctx.save() ;
         ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , this.position.x - xView , this.position.y - yView) ;
-        ctx.beginPath() ;
+      
+        var start , center , end ;
 
-        // var s = [] ;
-        // var l = this.nodes.length * 2 ;
-        // for(var i = 0 , j = 0; i < l ; i++) {
-        //     if(i%2 ==0)
-        //         s.push(this.nodes[j].x);
-        //     else {
-        //         s.push(this.nodes[j].y);
-        //         j++ ;
-        //     }
-        // }
-        // Drawf.Curve(ctx , s , 0.7 , 15 , false);
+        start = this.newNodesRoot[this.nodesRoot.length-1] ;
+        center = this.newNodesJoint[0] ;
+        end = this.newNodesRoot[0] ;
 
-        var c = 0 ;
-        var m = [] ;
-        var t = 10 ;
-        var r = 105 ;
-        var s = 4 ;
-        var st = Mathf.RandomFloat(0,360);
-        for(var i = 0 ; i < t ; i++) {
-            var d = 0 ;
-            var g = (360-c) / (t-i) ;
-            // while(d < 20) {
-                d = Mathf.RandomFloat( (r/t)*2 , (360-c)/(t-i) ) ;
-                
-            // }
-            // d ;
-            // if(c+d > 360) break ;
+        ctx.moveTo(start.x, start.y);
+        var points = [] ;
+        for(var i = 1 ; i < this.nodesJoint.length ; i++) {
+            // ctx.lineTo(start.x , start.y);
+            // ctx.lineTo(center.x , center.y);
+            // ctx.lineTo(end.x , end.y);
 
-            // console.log(c+d);
-            // }
-            // var c = d ;
-            // while (d > 360/t)
-                // d = Mathf.RandomFloat(c , 360) ;
-            // var c = d ; 
-            // m.push(c) ;
-            c += d ;
+            points.push(start.x);
+            points.push(start.y);
+
+            points.push(center.x);
+            points.push(center.y);
             
-            var x = r*Math.cos(Mathf.AngleToRad(c+st)) ;
-            var y = r*Math.sin(Mathf.AngleToRad(c+st)) ;
+            points.push(end.x);
+            points.push(end.y);
 
-            ctx.fillRect(x , y , s , s);
-            s++ ;
-            console.log("c:"+c+" d:"+d+" s:"+s+" g:"+g);
+            start = end;
+            
+            center = this.newNodesJoint[i];
+            end = this.newNodesRoot[i];
+
         }
-
+        
+        Drawf.Curve(ctx, points ,this.tension,this.numOfSeg,true);
         
         ctx.closePath();
-        // Drawf.CurveThroughPoints(ctx , this.nodes , 0 , 0);
-
-        // ctx.closePath();
-        // var r = 0 ;
-        // for(var i = 0 ; i < 360 ; i++) {
-        //     if(i%20 == 0) r = Mathf.RandomFloat(10,this.radius) ;
-        //     var x = r * Math.cos(Mathf.AngleToRad(i));
-        //     var y = r * Math.sin(Mathf.AngleToRad(i)); 
-        //     Drawf.CurveThroughPoints(ctx , )
-        // }
-
-        // for(var i = 0 ; i < 360 ; i++) {
-        //     var r = Mathf.RandomFloat(2,this.radius) ;
-        //     var x = r * Math.cos(Mathf.AngleToRad(i));
-        //     var y = r * Math.sin(Mathf.AngleToRad(i)); 
-        //     ctx.lineTo(x,y);
-        // }
-        // ctx.arc(0 , 0 , 70 , 0 , 2*Math.PI , true);
-        // ctx.fillStyle = "green" ;
-        ctx.stroke();
-        // ctx.fill();
+        ctx.fill();
         ctx.restore() ;
     }
 }
@@ -752,8 +780,8 @@ class Food {
 var intervals = new Intervals() ;
 var elements = new Elements() ;
 var MouseHandler ;
-elements.control_contatiner = document.getElementById("control-contatiner") ; 
-
+elements.control_container = document.getElementById("control-container") ; 
+elements.display_container = document.getElementById("display-container") ;
 var socket ;
 var isConnected = false ;
 var isInit = false ;
@@ -787,22 +815,26 @@ function Start() {
 
 function Init() {
     socket.on('start' , function(data) {
-        elements.control_contatiner.style.display = "none" ;
+        elements.control_container.style.display = "none" ;
+        elements.display_container.style.display = "flex" ;
+        // elements.display_container.style.height = window.innerHeight+"px" ;
         clearInterval(intervals.loading);
-        // intervals.update = setInterval(Frame , 1000/30);
-        intervals.update = setInterval(Frame , 1000);
+        intervals.update = setInterval(Frame , 1000/30);
+        // intervals.update = setInterval(Frame , 1000);
         // intervals.Add(ClearCanvas , 500);
         intervals.send = setInterval(Send , 200) ;
     });
     socket.on('end' , function() {
         clearInterval(intervals.send) ;
-        elements.control_contatiner.style.display = "flex" ;
+        elements.control_container.style.display = "flex" ;
+        elements.display_container.style.display = "none" ;
         isConnected = false ;
     });
     socket.on('stop') , function() {
         clearInterval(intervals.send) ;
         socket.disconnect() ;
         celements.ontrol_contatiner.style.display = "flex" ;
+        elements.display_container.style.display = "none" ;
         isConnected = false ;
     }
     socket.on('Direction' , function(angle , position) {
@@ -925,7 +957,7 @@ function Update() {
     //}
 
     var pos = Vector2.Lerp(player.Transform.position  , player.newTransform.position  , __interpolateMoveSpeed * 0.05);
-    // player.Translate(pos);
+    player.Translate(pos);
 
    	for(var i = 0 ; i< player.tentacles.length ; i++) {
         // player.tentacles[i].Move(player.Transform.position , false);
@@ -1144,3 +1176,30 @@ function Update() {
 
         // ctx.restore() ;
        	
+            // var amp = 10;
+        // var startAngle = Mathf.AngleToRad(Mathf.RandomFloat(4 , 45)) ;
+        // var angle = 0 ; 
+        // for(var i = 0 ; i < length ; i++) {
+        //     if(i==0) angle = startAngle ;
+        //     else if (i==this.nodes.length -1) {
+        //         angle = startAngle - (startAngle + Math.PI*2 - angle)/2 ;  
+        //     }
+        //     else {
+        //         var eta = angle + Mathf.AngleToRad((360 - Mathf.RadToAngle(angle))/(this.nodes.length-i)) ;
+        //         angle = Mathf.RandomFloat(angle , eta) + Mathf.AngleToRad(10) ;
+
+        //     }
+        //     var x = (this.radius + amp*Math.sin(angle) ) * Math.cos(angle) ;
+        //     var y = (this.radius + amp*Math.sin(angle) ) * Math.sin(angle) ;
+        //     if(i==0) ctx.moveTo(x,y); //
+        //     ctx.lineTo(x, y) ;
+            
+        // }
+
+          // ctx.beginPath() ;
+        // for(var i = 0 ; i < this.nodes.length ; i++) {
+        //     ctx.lineTo(this.nodes[i].x , this.nodes[i].y);
+        // }
+
+
+        // var loopLength = this.nodesJoint.length + this.nodesRoot.length ;

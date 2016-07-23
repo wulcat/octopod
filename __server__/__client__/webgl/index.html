@@ -5,16 +5,30 @@
         <!--<script src="webgl/js/phaser.min.js"></script>-->
         <link type="text/css" rel="stylesheet" href="webgl/css/align.css">
         <script src="/socket.io/socket.io.js/"></script>
-        <!--<link type="text/css" rel="stylesheet" href="css/align.css">-->
+<!--        <link type="text/css" rel="stylesheet" href="css/align.css">-->
     </head>
     <body style="margin:0;padding:0;">
-        <div id="control-contatiner">
+        <div id="control-container">
             <div id="control-frame">
                 <button id="start-game" onclick="Start();">Play</button>
             </div>
         </div>
-        <div id="Setting">
-            <button onclick="s_AddTentacle();">Add Tentatcle</button>
+        <div id="display-container">
+            <div id="score-box">
+                <div id="score-text">Score : </div>
+                <div id="current-score">: 50</div>
+            </div>
+        </div>
+        <div id="main-setting">
+            <button id="show-setting-button" onclick="s_show();">Settings</button>
+            <div id="show-setting">
+                <button onclick="s_AddTentacle();">Add Tentatcle</button>
+                <button onclick="s_IncreaseTension();">Increase Tension</button>
+                <button onclick="s_DecreaseTension();">Decrease Tension</button>
+                <button onclick="s_IncreaseSeg();">Increase Segments</button>
+                <button onclick="s_DecreaseSeg();">Decrease Segments</button>
+            </div>
+            
         </div>
         <canvas id="game"></canvas>
         <script src="webgl/js/main.js"></script>
