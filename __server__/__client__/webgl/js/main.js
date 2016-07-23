@@ -1,34 +1,70 @@
 "use strict";
-class Intervals {
-    constructor() {
-        this.preUpdate ;
-        this.loading ;
-        this.update ;
-        this.send ;
-        this.custom = [] ;
+
+class Mathf {
+    static AngleToRad(angle) {
+        var rad = angle * Math.PI / 180 ;
+        return rad ;
     }
-    Add(update , period) {
-        this.custom.push(setInterval(update , period)) ;
+    static RadToAngle(rad) {
+        var angle = rad * 180 / Math.PI ;
+        return angle ;
+    }
+    static Lerp(start , end , t) {
+        var ps = 1-t ;
+        var pe = t ;
+        var r = 0 ;
+
+        r = ps * start + pe * end;
+        return r ;
+    }
+    static LerpAngle(start , end , t , rad) {
+        var d = Math.abs(end - start);
+        if(d > 180)  { 
+            if(end > start) start += 360; 
+            else end += 360 ;
+        }
+        var value = ( start + ((end - start) * t)) ;
+        if(value >= 0 && value <= 360) {
+            if(rad)
+            return Mathf.AngleToRad(value);
+            else
+            return value;
+        }
+
+        value %= 360 ;
+        if(rad)
+        return Mathf.AngleToRad(value);
+        else
+        return value;
     }
 }
-class Elements {
-    constructor() {
-        this.canvas ;
-        this.ctx ; 
-        this.control_contatiner ;
-    }
-}
+
 class Vector2 {
     constructor(x,y) {
         this.x = x || 0 ;
         this.y = y || 0 ;
     }
+    static Lerp (start , end , t) {
+        var x = Mathf.Lerp(start.x , end.x , t);
+        var y = Mathf.Lerp(start.y , end.y , t);
+
+        return new Vector2(x,y);
+    }
 }
+
 class Transform {
     constructor() {
         this.position = new Vector2() ;
-        this.size = new Vector2() ;
+        this.scale = new Vector2(1,1) ;
         this.angle = 0 ;
+    }
+    Translate(value) {
+        this.position.x = value.x ;
+        this.position.y = value.y ;
+    }
+    Rotate(value , rad) {
+        if(rad) this.angle = Mathf.RadToAngle(value);
+        else this.angle = value ;
     }
 }
 //___________________________________________________________________
@@ -38,7 +74,7 @@ class Node {
         this.y = this.oy = y || 0 ;
 
         this.vx = 0 ;
-        thix.vy = 0 ;
+        this.vy = 0 ;
     }
     get Get() {
         return this.calcGet() ;
@@ -92,6 +128,154 @@ class Rect {
     }
 }
 
+class Intervals {
+    constructor() {
+        this.preUpdate ;
+        this.loading ;
+        this.update ;
+        this.send ;
+        this.custom = [] ;
+    }
+    Add(update , period) {
+        this.custom.push(setInterval(update , period)) ;
+    }
+}
+class Elements {
+    constructor() {
+        this.canvas ;
+        this.ctx ; 
+        this.control_contatiner ;
+    }
+}
+
+class Drawf {
+    static CurveThroughPoints(ctx , points , xView , yView) {
+        var i , n , a, b ,x ,y ;
+        for(i = 1 , n = points.length - 2; i < n ;i++) {
+            a = points[i] ;
+            b = points[i+1] ;
+
+            x = (a.x - xView + b.x - xView) * 0.5 ;
+            y = (a.y - yView + b.y - yView) * 0.5 ;
+
+            ctx.quadraticCurveTo(a.x - xView , a.y - yView, x , y);
+        }
+        a = points[i] ;
+        b = points[i+1] ;
+        ctx.quadraticCurveTo(a.x - xView, a.y - yView, b.x-xView , b.y-yView) ;
+    }
+}
+
+class Tentacle {
+    constructor(length , radius , spacing , friction) {
+        this.length = length || 10 ;
+        this.radius = radius || 10;
+        this.spacing = spacing  || 20;
+        this.friction = friction  || 0.8;
+
+        this.nodes = [] ;
+        this.outer = [] ;
+        this.inner = [] ;
+        // this.theta = [] ;
+
+        for(var i = 0 ; i < this.length ; i++) {
+            this.nodes.push(new Node());
+        }
+    }
+    Move(value , instant) {
+        this.nodes[0].x = value.x ;
+        this.nodes[0].y = value.y ;
+
+        if(instant) {
+            var i , node ;
+            for( i=1 ; i < this.length ; i++) {
+                node = this.nodes[i];
+                node.x = value.x ;
+                node.y = value.y ;
+            }
+        }
+    }
+    Update(l , t , f , g , w) {
+        var i = 0 ;
+        var j = 0 ;
+        var s = 0 ;
+        var c = 0 ;
+        var dx = 0 ;
+        var dy = 0 ;
+        var da = 0 ;
+        var px = 0 ;
+        var py = 0 
+        var node ;
+        // var node = new Node() ;
+        var prev = this.nodes[0] ;
+
+        var radius = t*this.radius ;
+        var step = radius/this.length ;
+
+        for(i=1 , j=0 ; i < this.length ;i++ ,j++) {
+            node = this.nodes[i] ;
+
+            node.x += node.vx ;
+            node.y += node.vy ;
+
+            dx = prev.x - node.x ;
+            dy = prev.y - node.y ;
+            da = Math.atan2(dy , dx) ;
+
+            px = node.x + Math.cos(da) * this.spacing * l ;
+            py = node.y + Math.sin(da) * this.spacing * l ;
+
+            node.x = prev.x - (px - node.x);
+            node.y = prev.y - (py - node.y);
+
+            node.vx = node.x - node.ox ;
+            node.vy = node.y - node.oy ;
+
+            node.vx *= this.friction * (1-f);
+            node.vy *= this.friction * (1-f);
+
+            node.vx += w ;
+            node.vy += g ;
+
+            node.ox = node.x ;
+            node.oy = node.y ;
+
+            s = Math.sin(da+1.57079632679489661923) ;
+            c = Math.cos(da+1.57079632679489661923) ;
+
+
+            this.outer[j] = new Vector2(prev.x + c * radius , prev.y + s * radius) ;
+            this.inner[j] = new Vector2(prev.x - c * radius , prev.y - s * radius) ;
+
+            radius -= step ;
+            prev = node ;
+        }
+    }
+
+    Draw(ctx , xView , yView) {
+        var h , s ,v ,e ;
+        s = this.outer[0] ;
+        e = this.inner[0] ;
+
+        // s.x -= xView ;
+        // s.y -= yView ;
+        // e.x -= xView ;
+        // e.y -= yView ;
+        // ctx.save();
+        ctx.beginPath() ;
+        ctx.moveTo( s.x - xView, s.y - yView) ;
+        Drawf.CurveThroughPoints(ctx , this.outer , xView , yView);
+        Drawf.CurveThroughPoints(ctx , this.inner.reverse() , xView , yView);
+        ctx.lineTo(e.x - xView ,e.y - yView);
+        ctx.closePath() ;
+
+        ctx.fillStyle = "orange" ;
+        ctx.fill() ;
+        // ctx.restore();
+        // ctx.stroke() ;
+
+    }
+}
 class Camera {
     constructor(xView , yView , canvasWidth , canvasHeight , worldWidth , worldHeight) {
         this.xView = xView || 0;
@@ -117,7 +301,11 @@ class Camera {
         this.xDeadZone = xDeadZone ;
         this.yDeadZone =yDeadZone ;
     }
-
+    Viewport(width , height) {
+        this.wView = width ;
+        this.hView = height ;
+        this.viewportRect = new Rect(this.xView , this.yView , this.wView , this.hView);
+    }
     Update() {
 
         if(this.follow != null) {
@@ -147,74 +335,66 @@ class Camera {
 }
 
 class Body {
-    constructor(bound , position , size , angle ) {
+    constructor(bound , position , scale , angle ) {
         this.Transform = new Transform() ;
 
         this.Transform.position = position || new Vector2(0,0) ;
-        this.Transform.size = size || new Vector2(1,1) ;
+        this.Transform.scale = scale || new Vector2(1,1) ;
         this.Transform.angle = angle || 0 ;
 
         this.Bound = bound || new Vector2(50,50) ;
         this.newTransform = new Transform() ;
 
+        this.tentacles = [] ;
+        this.setDefaultTentacle() ;
+    }
+    setDefaultTentacle() {
+        this.g = 0.5 ;
+        this.l = 40 ;
+        this.f = 0.1 ;
+        this.w = -0.5 ;
+        this.r = 15 ;
+    }
+    AddTentacle(tentacle) {
+        this.tentacles.push(tentacle);
+        //this.l = this.tentacles.length  ;
+    }
+    Update() {
+        
     }
     Translate(vec) {
-        this.Transform.position.x += vec.x ;
-        this.Transform.position.y += vec.y ;
+        this.Transform.position.x = vec.x ;
+        this.Transform.position.y = vec.y ;
     }
     Rotate(angle) {
-        // this.
+        this.Transform.angle = angle ;
     }
     Draw(ctx , xView , yView) {
-    
         var width = this.Bound.x ;
         var height = this.Bound.y ;
-        
-      
-        var x = this.Transform.position.x - width/2 - xView ;
-        var y = this.Transform.position.y - height/2 - yView ;
 
-        var pStart = new Vector2(x , y-height/2) ;
-        var p1 = new Vector2(x+width/2 , y-height/2) ;
-        var p2 = new Vector2(x+width/2 , y);
-        var radius = p1.x-pStart.x ;
-        var r = 50 ;
-        ctx.save() ;
-        ctx.translate(x+width/2,y+height/2);
-        ctx.rotate(this.Transform.angle) ;
-        
+        // var x = this.Transform.position.x - width/2 - xView ;
+        // var y = this.Transform.position.y - height/2 - yView ;
+        var x = this.Transform.position.x - xView ;
+        var y = this.Transform.position.y - yView ;
+        var r = 70 ;
+
+        var angle_sin = Math.sin(this.Transform.angle) * this.Transform.scale.x;
+        var angle_cos = Math.cos(this.Transform.angle) * this.Transform.scale.y;
+
+        ctx.save();
+        ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
         ctx.beginPath() ;
-        // ctx.moveTo(pStart.x , pStart.y-r);
-
-        // ctx.arcTo(p1.x+r , p1.y-r , p2.x +r, p2.y , radius);
-        
-        // ctx.arcTo(p2.x +r , p2.y+height/2 +r , x , y+height/2 +r, radius);
-
-        // ctx.arcTo(x-width/2-r,y+height/2+r,x-width/2-r,y,radius);
-
-        // ctx.arcTo(x-width/2-r,y-height/2-r , x+width/2 ,y-height/2-r,radius);
-        // ctx.lineTo(pStart.x,pStart.y-r);
-        // ctx.closePath();
-        // ctx.shadowBlur = 20 ;
-        // ctx.shadowColor = "blue";
-        ctx.fillStyle = "blue";
+        ctx.arc(0,0,r,0,2*Math.PI,false);
+        ctx.strokeStyle = "#e60000";
+        ctx.lineWidth = 20 ;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "#e60000";
+        ctx.fillStyle = "#ff0000";
+        ctx.stroke();
         ctx.fill();
-
-        ctx.fillRect(-width/2, -height/2, this.Bound.x, this.Bound.y);
-        ctx.restore() ;
-        // ctx.fillRect(x-width/2,y,5,5);
-        // ctx.fillRect(x-width/2,y+height/2,5,5);
-
-      
-        //ctx.beginPath();
-
-        //ctx.moveTo(this.Transform.position.x + this.Bound.x/2 , this.Transform.position.x + this.Bound.x/2);               // Create a starting point
-             // Create a horizontal line
-      //  ctx.arcTo(this.Transform.position.x - this.Bound.x/2 -xView, this.Transform.position.x - this.Bound.x/2 -yView , 150, 70, 50);  // Create an arc
-
-        //ctx.stroke();  
-        
-        // ctx.restore();		
+        ctx.stroke();
+        ctx.restore();
     }
 }
 class Map {
@@ -266,7 +446,7 @@ class Map {
         }
 
         ctx.closePath();
-        ctx.strokeStyle="#66ccff";
+        ctx.strokeStyle="#66ccff" ;
         ctx.stroke() ;
 
         this.image = new Image() ;
@@ -275,9 +455,8 @@ class Map {
     }
 
     Draw(ctx , xView , yView) {
-        ctx.shadowBlur=20;
-        ctx.shadowColor="#66ccff";
-        ctx.strokeStyle="#66ccff";
+        // ctx.shadowBlur=20;
+        // ctx.shadowColor="#66ccff";
         ctx.clearRect( 0 , 0 , elements.canvas.width , elements.canvas.height);
         ctx.drawImage(this.image , xView , yView , elements.canvas.width , elements.canvas.height , 0 ,0 ,elements.canvas.width ,elements.canvas.height);
     }
@@ -286,13 +465,29 @@ class Map {
 class Mouse {
     constructor(canvas) {
         this.position = new Vector2() ;
+        this.left = false ;
+        this.leftDOWN = false ;
+        this.leftUP = false ;
         var t = this ;
         canvas.addEventListener("mousemove" , function(event) {
             t.position = t.calcMouseAxis(event) ;
-        })
+        });
+        canvas.addEventListener("mousedown" , function() {
+            t.leftDOWN = true ;
+            t.left = true ;
+        });
+        canvas.addEventListener("mouseup" , function() {
+            t.leftUP = true ;
+            t.left = false ;
+        });
+
     }
     calcMouseAxis(event) {
         return new Vector2(event.clientX , event.clientY) ;
+    }
+    Reset() {
+        this.leftDOWN = false ;
+        this.leftUP = false ;
     }
 }
 
@@ -353,21 +548,15 @@ function Init() {
         isConnected = false ;
     }
     socket.on('Direction' , function(angle , position) {
-        // var newRotation = angle ;
         player.newTransform.angle = angle ;
-        console.log(angle);
+        position.x += elements.canvas.width ;
+        position.y += elements.canvas.height ;
         player.newTransform.position = position ;
-        // var newPosition = position ;
     });
 }
 function Send() {
     socket.emit('MouseUpdate' , MouseHandler.position.x - window.innerWidth/2 ,  MouseHandler.position.y - window.innerHeight/2);
 }
-function ClearCanvas() {
-    elements.ctx.clearRect(0,0,elements.canvas.width , elements.canvas.height);
-    // room.map.Draw(elements.ctx , camera.xView , camera.yView) ;
-}
-
 
 //___________________________________________________________________
 
@@ -381,6 +570,7 @@ window.onresize = function() {
     canvas.width = window.innerWidth ;
     canvas.height = window.innerHeight ;
     var ctx = canvas.getContext("2d") ;
+    // camera.Viewport(canvas.width , canvas.height);
     ctx.clearRect(0 , 0 , canvas.width , canvas.height) ;
 
     room.map.Draw(ctx , camera.xView , camera.yView);
@@ -414,7 +604,12 @@ window.onload = function() {
 
     camera = new Camera(0,0, canvas.width , canvas.height , room.width , room.height);
 
-    player = new Body(new Vector2(50,50) , new Vector2(100,100)) ;
+    player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(0.2,0.2), 0) ;
+    for(var i = 0 ; i < 1 ; i++) {
+        var tee = new Tentacle(7,0.5,0.5,0.02);
+        tee.Move(player.Transform.position , true);
+        player.AddTentacle(tee);
+    }
     camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
 
     camera.Update() ;
@@ -435,65 +630,38 @@ function PreUpdate() {
 
 function Loading() {
     elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height);
+
 }
-function Lerp (s,e,t) {
-        var ps = 1-t ;
-        var pe = t ;
-        var r = 0 ;
-
-        r = ps * s + pe * e ;
-        return r ;
-}
-function LerpAngle(start, end , amount)
-    {
-        var difference = Math.abs(end - start);
-        if (difference > 180)
-        {
-            // We need to add on to one of the values.
-            if (end > start)
-            {
-                // We'll add it on to start...
-                start += 360;
-            }
-            else
-            {
-                // Add it on to end.
-                end += 360;
-            }
-        }
-
-        // Interpolate it.
-        var value = (start + ((end - start) * amount));
-
-        // Wrap it..
-        var rangeZero = 360;
-
-        if (value >= 0 && value <= 360)
-            return value;
-
-        return (value % rangeZero);
-    }
 
 var __interpolateMoveSpeed = 1.5 ;
-var __interpolateAngleSpeed = 1.5 ;
-var test = true ;
+var __interpolateAngleSpeed = 2.5 ;
+
 function Update() {
-    player.Transform.angle = (LerpAngle(player.Transform.angle * 180/Math.PI , player.newTransform.angle , __interpolateAngleSpeed * 0.05 )* Math.PI/180 );
-    
+    player.Rotate( Mathf.LerpAngle(Mathf.RadToAngle(player.Transform.angle) , player.newTransform.angle , __interpolateAngleSpeed * 0.05 , true) );
+
     if(isNaN(player.Transform.position.x) || isNaN(player.Transform.position.y)) {
-        // player.Transform.position.x = player.newTransform.position.x + window.innerWidth/2 ;
-        // player.Transform.position.y = player.newTransform.position.y + window.innerHeight/2 ;
+        player.Transform.position.x = player.newTransform.position.x + window.innerWidth/2 ;
+        player.Transform.position.y = player.newTransform.position.y + window.innerHeight/2 ;
     }
     else {
-        // player.Transform.position.x = Lerp(player.Transform.position.x , player.newTransform.position.x + window.innerWidth/2 , __interpolateMoveSpeed * 0.05) ;
-        // player.Transform.position.y = Lerp(player.Transform.position.y , player.newTransform.position.y + window.innerHeight/2 , __interpolateMoveSpeed * 0.05) ;
+        var pos = Vector2.Lerp(player.Transform.position  , player.newTransform.position  , __interpolateMoveSpeed * 0.05);
+        player.Translate(pos);
+    }
+   	for(var i = 0 ; i< player.tentacles.length ; i++) {
+        player.tentacles[i].Move(player.Transform.position , false);
+        player.tentacles[i].Update(player.l , player.r , player.f , player.g , player.w) ;
     }
 
-    // player.Translate(new Vector2(5,5)) ;
     camera.Update();
 
     room.map.Draw(elements.ctx , camera.xView , camera.yView) ;
+    
+    for(var i=0 ; i < player.tentacles.length ;i++) {
+        player.tentacles[i].Draw(elements.ctx , camera.xView , camera.yView) ;
+    }
     player.Draw(elements.ctx , camera.xView , camera.yView) ;
+
+    MouseHandler.Reset() ;
 }
 
   // canvas.width = this.width;
@@ -505,3 +673,201 @@ function Update() {
     // elements.ctx = canvas.getContext("2d");
     // document.body.appendChild(canvas);
     // elements.canvas = canvas ;
+
+      // ctx.moveTo(centerX1 , centerY1);
+    
+        // ctx.stroke() ;
+        
+        // ctx.beginPath() ;
+
+        // ctx.arc(centerX1 ,centerY1 , r , Math.PI * 0.8 , Math.PI * 0.2 ) ;
+        // ctx.closePath();
+        // ctx.fillStyle = "grey";
+        // ctx.fill();
+        // ctx.stroke() ;
+        // ctx.restore() ;
+        // ctx.save() ;
+
+         // ctx.fillRect(x-width/2,y,5,5);
+        // ctx.fillRect(x-width/2,y+height/2,5,5);
+
+      
+        //ctx.beginPath();
+
+        //ctx.moveTo(this.Transform.position.x + this.Bound.x/2 , this.Transform.position.x + this.Bound.x/2);               // Create a starting point
+             // Create a horizontal line
+      //  ctx.arcTo(this.Transform.position.x - this.Bound.x/2 -xView, this.Transform.position.x - this.Bound.x/2 -yView , 150, 70, 50);  // Create an arc
+
+        //ctx.stroke();  
+        
+        // ctx.restore();	
+         // ctx.save();
+        // ctx.setTransform(angle_cos, angle_sin , -angle_sin*strech , angle_cos*strech , x , y);
+        // // ctx.rotate(this.Transform.angle);
+        // ctx.beginPath();
+        // ctx.arc(0,0,r,0,2*Math.PI);
+        // ctx.stroke();
+        // ctx.clip();
+
+        // // ctx.rotate(this.Transform.angle);
+        // // ctx.setTransform(this.Transform.scale.x,0,0,this.Transform.scale.y + strech,x,y);
+        
+        // ctx.beginPath();
+        // ctx.arc(0,0,r,0,2*Math.PI,false);
+        // ctx.fillStyle = "red";
+        // ctx.fill();
+
+        // ctx.setTransform(angle_cos , angle_sin , -angle_sin , angle_cos , x , y);
+        // // ctx.rotate(this.Transform.angle);
+        // ctx.beginPath();
+        // ctx.arc(0,-offset,r,0,2*Math.PI,false);
+        // ctx.fillStyle = "#f2f2f2";
+        // ctx.fill();
+        // ctx.lineWidth = 0.5 ;
+        // ctx.strokeStyle = "grey";
+        // ctx.stroke();
+
+        // ctx.setTransform(angle_cos, angle_sin , -angle_sin*strech , angle_cos*strech , x , y);
+
+        // ctx.beginPath();
+        // ctx.arc(0,0,r,0,2*Math.PI,false);
+        // ctx.restore();
+
+        // ctx.save();
+        // ctx.shadowBlur = 6;
+        // ctx.shadowColor = "darkred";
+
+        // ctx.lineWidth = 2;
+        // ctx.strokeStyle = "darkred" ;
+        // ctx.stroke();
+        // ctx.restore();
+
+        
+
+        // ctx.save() ;
+
+        // ctx.translate(x,y);
+        // // ctx.rotate(this.Transform.angle) ;
+        // ctx.scale(this.Transform.scale.x+0.5,this.Transform.scale.y+0.5);
+        // x = 0;
+        // y = 0;
+        // ctx.beginPath() ;
+        // ctx.arc(x,y,r,0,Math.PI * 2 );
+        
+        // ctx.moveTo(x+r,y-r);
+        // ctx.arc(x,y-r-10,r,0,Math.PI*2);
+        // ctx.closePath() ;
+        
+        // ctx.restore();
+
+        // ctx.save();
+        // ctx.clip() ;
+        
+        // ctx.translate(this.Transform.position.x - width/2 - xView,this.Transform.position.y - height/2 - yView);
+        // ctx.scale(this.Transform.scale.x,this.Transform.scale.y+0.5);
+        
+            
+        // ctx.beginPath();
+        // ctx.moveTo(x+r,y);
+        
+
+        // ctx.arc(x,y,r,0,Math.PI * 2);
+        // ctx.closePath();
+        // ctx.fillStyle = "#f2f2f2";
+        // ctx.fill() ;
+        // ctx.lineWidth = 2;
+        // ctx.stroke() ;
+        // ctx.restore() ;
+
+        // // ctx.fillStyle = "cyan";
+        // // ctx.fill() ;
+        // ctx.lineWidth = 3;
+        // ctx.stroke() ;
+
+
+        // ctx.save() ;
+        // ctx.translate(x,y) ;
+        // ctx.rotate(this.Transform.angle) ;
+        // ctx.scale(this.Transform.scale.x , this.Transform.scale.y+0.5);
+        // ctx.beginPath() ;
+        // ctx.arc(0,0,r,0,2*Math.PI);
+        // ctx.closePath() ;
+        // ctx.fillStyle = "cyan" ;
+        // ctx.fill() ;
+        // ctx.lineWidth = 2;
+        // ctx.stroke();
+        // ctx.restore() ;
+
+        // ctx.save() ;
+        // ctx.clip() ;
+        // ctx.translate(x,y);
+        // ctx.rotate(this.Transform.angle) ;
+        // ctx.scale(this.Transform.scale.x , this.Transform.scale.y);
+        // ctx.beginPath();
+        // ctx.moveTo(r,-r-10);
+        // ctx.arc(0,-r-10,r,0,Math.PI*2);
+        // ctx.closePath();
+        // ctx.fillStyle = "#f2f2f2";
+        // ctx.fill();
+        // ctx.shadowBlur = 2;
+        // ctx.shadowColor = "black";
+        // ctx.lineWidth = 1;
+        // ctx.stroke();
+        // ctx.restore();
+        // ctx.stroke();
+
+
+
+
+
+
+        
+        // ctx.restore();
+        // var pStart = new Vector2(x , y-height/2) ;
+        // var p1 = new Vector2(x+width/2 , y-height/2) ;
+        // var p2 = new Vector2(x+width/2 , y);
+
+        // var curve = p1.x-pStart.x ;
+        
+        // var centerX1 = pStart.x  ;
+        // var centerY1 = -height*2 ;
+
+        
+        
+
+        // ctx.beginPath() ;
+        // ctx.moveTo(pStart.x , pStart.y-r);
+
+        // ctx.fillRect(pStart.x , pStart.y-r , 5, 5);
+
+        // ctx.fillRect(x, y , 5, 5);
+
+        // ctx.fillRect(p1.x+r ,p1.y-r  , 5, 5);
+
+        // ctx.arcTo(p1.x+r , p1.y-r , p2.x +r, p2.y , curve);
+        
+        // ctx.arcTo(p2.x +r , p2.y+height/2 +r , x , y+height/2 +r, curve);
+
+        // ctx.arcTo(x-width/2-r,y+height/2+r,x-width/2-r,y,curve);
+
+        // ctx.arcTo(x-width/2-r,y-height/2-r , x+width/2 ,y-height/2-r,curve);
+        // ctx.lineTo(pStart.x,pStart.y-r);
+        // ctx.closePath();
+        // // ctx.shadowBlur = 10 ;
+        // // ctx.shadowColor = "blue";
+        // // ctx.fillStyle = "blue";
+        // ctx.stroke() ;
+        // ctx.fill();
+
+
+        // ctx.beginPath();
+        // ctx.arc(centerX1 ,centerY1+35 , r+15 , Math.PI * 0.8 , Math.PI * 0.2 ) ;
+        // ctx.closePath();
+        // ctx.shadowBlur = 6 ;
+        // ctx.shadowColor= "#blue";
+        // ctx.fillStyle = "#f2f2f2";
+        // // ctx.fill();
+        // ctx.stroke() ;
+
+        // ctx.restore() ;
+       	
