@@ -25,6 +25,8 @@ var port = process.env.PORT || 3000 ;
  */
 var Players = [] ;
 
+var Foods = [] ;
+var Maps = [] ;
 
 if(port == 3000) {
     app.use(express.static(__dirname + '/__client__')) ;   
@@ -67,4 +69,43 @@ fw.on('connection' , function(socket) {
         socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
     });
 });
-
+function Connect(socket,oath,auth) {
+    var rank = GetMap() ;
+    Maps[rank].Join(socket.id) ;
+    
+}
+function GetMap() {
+    var i , k;
+    k=-1;
+    for(i = 0 ; i < Maps.length ; i++) {
+        if(Maps[i].players.length < 30) {
+            k = i ;
+            break;
+        }
+    }
+    if(k == -1) {
+        k = CreateMap() ;
+    }
+    return k ;
+}
+function CreateMap() {
+    var map = new Octopod.Body.Map(new Octopod.Geometry.Rect(0,0,7000,7000)) ;
+    Maps.push(map);
+    return Maps.length-1 ;
+}
+var update_rate = setInterval(Update , 3000);
+function Update() {
+    for(var i = 0 ; i < Maps.length ;i++) {
+        // Maps[i].Update() ;
+        var food = Maps[i].AddFood() ;
+        
+    }
+}
+var update_rate = setInterval(Send , 1000);
+function Send() {
+    for(var i = 0 ; i < Maps.length ; i++) {
+        for(var j = 0 ; j < Maps[i].players.length ; i++) {
+            
+        }
+    }
+}

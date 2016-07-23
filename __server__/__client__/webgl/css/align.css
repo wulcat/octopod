@@ -66,9 +66,10 @@ body {
 
 #show-setting {
     display: none;
-    z-index: -999;
+    z-index: 998;
     flex-wrap: nowrap;
-    background-color: aqua ;
+    height: 300px ;
+    width: 500px ;
 }  
 
 #show-setting-button {
