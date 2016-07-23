@@ -31,11 +31,11 @@ class Player {
         if(this.Jerk > this.JerkMax) {
             this.JerkSpeed = -Math.abs(this.JerkSpeed) ;
         }
-        else if(this.Jerk < 0.7) {
+        else if(this.Jerk < 2) {
             this.JerkSpeed = Math.abs(this.JerkSpeed) ;
         }
         if(this.Jerk < 2) {
-            this.RotSpeed = 7 ;
+            this.RotSpeed = 4 ;
         }
         else {
             this.RotSpeed = 3 ;

@@ -49,7 +49,7 @@ fw.on('connection' , function(socket) {
     console.log("connected : "+socket.id);
 
     var __player = new Octopod.Body.Player(socket.id , "test") ;
-    __player.Init(10 , 1 , 5);
+    __player.Init(20 , 1 , 5);
     __player.Start(200) ;
 
     Players[socket.id] = __player ;
