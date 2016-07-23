@@ -1,0 +1,33 @@
+*{
+    margin: 0 ;
+    padding: 0;
+    overflow: hidden ;
+}
+body {
+   background-color: #e6f7ff ;
+}
+#start-game {
+    width: 100px ;
+    height: 50px ;
+}
+#control-contatiner {
+    position: absolute;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+#control-frame {
+    width: 450px;
+    height: 450px;
+    background-color: aliceblue ;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center ;
+}

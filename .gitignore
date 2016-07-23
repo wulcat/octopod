@@ -1,0 +1,8 @@
+/node_modules
+npm-debug
+.DS_Store
+other
+.vscode
+jsconfig.json
+typings
+/*.env

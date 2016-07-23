@@ -1,0 +1,1 @@
+No one is allowed to make a copy of this for any kind of commercial or non-commercial use .
