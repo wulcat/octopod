@@ -112,7 +112,7 @@ fw.on('connection' , function(socket) {
                         fw.sockets.connected[socket.id].emit('SyncPlayer' , Players[Maps[players.mapid].players[i]].getPlayer());
                     }
                 }
-                socket.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
+                fw.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
             }
         }
     });
@@ -199,7 +199,7 @@ function Send() {
         for(var j = 0 ; j < Maps[i].length ; j++) {
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
                 for(var m = 0 ; m < Players.length ; m++) {
-                    fw.to( S_GetMapType(i) + j ).broadcast.emit('SyncPlayer' , Players[m]);
+                    fw.to( S_GetMapType(i) + j ).emit('SyncPlayer' , Players[m][Maps[i][j].players[k]].getPlayer() );
                 }
             }
         }
