@@ -189,19 +189,23 @@ var update_rate = setInterval(Update , 3000);
 function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
         // Maps[i].Update() ;
+        for(var j = 0 ; j < Maps[i].length ; j++) {
+            Maps[i][j].AddFood() ;
+        }
         var food = Maps[i].AddFood() ;
         
     }
 }
 var update_rate = setInterval(Send , 1000);
 function Send() {
-    for(var i = 0 ; i < Maps.length ; i++) {
+    for(var i = 0 ; i < Maps.length ; i++) { // Sends  players custom object
         for(var j = 0 ; j < Maps[i].length ; j++) {
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
-                for(var m = 0 ; m < Maps[i][j].players[k].length ; i++) {
+                for(var m = 0 ; m < Maps[i][j].players[k].length ; m++) {
                     fw.to( S_GetMapType(i) + j ).emit('SyncPlayer' , Players[k][Maps[i][j].players[k][m]].getPlayer() );
                 }
             }
         }
     }
+
 }
