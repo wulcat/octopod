@@ -9,7 +9,10 @@ class Player {
         this.id = id ;
         this.name = name ;
         this.Transform = new Component.Transform() ;
+
         this.status = false ;
+        this.rank = rank ;
+        this.type = type ;
     }
     Init(moveSpeed , jerkSpeed , jerkMax) {
         this.MoveSpeed = moveSpeed ;
@@ -21,8 +24,12 @@ class Player {
         // this.RotWidthMin = 3 ;
         this.__angle = 0 ;
     }
-    setMap() {
-
+    setMap(rank , type) {
+        this.rank = rank ;
+        this.type = type ;
+    }
+    getMap() {
+        return this.type+this.rank ;
     }
     Start(time) {
         if(time == null) time = 500 ;

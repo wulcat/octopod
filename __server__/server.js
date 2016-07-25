@@ -100,6 +100,7 @@ fw.on('connection' , function(socket) {
             if(status) {
                 // update everything needed to client 
                 // broadcast
+                socket.join(player.maptype+player.mapid);
             }
         }
     });
@@ -129,7 +130,8 @@ function S_Disconnect(socket) {}
 function S_CreateMap(type) {
     var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,7000,7000),
                                     type , Maps.length);
-    Maps.push(map);
+    var mapid = S_GetMapId(type) ;
+    Maps[mapid].push(map);
     return true ;
 }
 function S_Connect(player , type) {
@@ -143,25 +145,27 @@ function S_Connect(player , type) {
         }
 
         if(rank > -1) {
-            var map = Maps[rank].GetMap() ;
-            socket.join(map);
+            // var map = Maps[rank].GetMap() ;
+            // socket.join(map);
+            player.status = true ;
+            player.setMap(rank , type);
+            // Players[socket.id].status = true ;
+            // Players[socket.id].setMap(rank , type);
 
-            Players[socket.id].status = true ;
-            Players[socket.id].setMap(rank , type);
+            Maps[mapid][rank].push(player.id);
 
-            Maps[rank].addPlayer(socket.id , -1);
-
-            for(var i = 0 ; i < Maps[rank].players.length ; i++) {
+            // for(var i = 0 ; i < Maps[rank].players.length ; i++) {
             
-            }
-            for(var i = 0 ; i < Maps[rank].foods.length ; i++) {
+            // }
+            // for(var i = 0 ; i < Maps[rank].foods.length ; i++) {
 
-            }
+            // }
+            return true ;
         }
         else {
             var result = S_CreateMap(type) ;
             if(result) {
-                 S_Connect(socket,oath,auth,type) ;
+                return S_Connect(player,type) ;
             }
             else {
                 return false ;
