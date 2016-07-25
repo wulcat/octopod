@@ -92,8 +92,11 @@ fw.on('connection' , function(socket) {
             var oathid = S_GetOathId(oath);
             var player = Players[oathid][id] ;
 
-            if(player.status == true)
-                S_Disconnect(socket) ;
+            if(player.status == true) {
+                socket.leave(player.getMap()) ;
+                var typeid = S_GetMapId(type) ;
+                S_Disconnect(typeid , player , oathid) ;
+            }
 
                 
             var status = S_Connect(player,oathid,type) ;
@@ -126,6 +129,7 @@ fw.on('connection' , function(socket) {
         socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
     });
 });
+
 function S_GetOathId(oath) {
     switch (oath) {
         case "facebook" :
@@ -150,7 +154,7 @@ function S_GetMapType(id) {
             return "underwater" ;
     }
 }
-function S_Disconnect(socket) {}
+
 function S_CreateMap(type) {
     var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,7000,7000) );
     var mapid = S_GetMapId(type) ;
@@ -184,7 +188,9 @@ function S_Connect(player,oathid , type) {
             }
         }
 }
-
+function S_Disconnect(mapid , player , oathid) {
+    Maps[mapid][player.mapid].players[oathid].splice(Maps[mapid][player.mapid].players[oathid].indexOf(player.id) , 1);
+}
 var update_rate = setInterval(Update , 3000);
 function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
