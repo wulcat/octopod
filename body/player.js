@@ -31,6 +31,12 @@ class Player {
     getMap() {
         return this.maptype+this.mapid ;
     }
+    getPlayer() {
+        object_player = {} ;
+        object_player["name"] = this.name ;
+        object_player["Transform"] = this.Transform ;
+        
+    }
     Start(time) {
         if(time == null) time = 500 ;
         var t = this ;

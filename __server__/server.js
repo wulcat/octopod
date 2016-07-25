@@ -105,8 +105,9 @@ fw.on('connection' , function(socket) {
                 for(var i = 0 ; i < Map[player.mapid].foods.length ;i++) {
     // socket.to(Maps[rank].GetMap()).broadcast.emit('');
                     fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
-
+                    
                 } 
+                socket.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
             }
         }
     });
