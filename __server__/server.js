@@ -100,7 +100,13 @@ fw.on('connection' , function(socket) {
             if(status) {
                 // update everything needed to client 
                 // broadcast
-                socket.join(player.maptype+player.mapid);
+                socket.join(player.getMap());
+
+                for(var i = 0 ; i < Map[player.mapid].foods.length ;i++) {
+    // socket.to(Maps[rank].GetMap()).broadcast.emit('');
+                    fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
+
+                } 
             }
         }
     });
@@ -128,8 +134,7 @@ function S_GetMapId(type) {
 
 function S_Disconnect(socket) {}
 function S_CreateMap(type) {
-    var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,7000,7000),
-                                    type , Maps.length);
+    var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,7000,7000) );
     var mapid = S_GetMapId(type) ;
     Maps[mapid].push(map);
     return true ;

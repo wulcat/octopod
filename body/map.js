@@ -3,19 +3,17 @@ var Mathfw = require('../module/mathfw.js');
 var Body = require('../module/body.js');
 var Geometry = require('../module/geometry.js');
 class Map {
-    constructor(rect , type , id) {
+    constructor(rect , type) {
         this.rect = rect ;
         this.foods= [] ;
         this.players = [] ;
-        this.type = type ;
-        this.id = id ;
+        // this.type = type ;
+        // this.id = id ;
     }
-    addPlayer(id , auth) {
-        this.players.push(id);
-    }
-    GetMap(type) {
-        return this.id + this.type ;
-    }
+    
+    // GetMap(type) {
+    //     return this.id + this.type ;
+    // }
     AddFood() {
         var x , y ;
         x = Mathfw.RandomFloat(0,this.rect.width) ;

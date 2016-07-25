@@ -11,8 +11,8 @@ class Player {
         this.Transform = new Component.Transform() ;
 
         this.status = false ;
-        this.rank = rank ;
-        this.type = type ;
+        this.mapid = rank ;
+        this.maptype = type ;
     }
     Init(moveSpeed , jerkSpeed , jerkMax) {
         this.MoveSpeed = moveSpeed ;
@@ -25,11 +25,11 @@ class Player {
         this.__angle = 0 ;
     }
     setMap(rank , type) {
-        this.rank = rank ;
-        this.type = type ;
+        this.mapid = rank ;
+        this.maptype = type ;
     }
     getMap() {
-        return this.type+this.rank ;
+        return this.maptype+this.mapid ;
     }
     Start(time) {
         if(time == null) time = 500 ;
