@@ -198,8 +198,8 @@ function Send() {
     for(var i = 0 ; i < Maps.length ; i++) {
         for(var j = 0 ; j < Maps[i].length ; j++) {
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
-                for(var m = 0 ; m < Players.length ; m++) {
-                    fw.to( S_GetMapType(i) + j ).emit('SyncPlayer' , Players[m][Maps[i][j].players[k]].getPlayer() );
+                for(var m = 0 ; m < Maps[i][j].players[k].length ; i++) {
+                    fw.to( S_GetMapType(i) + j ).emit('SyncPlayer' , Players[k][Maps[i][j].players[k][m]].getPlayer() );
                 }
             }
         }
