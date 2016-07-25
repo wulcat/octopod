@@ -6,12 +6,13 @@ class Map {
     constructor(rect , type) {
         this.rect = rect ;
         this.foods= [] ;
-        this.players = [] ;
+        this.players = [[],[]] ;
+
         // this.type = type ;
         // this.id = id ;
     }
     
-    // GetMap(type) {
+    // getMap(type) {
     //     return this.id + this.type ;
     // }
     AddFood() {

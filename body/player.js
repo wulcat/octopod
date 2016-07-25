@@ -33,8 +33,10 @@ class Player {
     }
     getPlayer() {
         object_player = {} ;
+
         object_player["name"] = this.name ;
         object_player["Transform"] = this.Transform ;
+        object_player["oath"] = this.oath ;
         
     }
     Start(time) {

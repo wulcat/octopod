@@ -96,17 +96,22 @@ fw.on('connection' , function(socket) {
                 S_Disconnect(socket) ;
 
                 
-            var status = S_Connect(player,type) ;
+            var status = S_Connect(player,oathid,type) ;
             if(status) {
                 // update everything needed to client 
                 // broadcast
                 socket.join(player.getMap());
 
-                for(var i = 0 ; i < Map[player.mapid].foods.length ;i++) {
+                for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
     // socket.to(Maps[rank].GetMap()).broadcast.emit('');
                     fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
                     
-                } 
+                }
+                for(var i = 0 ; i < Maps[player.mapid].players.length ;i++) {
+                    for(var j = 0 ; j < Maps[player.mapid].players[i].length ; j++) {
+                        fw.sockets.connected[socket.id].emit('SyncPlayer' , Players[Maps[players.mapid].players[i]].getPlayer());
+                    }
+                }
                 socket.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
             }
         }
@@ -130,9 +135,21 @@ function S_GetOathId(oath) {
     }
 }
 function S_GetMapId(type) {
-
+    switch (type) {
+        case "underwater" :
+            return 0 ;
+        default :
+            return 0 ;
+    }
 }
-
+function S_GetMapType(id) {
+    switch (id) {
+        case 0 :
+            return "underwater" ;
+        default :
+            return "underwater" ;
+    }
+}
 function S_Disconnect(socket) {}
 function S_CreateMap(type) {
     var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,7000,7000) );
@@ -140,7 +157,7 @@ function S_CreateMap(type) {
     Maps[mapid].push(map);
     return true ;
 }
-function S_Connect(player , type) {
+function S_Connect(player,oathid , type) {
         var rank = -1 ;
         var mapid = S_GetMapId(type) ; 
         for(var i = 0 ; i < Maps.length ; i++) {
@@ -151,21 +168,10 @@ function S_Connect(player , type) {
         }
 
         if(rank > -1) {
-            // var map = Maps[rank].GetMap() ;
-            // socket.join(map);
             player.status = true ;
             player.setMap(rank , type);
-            // Players[socket.id].status = true ;
-            // Players[socket.id].setMap(rank , type);
 
-            Maps[mapid][rank].push(player.id);
-
-            // for(var i = 0 ; i < Maps[rank].players.length ; i++) {
-            
-            // }
-            // for(var i = 0 ; i < Maps[rank].foods.length ; i++) {
-
-            // }
+            Maps[mapid][rank].players[oathid].push(player.id);
             return true ;
         }
         else {
@@ -177,48 +183,8 @@ function S_Connect(player , type) {
                 return false ;
             }
         }
-    
-    // var i , k;
-    // k=-1;
-    // for(i = 0 ; i < Maps.length ; i++) {
-    //     if(Maps[i].players.length < 30) {
-    //         k = i ;
-    //         break;
-    //     }
-    // }
-    // if(k == -1) {
-    //     k = S_Connect() ;
-    // }
-
-
-
-    // var rank = GetMap() ;
-    // Maps[rank].Join(socket.id) ;
-    // socket.join(Maps[rank].GetMap()) ;
-    // fw.sockets.connected[socket.id].emit('');
-    // socket.to(Maps[rank].GetMap()).broadcast.emit('');
-
-    
 }
-// function GetMap() {
-//     var i , k;
-//     k=-1;
-//     for(i = 0 ; i < Maps.length ; i++) {
-//         if(Maps[i].players.length < 30) {
-//             k = i ;
-//             break;
-//         }
-//     }
-//     if(k == -1) {
-//         k = CreateMap() ;
-//     }
-//     return k ;
-// }
-// function CreateMap() {
-//     var map = new Octopod.Body.Map(new Octopod.Geometry.Rect(0,0,7000,7000)) ;
-//     Maps.push(map);
-//     return Maps.length-1 ;
-// }
+
 var update_rate = setInterval(Update , 3000);
 function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
@@ -230,8 +196,12 @@ function Update() {
 var update_rate = setInterval(Send , 1000);
 function Send() {
     for(var i = 0 ; i < Maps.length ; i++) {
-        for(var j = 0 ; j < Maps[i].players.length ; i++) {
-            
+        for(var j = 0 ; j < Maps[i].length ; j++) {
+            for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
+                for(var m = 0 ; m < Players.length ; m++) {
+                    fw.to( S_GetMapType(i) + j ).broadcast.emit('SyncPlayer' , Players[]);
+                }
+            }
         }
     }
 }
