@@ -7,14 +7,8 @@ class Map {
         this.rect = rect ;
         this.foods= [] ;
         this.players = [[],[]] ;
-
-        // this.type = type ;
-        // this.id = id ;
     }
-    
-    // getMap(type) {
-    //     return this.id + this.type ;
-    // }
+   
     AddFood() {
         var x , y ;
         x = Mathfw.RandomFloat(0,this.rect.width) ;
