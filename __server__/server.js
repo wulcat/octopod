@@ -36,8 +36,17 @@ else {
 }
 
 server.listen(port , function() {
+    S_Init() ;
    console.log("server started at port %d" , port) ; 
 });
+
+function S_Init() {
+    var User = [] ;
+    var Facebook = [] ;
+
+    Players.push(User) ;
+    Players.push(Facebook) ;
+}
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/__client__/webgl/index.html');
@@ -61,6 +70,39 @@ fw.on('connection' , function(socket) {
     
     if(status) socket.emit('start');
 
+    socket.on('init', function(oath , id) {
+        // if(socket.u_id != undefined)  {
+            // var id = "3452436";
+            // socket.u_id = id ;
+            var __player = new Octopod.Body.Player(oath , id) ;
+            switch (oath) {
+                case "facebook" :
+                    Players[1][oathid] = __player ;
+                    break ;
+                default :
+                    Players[0][socket.id] = __player ;
+                    break ;
+            }
+            socket.init = true ;
+            // Players[id] = __player ;    
+        // }
+    });
+    socket.on('S_Connect' , function(oath , id , name , type) {
+        if(socket.init) {
+            var oathid = S_GetOathId(oath);
+            var player = Players[oathid][id] ;
+
+            if(player.status == true)
+                S_Disconnect(socket) ;
+
+                
+            var status = S_Connect(player,type) ;
+            if(status) {
+                // update everything needed to client 
+                // broadcast
+            }
+        }
+    });
     socket.on('disconnect' , function(){
         console.log(socket.id+" disconnected");
         Players[socket.id].Stop() ;
@@ -71,6 +113,18 @@ fw.on('connection' , function(socket) {
         socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
     });
 });
+function S_GetOathId(oath) {
+    switch (oath) {
+        case "facebook" :
+            return 1 ;
+        default :
+            return 0 ;
+    }
+}
+function S_GetMapId(type) {
+
+}
+
 function S_Disconnect(socket) {}
 function S_CreateMap(type) {
     var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,7000,7000),
@@ -78,19 +132,16 @@ function S_CreateMap(type) {
     Maps.push(map);
     return true ;
 }
-function S_Connect(socket,oath,auth,type) {
-
-    if(Players[socket.id] != null) {
-        if(Players[socket.id].status == true)
-            S_Disconnect(socket) ;
-
+function S_Connect(player , type) {
         var rank = -1 ;
+        var mapid = S_GetMapId(type) ; 
         for(var i = 0 ; i < Maps.length ; i++) {
-            if(Maps[i].type == type && Maps[i].players.length <= 30) {
+            if(Maps[mapid][i].players.length <= 30) {
                 rank = i ;
                 break ;
             }
         }
+
         if(rank > -1) {
             var map = Maps[rank].GetMap() ;
             socket.join(map);
@@ -116,10 +167,7 @@ function S_Connect(socket,oath,auth,type) {
                 return false ;
             }
         }
-    }
-    else {
-        return false ;
-    }
+    
     // var i , k;
     // k=-1;
     // for(i = 0 ; i < Maps.length ; i++) {

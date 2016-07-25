@@ -4,12 +4,12 @@ var Component = require('../module/component.js');
 // var Octopod = require('../module/octomath.js');
 var OctoMath = require('../module/octomath.js');
 class Player {
-    constructor(socketId , name) {
-        this.id = socketId ;
+    constructor(oath , id , name) {
+        this.oath = oath ;
+        this.id = id ;
         this.name = name ;
         this.Transform = new Component.Transform() ;
         this.status = false ;
-
     }
     Init(moveSpeed , jerkSpeed , jerkMax) {
         this.MoveSpeed = moveSpeed ;
