@@ -199,7 +199,7 @@ function Send() {
         for(var j = 0 ; j < Maps[i].length ; j++) {
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
                 for(var m = 0 ; m < Players.length ; m++) {
-                    fw.to( S_GetMapType(i) + j ).broadcast.emit('SyncPlayer' , Players[]);
+                    fw.to( S_GetMapType(i) + j ).broadcast.emit('SyncPlayer' , Players[m]);
                 }
             }
         }
