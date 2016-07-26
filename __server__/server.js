@@ -59,16 +59,16 @@ app.post('/', function (req , res) {
 fw.on('connection' , function(socket) {
     console.log("connected : "+socket.id);
 
-    var __player = new Octopod.Body.Player(socket.id , "test") ;
-    Players[socket.id] = __player ;
-    __player.Init(20 , 1 , 5);
+    // var __player = new Octopod.Body.sPlayer(socket.id , "test") ;
+    // Players[socket.id] = __player ;
+    // __player.Init(20 , 1 , 5);
     // __player.Start(200) ;
 
-    Players[socket.id] = __player ;
-    var status = false ;
-    if(!Players[socket.id].status) status = S_Connect(socket,null,null,"Underwater") ;
+    // Players[socket.id] = __player ;
+    // var status = false ;
+    // if(!Players[socket.id].status) status = S_Connect(socket,null,null,"Underwater") ;
     
-    if(status) socket.emit('start');
+    // if(status) socket.emit('start');
 
     socket.on('init', function(oath , id) {
         // if(socket.u_id != undefined)  {
@@ -121,12 +121,18 @@ fw.on('connection' , function(socket) {
     });
     socket.on('disconnect' , function(){
         console.log(socket.id+" disconnected");
-        Players[socket.id].Stop() ;
-        Players[socket.id] = null ;
+        S_Disconnect();
+        // Players[socket.id].Stop() ;
+        // Players[socket.id] = null ;
     });
-    socket.on('MouseUpdate' , function(x,y) {
-        Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
-        socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
+    socket.on('MouseUpdate' , function(oath ,id, x,y) {
+        var oathid = S_GetOathId(oath) ;
+        var player = Players[oathid][id] ; 
+        player.___angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
+        // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
+        // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
+
+        fw.to(player.getMap()).emit('PlayerUpdate' , player.getPlayer() );
     });
 });
 
