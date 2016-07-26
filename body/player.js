@@ -22,7 +22,6 @@ class Player {
         this.Speed = 0 ;
         // this.RotWidthMax = RotWidth ;
         // this.RotWidthMin = 3 ;
-        this.__angle = 0 ;
     }
     setMap(rank , type) {
         this.mapid = rank ;
@@ -47,6 +46,8 @@ class Player {
     }
   
     Update() {
+        
+
         if(this.Jerk > this.JerkMax) {
             this.JerkSpeed = -Math.abs(this.JerkSpeed) ;
         }

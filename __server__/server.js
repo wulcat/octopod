@@ -117,17 +117,24 @@ fw.on('connection' , function(socket) {
                 }
                 fw.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
             }
+            socket.oath = oath ;
+            socket.u_id = id ;
         }
     });
     socket.on('disconnect' , function(){
         console.log(socket.id+" disconnected");
-        S_Disconnect();
+        var oathid = S_GetOathId(socket.oath);
+        var player = Players[oathid][socket.u_id] ;
+        console.log(Players);
+        var mapid = S_GetMapId(player.maptype);
+        S_Disconnect(mapid , player ,oathid);
         // Players[socket.id].Stop() ;
         // Players[socket.id] = null ;
     });
     socket.on('MouseUpdate' , function(oath ,id, x,y) {
         var oathid = S_GetOathId(oath) ;
-        var player = Players[oathid][id] ; 
+        var player = Players[oathid][id] ;
+         
         player.___angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);

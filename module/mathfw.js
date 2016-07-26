@@ -1,3 +1,4 @@
+"use strict";
 class Mathfw {
     static RandomFloat(min, max) {
         return Math.random() * (max - min) + min;
