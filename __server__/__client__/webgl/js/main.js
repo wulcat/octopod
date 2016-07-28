@@ -790,6 +790,16 @@ var loaded = false ;
 var camera ;
 var room ;
 
+var World = {
+    underwater : {value : 0 , type : "underwater"}
+}
+var CurrentWorld = World.underwater ;
+function SelectWorld(world) {
+    CurrentWorld = world ;
+}
+// function CreateWorld(world) {
+    
+// }
 function Start() {
     if(loaded) {
         if(!isInit) {
@@ -797,12 +807,14 @@ function Start() {
             Init() ;
             isInit = true ;
 
-            clearInterval(intervals.preUpdate);
-            intervals.loading = setInterval(Loading , 20) ;
+            // clearInterval(intervals.preUpdate);
+            // intervals.loading = setInterval(Loading , 20) ;
             // isConnected = true ;
         }
-        else if(isConnected) {
-            socket.connect() ;
+        else if(!isConnected && canConnect) {
+            // socket.connect() ;
+            var result = Logged() ;
+            socket.emit('S_Connect' , result.oath , result.id , name , CurrentWorld.type ) ;
             clearInterval(intervals.preUpdate);
             intervals.loading = setInterval(Loading , 20) ;
             // isConnected = true ;
@@ -812,9 +824,25 @@ function Start() {
         }
     }
 }
+var name = "mystry" ;
+var type = "underwater";    
+var canConnect = false ;
+function Logged() {
+    return {oath:"user" , id:0 , name:"mystry"} ;
+}
+
 
 function Init() {
-    socket.on('start' , function(data) {
+    socket.on('connected' , function(data) {
+        // Start() ;
+        var result = Logged() ;
+        socket.emit('init' , result.oath , result.id) ;
+    });
+    socket.on('init' ,function() {
+        canConnect = true ;
+        Start() ;
+    });
+    socket.on('joined' , function() {
         elements.control_container.style.display = "none" ;
         elements.display_container.style.display = "flex" ;
         // elements.display_container.style.height = window.innerHeight+"px" ;
@@ -832,20 +860,32 @@ function Init() {
     });
     socket.on('stop') , function() {
         clearInterval(intervals.send) ;
-        socket.disconnect() ;
+        // socket.disconnect() ;
         celements.ontrol_contatiner.style.display = "flex" ;
         elements.display_container.style.display = "none" ;
         isConnected = false ;
     }
-    socket.on('Direction' , function(angle , position) {
+    socket.on('Direction' , function(angle , position) { //obsolete
         player.newTransform.angle = angle ;
         position.x += elements.canvas.width ;
         position.y += elements.canvas.height ;
         player.newTransform.position = position ;
     });
+    socket.on('SyncPlayer' , function(data) {
+
+    });
+    socket.on('SyncFood' , function(data) {
+
+    });
 }
+var oath = "user";
+var id = 1 ;
 function Send() {
-    socket.emit('MouseUpdate' , MouseHandler.position.x - window.innerWidth/2 ,  MouseHandler.position.y - window.innerHeight/2);
+    var result = Logged() ;
+    socket.emit('MouseUpdate' , result.oath ,
+                                result.id ,
+                                MouseHandler.position.x - window.innerWidth/2 ,
+                                MouseHandler.position.y - window.innerHeight/2 );
 }
 
 //___________________________________________________________________

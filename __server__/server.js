@@ -58,7 +58,7 @@ app.post('/', function (req , res) {
 
 fw.on('connection' , function(socket) {
     console.log("connected : "+socket.id);
-
+    socket.emit('connected') ;
     // var __player = new Octopod.Body.sPlayer(socket.id , "test") ;
     // Players[socket.id] = __player ;
     // __player.Init(20 , 1 , 5);
@@ -104,7 +104,7 @@ fw.on('connection' , function(socket) {
                 // update everything needed to client 
                 // broadcast
                 socket.join(player.getMap());
-
+                socket.emit('start');
                 for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
     // socket.to(Maps[rank].GetMap()).broadcast.emit('');
                     fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
@@ -139,7 +139,7 @@ fw.on('connection' , function(socket) {
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
 
-        fw.to(player.getMap()).emit('PlayerUpdate' , player.getPlayer() );
+        fw.to(player.getMap()).emit('SyncPlayer' , player.getPlayer() );
     });
 });
 
