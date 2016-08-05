@@ -151,6 +151,7 @@ class Elements {
         this.control_container ;
         this.ad_container ;
         this.display_container ;
+        this.index_name ;
     }
 }
 
@@ -791,15 +792,33 @@ var camera ;
 var room ;
 
 var World = {
-    underwater : {value : 0 , type : "underwater"}
+    underwater : {  size : {x : 5000 , y : 5000} ,
+                    value : 0 , 
+                    type : "underwater" }
 }
 var CurrentWorld = World.underwater ;
 function SelectWorld(world) {
+    //reset if anything exsits
     CurrentWorld = world ;
+    //reinitiated if needed
 }
 // function CreateWorld(world) {
     
 // }
+// var name = "mystry" ;
+// var type = "underwater";    
+var canConnect = false ;
+function Logged() {
+    if(isInit) {
+        return{ oath : "user" ,
+                id : socket.id ,
+                name : elements.index_name } ;
+    }
+}
+function Instantiate(type , position , size , angle) {
+    var object ;
+    return object ;
+}
 function Start() {
     if(loaded) {
         if(!isInit) {
@@ -814,7 +833,7 @@ function Start() {
         else if(!isConnected && canConnect) {
             // socket.connect() ;
             var result = Logged() ;
-            socket.emit('S_Connect' , result.oath , result.id , name , CurrentWorld.type ) ;
+            socket.emit('S_Connect' , result.oath , result.id , result.name , CurrentWorld.type ) ;
             clearInterval(intervals.preUpdate);
             intervals.loading = setInterval(Loading , 20) ;
             // isConnected = true ;
@@ -824,12 +843,7 @@ function Start() {
         }
     }
 }
-var name = "mystry" ;
-var type = "underwater";    
-var canConnect = false ;
-function Logged() {
-    return {oath:"user" , id:0 , name:"mystry"} ;
-}
+
 
 
 function Init() {
@@ -872,14 +886,23 @@ function Init() {
         player.newTransform.position = position ;
     });
     socket.on('SyncPlayer' , function(data) {
+        // var result = Logged() ;
+        Players[data.id].newTransform.angle = data.Transform.angle ;
 
+        data.position.x += elements.canvas.width ;
+        data.position.y += elements.canvas.height ;
+
+        Players[data.id].newTransform.position = data.Transform.position ;
     });
     socket.on('SyncFood' , function(data) {
-
+        Food[data.id] = data.Transform ;
+    });
+    socket.on('joined' , function(){
+        // start the game
     });
 }
-var oath = "user";
-var id = 1 ;
+// var oath = "user";
+// var id = 1 ;
 function Send() {
     var result = Logged() ;
     socket.emit('MouseUpdate' , result.oath ,
@@ -949,6 +972,7 @@ window.onload = function() {
 
     intervals.preUpdate = setInterval(PreUpdate , INTERVAL);
 }
+var Players = [] ;
 var player ;
 var foods = [] ;
 

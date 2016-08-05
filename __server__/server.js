@@ -25,7 +25,7 @@ var port = process.env.PORT || 3000 ;
  */
 var Players = [] ;
 
-var Foods = [] ;
+// var Foods = [] ;
 var Maps = [] ;
 
 if(port == 3000) {
@@ -46,6 +46,9 @@ function S_Init() {
 
     Players.push(User) ;
     Players.push(Facebook) ;
+
+    var Underwater = [] ;
+    Maps.push(Underwater) ;
 }
 
 app.get('/', function(req, res){
@@ -104,7 +107,7 @@ fw.on('connection' , function(socket) {
                 // update everything needed to client 
                 // broadcast
                 socket.join(player.getMap());
-                socket.emit('start');
+                socket.emit('joined');
                 for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
     // socket.to(Maps[rank].GetMap()).broadcast.emit('');
                     fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
@@ -147,6 +150,8 @@ function S_GetOathId(oath) {
     switch (oath) {
         case "facebook" :
             return 1 ;
+        case "user" :
+            return 0 ;
         default :
             return 0 ;
     }
@@ -209,13 +214,15 @@ function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
         // Maps[i].Update() ;
         for(var j = 0 ; j < Maps[i].length ; j++) {
+            Maps[i][j].Update() ;
             Maps[i][j].AddFood() ;
+            fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getFood() ) ;
         }
-        var food = Maps[i].AddFood() ;
+        // var food = Maps[i].AddFood() ;
         
     }
 }
-var update_rate = setInterval(Send , 1000);
+var send_rate = setInterval(Send , 1000);
 function Send() {
     for(var i = 0 ; i < Maps.length ; i++) { // Sends  players custom object
         for(var j = 0 ; j < Maps[i].length ; j++) {
