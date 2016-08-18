@@ -64,6 +64,7 @@ function S_Connected(socket) { // Will be trigged after few seconds as player is
 }
 fw.on('connection' , function(socket) {
     console.log("connected : "+socket.id);
+    // socket.status = false ;
     // socket.emit('connected') ;
     setTimeout(S_Connected , 1000 , socket);
     // var __player = new Octopod.Body.sPlayer(socket.id , "test") ;
@@ -98,15 +99,16 @@ fw.on('connection' , function(socket) {
     socket.on('S_Connect' , function(oath , id , type) {
         if(socket.init) {
             var oathid = S_GetOathId(oath);
-            var player = Players[oathid][id] ;
-
+            var player = Players[oathid]["/#"+id];
+            // console.log("/#"+id);
+            // console.log(Players[oathid]["/#"+id]);
+            // console.log(player);
             if(player.status == true) {
                 socket.leave(player.getMap()) ;
                 var typeid = S_GetMapId(type) ;
                 S_Disconnect(typeid , player , oathid) ;
             }
-
-                
+            // console.log(oathid);
             var status = S_Connect(player,oathid,type) ;
             if(status) {
                 // update everything needed to client 
@@ -125,7 +127,7 @@ fw.on('connection' , function(socket) {
     //             fw.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
             }
             socket.oath = oath ;
-            socket.u_id = id ;
+            socket.u_id = "/#"+id ;
         }
     });
     // socket.on("C_Ready" , function(oath , id , name , type) { 
@@ -135,7 +137,8 @@ fw.on('connection' , function(socket) {
         console.log(socket.id+" disconnected");
         var oathid = S_GetOathId(socket.oath);
         var player = Players[oathid][socket.u_id] ;
-        console.log(Players);
+        // console.log(Players);
+        // console.log(player);
         var mapid = S_GetMapId(player.maptype);
         S_Disconnect(mapid , player ,oathid);
         // Players[socket.id].Stop() ;
@@ -181,32 +184,38 @@ function S_GetMapType(id) {
 }
 
 function S_CreateMap(type) {
+    // console.log("Creating Map");
     var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,5000,5000) );
     var mapid = S_GetMapId(type) ;
     Maps[mapid].push(map);
+    // console.log(Maps[mapid][0].players);
     return true ;
 }
 function S_Connect(player,oathid , type) {
+        // console.log(i)
         var rank = -1 ;
         var mapid = S_GetMapId(type) ; 
-        for(var i = 0 ; i < Maps.length ; i++) {
+        // console.log(Maps);
+        for(var i = 0 ; i < Maps[mapid].length ; i++) {
+            // console.log(Maps[mapid][i].players.length);
             if(Maps[mapid][i].players.length <= 30) {
                 rank = i ;
                 break ;
             }
         }
-
+        // console.log(rank);
+        // console.log(oathid);
         if(rank > -1) {
             player.status = true ;
             player.setMap(rank , type);
-
+            // console.log()
             Maps[mapid][rank].players[oathid].push(player.id);
             return true ;
         }
         else {
             var result = S_CreateMap(type) ;
             if(result) {
-                return S_Connect(player,type) ;
+                return S_Connect(player,oathid,type) ;
             }
             else {
                 return false ;
@@ -222,8 +231,8 @@ function Update() {
         // Maps[i].Update() ;
         for(var j = 0 ; j < Maps[i].length ; j++) {
             Maps[i][j].Update() ;
-            Maps[i][j].AddFood() ;
-            fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getFood() ) ;
+            // Maps[i][j].AddFood() ;
+            // fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getFood() ) ;
         }
         // var food = Maps[i].AddFood() ;   
     }
@@ -234,7 +243,7 @@ function Send() {
         for(var j = 0 ; j < Maps[i].length ; j++) {
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
                 for(var m = 0 ; m < Maps[i][j].players[k].length ; m++) {
-                    fw.to( S_GetMapType(i) + j ).emit('SyncPlayer' , Players[k][Maps[i][j].players[k][m]].getPlayer() );
+                    // fw.to( S_GetMapType(i) + j ).emit('SyncPlayer' , Players[k][Maps[i][j].players[k][m]].getPlayer() );
                 }
             }
         }

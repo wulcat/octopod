@@ -920,7 +920,7 @@ function Prepare() {
     room = new Map(5000 , 5000);
     room.Generate() ;
 
-    camera = new Camera(0,0, canvas.width , canvas.height , 5000 , 5000);
+    camera = new Camera(0,0, elements.canvas.width , elements.canvas.height , 5000 , 5000);
 
     // player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
     
@@ -930,7 +930,7 @@ function Prepare() {
 
     camera.Update() ;
     
-    ctx.clearRect(0 , 0 , canvas.width , canvas.height) ;
+    elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height) ;
 
     // socket.emit("C_Ready");
 }

@@ -7,12 +7,12 @@ class Player {
     constructor(oath , id , name) {
         this.oath = oath ;
         this.id = id ;
-        this.name = name ;
+        this.name = "mystry" ;
         this.Transform = new Component.Transform() ;
 
         this.status = false ;
-        this.mapid = rank ;
-        this.maptype = type ;
+        // this.mapid ; //= rank ;
+        //this.maptype ; //= type ;
     }
     Init(moveSpeed , jerkSpeed , jerkMax) {
         this.MoveSpeed = moveSpeed ;

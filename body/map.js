@@ -1,7 +1,10 @@
 "use strict"
+// var Geometry = require('../module/geometry.js');
+// var Component = require('../module/component.js');
+
+// var Body = require('../module/body.js');
+var Octopod = require('../module/octopod.js');
 var Mathfw = require('../module/mathfw.js');
-var Body = require('../module/body.js');
-var Geometry = require('../module/geometry.js');
 class Map {
     constructor(rect , type) {
         this.rect = rect ;
@@ -14,7 +17,7 @@ class Map {
         x = Mathfw.RandomFloat(0,this.rect.width) ;
         y = Mathfw.RandomFloat(0,this.rect.height) ;
 
-        var food = new Body.Food(new Geometry.Vector2(x,y) ,
+        var food = new Octopod.Body.Food(new Geometry.Vector2(x,y) ,
             new Geometry.Vector2(1,1)
         )
         this.foods.push() ;
