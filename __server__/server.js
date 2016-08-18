@@ -59,9 +59,13 @@ app.post('/', function (req , res) {
    // res.sendFile(__dirname+ '..__client__/index.html') ; // For facebook canvas
 });
 
+function S_Connected(socket) { // Will be trigged after few seconds as player is taking time to init the game
+    socket.emit('connected') ;
+}
 fw.on('connection' , function(socket) {
     console.log("connected : "+socket.id);
-    socket.emit('connected') ;
+    // socket.emit('connected') ;
+    setTimeout(S_Connected , 1000 , socket);
     // var __player = new Octopod.Body.sPlayer(socket.id , "test") ;
     // Players[socket.id] = __player ;
     // __player.Init(20 , 1 , 5);
@@ -87,10 +91,11 @@ fw.on('connection' , function(socket) {
                     break ;
             }
             socket.init = true ;
-            // Players[id] = __player ;    
+            // Players[id] = __player ;
+            socket.emit('init' , true);
         // }
     });
-    socket.on('S_Connect' , function(oath , id , name , type) {
+    socket.on('S_Connect' , function(oath , id , type) {
         if(socket.init) {
             var oathid = S_GetOathId(oath);
             var player = Players[oathid][id] ;
@@ -108,22 +113,24 @@ fw.on('connection' , function(socket) {
                 // broadcast
                 socket.join(player.getMap());
                 socket.emit('joined');
-                for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
-    // socket.to(Maps[rank].GetMap()).broadcast.emit('');
-                    fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
-                    
-                }
-                for(var i = 0 ; i < Maps[player.mapid].players.length ;i++) {
-                    for(var j = 0 ; j < Maps[player.mapid].players[i].length ; j++) {
-                        fw.sockets.connected[socket.id].emit('SyncPlayer' , Players[Maps[players.mapid].players[i]].getPlayer());
-                    }
-                }
-                fw.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
+    //             for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
+    // // socket.to(Maps[rank].GetMap()).broadcast.emit('');
+    //                 fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
+    //             }
+    //             for(var i = 0 ; i < Maps[player.mapid].players.length ;i++) {
+    //                 for(var j = 0 ; j < Maps[player.mapid].players[i].length ; j++) {
+    //                     fw.sockets.connected[socket.id].emit('SyncPlayer' , Players[Maps[players.mapid].players[i]].getPlayer());
+    //                 }
+    //             }
+    //             fw.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
             }
             socket.oath = oath ;
             socket.u_id = id ;
         }
     });
+    // socket.on("C_Ready" , function(oath , id , name , type) { 
+    //     // fw.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
+    // });
     socket.on('disconnect' , function(){
         console.log(socket.id+" disconnected");
         var oathid = S_GetOathId(socket.oath);
@@ -174,7 +181,7 @@ function S_GetMapType(id) {
 }
 
 function S_CreateMap(type) {
-    var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,7000,7000) );
+    var map = new Octopod.Body.Map( new Octopod.Geometry.Rect(0,0,5000,5000) );
     var mapid = S_GetMapId(type) ;
     Maps[mapid].push(map);
     return true ;
@@ -218,8 +225,7 @@ function Update() {
             Maps[i][j].AddFood() ;
             fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getFood() ) ;
         }
-        // var food = Maps[i].AddFood() ;
-        
+        // var food = Maps[i].AddFood() ;   
     }
 }
 var send_rate = setInterval(Send , 1000);

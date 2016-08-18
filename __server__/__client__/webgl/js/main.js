@@ -641,6 +641,8 @@ class Mouse {
     }
 }
 
+
+
 class Food {
     constructor(position , scale , radius , shear) {
         this.position = position || new Vector2() ;
@@ -787,13 +789,15 @@ var socket ;
 var isConnected = false ;
 var isInit = false ;
 var loaded = false ;
+var Players = [] ;
+var player ;
+var foods = [] ;
 
 var camera ;
 var room ;
 
 var World = {
-    underwater : {  size : {x : 5000 , y : 5000} ,
-                    value : 0 , 
+    underwater : {  value : 0 , 
                     type : "underwater" }
 }
 var CurrentWorld = World.underwater ;
@@ -833,10 +837,12 @@ function Start() {
         else if(!isConnected && canConnect) {
             // socket.connect() ;
             var result = Logged() ;
-            socket.emit('S_Connect' , result.oath , result.id , result.name , CurrentWorld.type ) ;
+            socket.emit('S_Connect' , result.oath , result.id , CurrentWorld.type ) ;
             clearInterval(intervals.preUpdate);
             intervals.loading = setInterval(Loading , 20) ;
             // isConnected = true ;
+
+           
         }
         else {
             alert("Already Connected") ;
@@ -852,8 +858,8 @@ function Init() {
         var result = Logged() ;
         socket.emit('init' , result.oath , result.id) ;
     });
-    socket.on('init' ,function() {
-        canConnect = true ;
+    socket.on('init' ,function(status) {
+        canConnect = status ;
         Start() ;
     });
     socket.on('joined' , function() {
@@ -861,10 +867,14 @@ function Init() {
         elements.display_container.style.display = "flex" ;
         // elements.display_container.style.height = window.innerHeight+"px" ;
         clearInterval(intervals.loading);
-        intervals.update = setInterval(Frame , 1000/30);
+        Prepare() ;
+        // intervals.update = setInterval(Frame , 1000/30);
         // intervals.update = setInterval(Frame , 1000);
         // intervals.Add(ClearCanvas , 500);
-        intervals.send = setInterval(Send , 200) ;
+        // intervals.send = setInterval(Send , 200) ;
+
+        
+        // room.Draw(ctx , camera.xView , camera.yView);
     });
     socket.on('end' , function() {
         clearInterval(intervals.send) ;
@@ -897,9 +907,32 @@ function Init() {
     socket.on('SyncFood' , function(data) {
         Food[data.id] = data.Transform ;
     });
-    socket.on('joined' , function(){
-        // start the game
-    });
+    // socket.on('joined' , function(){
+    //     // start the game
+    // });
+}
+function Prepare() {
+    // room = {
+    //     width : 2000 ,
+    //     height : 2000 ,
+    //     map : new Map(2000, 2000)
+    // };
+    room = new Map(5000 , 5000);
+    room.Generate() ;
+
+    camera = new Camera(0,0, canvas.width , canvas.height , 5000 , 5000);
+
+    // player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
+    
+    // var food = new Food(new Vector2(500 , 500) , new Vector2(1,1) , 35 , 20);
+    // foods.push(food);
+    // camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
+
+    camera.Update() ;
+    
+    ctx.clearRect(0 , 0 , canvas.width , canvas.height) ;
+
+    // socket.emit("C_Ready");
 }
 // var oath = "user";
 // var id = 1 ;
@@ -926,7 +959,8 @@ window.onresize = function() {
     // camera.Viewport(canvas.width , canvas.height);
     ctx.clearRect(0 , 0 , canvas.width , canvas.height) ;
 
-    room.map.Draw(ctx , camera.xView , camera.yView);
+    if(room != null)
+        room.Draw(ctx , camera.xView , camera.yView);
 }
 
 
@@ -943,42 +977,40 @@ window.onload = function() {
     elements.canvas = canvas ;
     elements.ctx = ctx ;
 
-    var FPS =30 ;
-    var INTERVAL = 1000/FPS ;
-    var STEP = INTERVAL/1000 ;
+    // var FPS =30 ;
+    // var INTERVAL = 1000/FPS ;
+    // var STEP = INTERVAL/1000 ;
 
-    room = {
-        width : 2000 ,
-        height : 2000 ,
-        map : new Map(2000, 2000)
-    };
+    // room = {
+    //     width : 2000 ,
+    //     height : 2000 ,
+    //     map : new Map(2000, 2000)
+    // };
 
-    room.map.Generate() ;
+    // room.map.Generate() ;
 
-    camera = new Camera(0,0, canvas.width , canvas.height , room.width , room.height);
+    // camera = new Camera(0,0, canvas.width , canvas.height , room.width , room.height);
 
-    player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
+    // player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
     
-    var food = new Food(new Vector2(500 , 500) , new Vector2(1,1) , 35 , 20);
-    foods.push(food);
-    camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
+    // var food = new Food(new Vector2(500 , 500) , new Vector2(1,1) , 35 , 20);
+    // foods.push(food);
+    // camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
 
-    camera.Update() ;
+    // camera.Update() ;
     
-    ctx.clearRect(0 , 0 , canvas.width , canvas.height) ;
-    room.map.Draw(ctx , camera.xView , camera.yView);
+    // ctx.clearRect(0 , 0 , canvas.width , canvas.height) ;
+    // room.Draw(ctx , camera.xView , camera.yView);
     
     loaded = true ;
 
-    intervals.preUpdate = setInterval(PreUpdate , INTERVAL);
+    intervals.preUpdate = setInterval(PreUpdate , 30);
 }
-var Players = [] ;
-var player ;
-var foods = [] ;
+
 
 function PreUpdate() {
     // elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height);
-    room.map.Draw(elements.ctx , camera.xView , camera.yView) ;
+    // room.Draw(elements.ctx , camera.xView , camera.yView) ;
 }
 
 function Loading() {
@@ -998,7 +1030,7 @@ function Draw() {
 
     camera.Update();
 
-    room.map.Draw(elements.ctx , camera.xView , camera.yView) ;
+    room.Draw(elements.ctx , camera.xView , camera.yView) ;
     
     for(var i = 0 ; i < foods.length ; i++) {
         foods[i].Draw(elements.ctx , camera.xView , camera.yView) ;
