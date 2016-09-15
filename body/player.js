@@ -20,6 +20,7 @@ class Player {
         this.Jerk = 0 ;
         this.JerkSpeed = jerkSpeed ;
         this.Speed = 0 ;
+        this.Camera = new Component.Camera(300,230)
         // this.RotWidthMax = RotWidth ;
         // this.RotWidthMin = 3 ;
     }
@@ -46,8 +47,6 @@ class Player {
     }
   
     Update() {
-        
-
         if(this.Jerk > this.JerkMax) {
             this.JerkSpeed = -Math.abs(this.JerkSpeed) ;
         }
