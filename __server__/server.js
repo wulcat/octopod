@@ -82,6 +82,7 @@ fw.on('connection' , function(socket) {
         // if(socket.u_id != undefined)  {
             // var id = "3452436";
             // socket.u_id = id ;
+            console.log("init : oath -"+oath+" , id -"+id);
             var __player = new Octopod.Body.Player(oath , id) ;
             switch (oath) {
                 case "facebook" :
@@ -97,6 +98,7 @@ fw.on('connection' , function(socket) {
         // }
     });
     socket.on('S_Connect' , function(oath , id , type) {
+        
         if(socket.init) {
             var oathid = S_GetOathId(oath);
             var player = Players[oathid]["/#"+id];
@@ -110,6 +112,7 @@ fw.on('connection' , function(socket) {
             }
             // console.log(oathid);
             var status = S_Connect(player,oathid,type) ;
+            console.log("S_Connect : oath-"+oath+" , id-"+id+" , type-"+type+" , status-"+status) ;
             if(status) {
                 // update everything needed to client 
                 // broadcast
@@ -146,8 +149,9 @@ fw.on('connection' , function(socket) {
     });
     socket.on('MouseUpdate' , function(oath ,id, x,y) {
         var oathid = S_GetOathId(oath) ;
-        var player = Players[oathid][id] ;
-         
+
+        var player = Players[oathid][socket.u_id] ;
+        console.log(player);
         player.___angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);

@@ -868,10 +868,10 @@ function Init() {
         // elements.display_container.style.height = window.innerHeight+"px" ;
         clearInterval(intervals.loading);
         Prepare() ;
-        // intervals.update = setInterval(Frame , 1000/30);
+        intervals.update = setInterval(Frame , 1000/30);
         // intervals.update = setInterval(Frame , 1000);
         // intervals.Add(ClearCanvas , 500);
-        // intervals.send = setInterval(Send , 200) ;
+        intervals.send = setInterval(Send , 200) ;
 
         
         // room.Draw(ctx , camera.xView , camera.yView);

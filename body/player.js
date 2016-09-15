@@ -31,7 +31,7 @@ class Player {
         return this.maptype+this.mapid ;
     }
     getPlayer() {
-        object_player = {} ;
+        var object_player = {} ;
 
         object_player["name"] = this.name ;
         object_player["Transform"] = this.Transform ;
