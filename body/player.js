@@ -4,13 +4,16 @@ var Component = require('../module/component.js');
 // var Octopod = require('../module/octomath.js');
 var OctoMath = require('../module/octomath.js');
 class Player {
-    constructor(oath , id , name) {
+    constructor(oath , id , name , secId) {
         this.oath = oath ;
         this.id = id ;
         this.name = "mystry" ;
         this.Transform = new Component.Transform() ;
         this.Camera = new Octopod.Geometry.Rect(0,0,700,550);
         this.status = false ;
+
+        // this.oath = "socket" ;
+        this.secId = secId ; 
         // this.mapid ; //= rank ;
         //this.maptype ; //= type ;
     }

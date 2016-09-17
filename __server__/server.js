@@ -42,11 +42,11 @@ server.listen(port , function() {
 });
 
 function S_Init() {
-    var User = [] ;
-    var Facebook = [] ;
+    // var User = [] ;
+    // var Facebook = [] ;
 
-    Players.push(User) ;
-    Players.push(Facebook) ;
+    // Players.push(User) ;
+    // Players.push(Facebook) ;
 
     var Underwater = [] ;
     Maps.push(Underwater) ;
@@ -79,20 +79,26 @@ fw.on('connection' , function(socket) {
     
     // if(status) socket.emit('start');
 
-    socket.on('init', function(oath , id) {
+    socket.on('init', function(oath , id , secId) {
         // if(socket.u_id != undefined)  {
             // var id = "3452436";
             // socket.u_id = id ;
-            console.log("init : oath -"+oath+" , id -"+id);
-            var __player = new Octopod.Body.Player(oath , id) ;
-            switch (oath) {
-                case "facebook" :
-                    Players[1][oathid] = __player ;
-                    break ;
-                default :
-                    Players[0][socket.id] = __player ;
-                    break ;
+            console.log("init : oath -"+oath+" , id -"+id+" , secid-"+secId);
+            var __player = new Octopod.Body.Player(oath , id , secId) ;
+            if(Players["/#"+id] != null) {
+                Players[id] = __player ;
             }
+            else {
+                //Send the previos player if connected as error
+            }
+            // switch (oath) {
+            //     case "facebook" :
+            //         Players[1][oathid] = __player ;
+            //         break ;
+            //     default :
+            //         Players[0][socket.id] = __player ;
+            //         break ;
+            // }
             socket.init = true ;
             // Players[id] = __player ;
             socket.emit('init' , true);
@@ -102,7 +108,8 @@ fw.on('connection' , function(socket) {
         
         if(socket.init) {
             var oathid = S_GetOathId(oath);
-            var player = Players[oathid]["/#"+id];
+            // var player = Players[oathid]["/#"+id];
+            var player = Players["/#"+id];
             // console.log("/#"+id);
             // console.log(Players[oathid]["/#"+id]);
             // console.log(player);
@@ -130,8 +137,8 @@ fw.on('connection' , function(socket) {
     //             }
     //             fw.to(player.getMap()).broadcast.emit('SyncPlayer' , player.getPlayer() ) ;
             }
-            socket.oath = oath ;
-            socket.u_id = "/#"+id ;
+            // socket.oath = oath ;
+            // socket.u_id = "/#"+id ;
         }
     });
     // socket.on("C_Ready" , function(oath , id , name , type) { 
@@ -140,7 +147,8 @@ fw.on('connection' , function(socket) {
     socket.on('disconnect' , function(){
         console.log(socket.id+" disconnected");
         var oathid = S_GetOathId(socket.oath);
-        var player = Players[oathid][socket.u_id] ;
+        var player = Players[socket.id] ;
+        // var player = Players[oathid][socket.u_id] ;
         // console.log(Players);
         // console.log(player);
         var mapid = S_GetMapId(player.maptype);
@@ -151,7 +159,8 @@ fw.on('connection' , function(socket) {
     socket.on('MouseUpdate' , function(oath ,id, x,y) {
         var oathid = S_GetOathId(oath) ;
 
-        var player = Players[oathid][socket.u_id] ;
+        var player = Players[socket.id] ;
+        // var player = Players[oathid][socket.u_id] ;
         console.log(player);
         player.___angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
@@ -214,7 +223,7 @@ function S_Connect(player,oathid , type) {
             player.status = true ;
             player.setMap(rank , type);
             // console.log()
-            Maps[mapid][rank].players[oathid].push(player.id);
+            Maps[mapid][rank].players.push(player.id);
             return true ;
         }
         else {
@@ -236,6 +245,10 @@ function Update() {
         // Maps[i].Update() ;
         for(var j = 0 ; j < Maps[i].length ; j++) {
             Maps[i][j].Update() ;
+            Maps[i][j].quadTree.Clear() ;
+            for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
+                Maps[i][j].quadTree.Insert(Players[Maps[i][j].players[k]]) ;
+            }
             // Maps[i][j].AddFood() ;
             // fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getFood() ) ;
         }
@@ -244,11 +257,23 @@ function Update() {
 }
 var send_rate = setInterval(Send , 1000);
 function Send() {
+    // for(var i = 0 ; i < Maps.length ; i++) { // Sends  players custom object
+    //     for(var j = 0 ; j < Maps[i].length ; j++) {
+    //         for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
+    //             for(var m = 0 ; m < Maps[i][j].players[k].length ; m++) {
+    //                 // fw.to( S_GetMapType(i) + j ).emit('SyncPlayer' , Players[k][Maps[i][j].players[k][m]].getPlayer() );
+    //             }
+    //         }
+    //     }
+    // }
+
     for(var i = 0 ; i < Maps.length ; i++) { // Sends  players custom object
         for(var j = 0 ; j < Maps[i].length ; j++) {
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
-                for(var m = 0 ; m < Maps[i][j].players[k].length ; m++) {
-                    // fw.to( S_GetMapType(i) + j ).emit('SyncPlayer' , Players[k][Maps[i][j].players[k][m]].getPlayer() );
+                var gameObjects = Maps[i][j].getObjectsInFieldView(Players[Maps[i][j].players[k]]) ;
+                
+                for(var m = 0 ; m < gameObjects.length ; m++) {
+                    fw.sockets.connected[Maps[i][j].players[k]].emit('SyncPlayer', gameObjects[k].getPlayer());
                 }
             }
         }
