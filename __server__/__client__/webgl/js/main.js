@@ -981,21 +981,21 @@ window.onload = function() {
     // var INTERVAL = 1000/FPS ;
     // var STEP = INTERVAL/1000 ;
 
-    // room = {
-    //     width : 2000 ,
-    //     height : 2000 ,
-    //     map : new Map(2000, 2000)
-    // };
+    room = {
+        width : 2000 ,
+        height : 2000 ,
+        map : new Map(2000, 2000)
+    };
 
     // room.map.Generate() ;
 
-    // camera = new Camera(0,0, canvas.width , canvas.height , room.width , room.height);
+    camera = new Camera(0,0, canvas.width , canvas.height , room.width , room.height);
 
-    // player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
+    player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
     
     // var food = new Food(new Vector2(500 , 500) , new Vector2(1,1) , 35 , 20);
     // foods.push(food);
-    // camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
+    camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
 
     // camera.Update() ;
     

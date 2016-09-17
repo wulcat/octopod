@@ -11,6 +11,7 @@ class Camera {
         var object_data = [] ;
         
     }
+    
 }
 
 module.exports = Camera ;

@@ -3,12 +3,12 @@
 var Geometry = require("../module/geometry.js") ;
 
 class Quadtree {
-    constructor(bounds , max_objects , max_levels , level) {
+    constructor(rect , max_objects , max_levels , level) {
         this.max_objects = max_objects ;
         this.max_levels = max_levels ;
 
         this.level = level || 0 ;
-        this.bounds = bounds ;
+        this.rect = rect ;
 
         this.objects = [] ;
         this.nodes = [] ;
@@ -16,10 +16,10 @@ class Quadtree {
 
     Split() {
         var nextLevel = this.level + 1 ;
-        var subWidth = Math.round( this.bounds.width / 2) ;
-        var subHeight = Math.round( this.bounds.height / 2 );
-        var x = Math.round( this.bounds.x) ;
-        var y = Math.round(this.bounds.y) ;
+        var subWidth = Math.round( this.rect.width / 2) ;
+        var subHeight = Math.round( this.rect.height / 2 );
+        var x = Math.round( this.rect.x) ;
+        var y = Math.round(this.rect.y) ;
 
         this.nodes[0] = new Quadtree(   
             new Geometry.Rect(x+subWidth,y,subWidth,subHeight) ,
@@ -48,8 +48,8 @@ class Quadtree {
 
     getIndex(rect) {
         var index = -1 ;
-		var	verticalMidpoint 	= this.bounds.x + (this.bounds.width / 2) ;
-		var	horizontalMidpoint 	= this.bounds.y + (this.bounds.height / 2) ;
+		var	verticalMidpoint 	= this.rect.x + (this.rect.width / 2) ;
+		var	horizontalMidpoint 	= this.rect.y + (this.rect.height / 2) ;
 	 
 			//rect can completely fit within the top quadrants
 		var topQuadrant = (rect.y < horizontalMidpoint && rect.y + rect.height < horizontalMidpoint) ;
@@ -142,9 +142,8 @@ class Quadtree {
 				this.nodes[i].Clear();
 		  	}
 		}
-
 		this.nodes = [];
     }
 }
 
-modules.export = Quadtree ;
+module.exports = Quadtree ;

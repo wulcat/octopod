@@ -9,7 +9,7 @@ class Player {
         this.id = id ;
         this.name = "mystry" ;
         this.Transform = new Component.Transform() ;
-
+        this.Camera = new Octopod.Geometry.Rect(0,0,700,550);
         this.status = false ;
         // this.mapid ; //= rank ;
         //this.maptype ; //= type ;
@@ -31,12 +31,17 @@ class Player {
     getMap() {
         return this.maptype+this.mapid ;
     }
+    // getView() {
+    //     // var gameObjects 
+    // }
     getPlayer() {
         var object_player = {} ;
 
         object_player["name"] = this.name ;
         object_player["Transform"] = this.Transform ;
         object_player["oath"] = this.oath ;
+
+        return object_player ;
         
     }
     Start(time) {
@@ -70,6 +75,12 @@ class Player {
         newAngle = newAngle * Math.PI/180 ;
 
         this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
+        this.UpdateCamera() ;
+        
+    }
+    UpdateCamera() {
+        this.Camera.x = this.Transform.position.x - this.Camera.width/2 ;
+        this.Camera.y = this.Transform.position.y - this.Camera.height/2 ;
     }
     Stop() {
         if(this.Updating != null || this.Updating != undefined) clearInterval(this.Updating);

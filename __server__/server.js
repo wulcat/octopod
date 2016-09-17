@@ -28,6 +28,7 @@ var Players = [] ;
 // var Foods = [] ;
 var Maps = [] ;
 
+
 if(port == 3000) {
     app.use(express.static(__dirname + '/__client__')) ;   
 }

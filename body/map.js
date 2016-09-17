@@ -10,6 +10,7 @@ class Map {
         this.rect = rect ;
         this.foods= [] ;
         this.players = [[],[]] ;
+        this.quadTree = new Octopod.Component.QuadTree(rect) ;
     }
    
     AddFood() {
@@ -28,7 +29,29 @@ class Map {
         }
     }
     Update() {
+        this.quadTree.Clear() ;
         this.UpdateFood() ;
+
+        for(var i = 0 ; i < this.players.length ; i++) {
+            for(var j = 0 ; j < this.players[i].length ; j++) {
+                this.quadTree.Insert(this.players[i][j]) ;
+            }
+        }
+    }
+    getObjectsInFieldView(fieldView) {
+        var gameObjectsInRange = this.quadTree.Retrieve(fieldView);
+        var gameObjectsInFieldView = [] ;
+
+        for(var i = 0 ; i < gameObjectsInRange.length ; i++) {
+            if( gameObjectsInRange[i].Transform.position.x > fieldView.x && 
+                gameObjectsInRange[i].Transform.position.y > fieldView.y && 
+                gameObjectsInRange[i].Transform.position.x < fieldView.x + fieldView.width &&
+                gameObjectsInRange[i].Transform.position.y < fieldView.y + fieldView.height) {
+                    gameObjectsInFieldView.push(gameObjectsInRange[i].getPlayer());
+                }
+        }
+
+        return gameObjectsInFieldView ;
     }
 }
 module.exports = Map ;
