@@ -83,10 +83,10 @@ fw.on('connection' , function(socket) {
         // if(socket.u_id != undefined)  {
             // var id = "3452436";
             // socket.u_id = id ;
-            console.log("init : oath -"+oath+" , id -"+id+" , secid-"+secId);
+            console.log("init : oath-"+oath+" , id-"+id+" , secid-"+secId);
             var __player = new Octopod.Body.Player(oath , id , secId) ;
-            if(Players["/#"+id] != null) {
-                Players[id] = __player ;
+            if(Players["/#"+id] == null) {
+                Players["/#"+id] = __player ;
             }
             else {
                 //Send the previos player if connected as error
@@ -161,7 +161,7 @@ fw.on('connection' , function(socket) {
 
         var player = Players[socket.id] ;
         // var player = Players[oathid][socket.u_id] ;
-        console.log(player);
+        // console.log(player);
         player.___angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
@@ -247,7 +247,7 @@ function Update() {
             Maps[i][j].Update() ;
             Maps[i][j].quadTree.Clear() ;
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
-                Maps[i][j].quadTree.Insert(Players[Maps[i][j].players[k]]) ;
+                Maps[i][j].quadTree.Insert(Players["/#"+Maps[i][j].players[k]]) ;
             }
             // Maps[i][j].AddFood() ;
             // fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getFood() ) ;
@@ -270,7 +270,8 @@ function Send() {
     for(var i = 0 ; i < Maps.length ; i++) { // Sends  players custom object
         for(var j = 0 ; j < Maps[i].length ; j++) {
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
-                var gameObjects = Maps[i][j].getObjectsInFieldView(Players[Maps[i][j].players[k]]) ;
+                var player = Players[ "/#"+Maps[i][j].players[k] ] ;
+                var gameObjects = Maps[i][j].getObjectsInFieldView(player) ;
                 
                 for(var m = 0 ; m < gameObjects.length ; m++) {
                     fw.sockets.connected[Maps[i][j].players[k]].emit('SyncPlayer', gameObjects[k].getPlayer());
@@ -278,5 +279,4 @@ function Send() {
             }
         }
     }
-
 }

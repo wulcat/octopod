@@ -46,52 +46,80 @@ class Quadtree {
             nextLevel) ;
     }
 
-    getIndex(rect) {
+    getIndex(player , camera) {
         var index = -1 ;
+		// var	verticalMidpoint 	= this.rect.x + (this.rect.width / 2) ;
 		var	verticalMidpoint 	= this.rect.x + (this.rect.width / 2) ;
 		var	horizontalMidpoint 	= this.rect.y + (this.rect.height / 2) ;
-	 
-			//rect can completely fit within the top quadrants
-		var topQuadrant = (rect.y < horizontalMidpoint && rect.y + rect.height < horizontalMidpoint) ;
+		
+		if(camera) {
+			var topQuadrant = (player.Camera.y < horizontalMidpoint && player.Camera.y < horizontalMidpoint) ;
+
+				
+				//rect can completely fit within the bottom quadrants
+			var bottomQuadrant = (player.Camera.y+player.Camera.height > horizontalMidpoint);
 			
-			//rect can completely fit within the bottom quadrants
-        var bottomQuadrant = (rect.y > horizontalMidpoint);
-		 
-		//rect can completely fit within the left quadrants
-		if( rect.x < verticalMidpoint && rect.x + rect.width < verticalMidpoint ) {
-			if( topQuadrant ) {
-				index = 1;
-			} else if( bottomQuadrant ) {
-				index = 2;
+			//rect can completely fit within the left quadrants
+			if( player.Camera.x < verticalMidpoint && player.Camera.x + player.Camera.width < verticalMidpoint ) {
+				if( topQuadrant ) {
+					index = 1;
+				} else if( bottomQuadrant ) {
+					index = 2;
+				}
+				
+			//rect can completely fit within the right quadrants	
+			} else if( player.Camera.x > verticalMidpoint ) {
+				if( topQuadrant ) {
+					index = 0;
+				} else if( bottomQuadrant ) {
+					index = 3;
+				}
 			}
+		}
+		else {
+			//rect can completely fit within the top quadrants
+			var topQuadrant = (player.Transform.position.y-player.Transform.scale.y/2 < horizontalMidpoint && player.Transform.position.y + player.Transform.scale/2 < horizontalMidpoint) ;
+			// var topQuadrant = (rect.y < horizontalMidpoint && rect.y + rect.height < horizontalMidpoint) ;
+				
+				//rect can completely fit within the bottom quadrants
+			var bottomQuadrant = (player.Transform.position.y+player.Transform.scale.y > horizontalMidpoint);
 			
-		//rect can completely fit within the right quadrants	
-		} else if( rect.x > verticalMidpoint ) {
-			if( topQuadrant ) {
-				index = 0;
-			} else if( bottomQuadrant ) {
-				index = 3;
+			//rect can completely fit within the left quadrants
+			if( player.Transform.position.x - player.Transform.scale.x/2 < verticalMidpoint && player.Transform.position.x + player.Transform.scale.x/2 < verticalMidpoint ) {
+				if( topQuadrant ) {
+					index = 1;
+				} else if( bottomQuadrant ) {
+					index = 2;
+				}
+				
+			//rect can completely fit within the right quadrants	
+			} else if( player.Transform.position.x - player.Transform.scale.x/2 > verticalMidpoint ) {
+				if( topQuadrant ) {
+					index = 0;
+				} else if( bottomQuadrant ) {
+					index = 3;
+				}
 			}
 		}
 	 
 		return index;
     }
 
-    Insert(rect) {
+    Insert(player) { //player with transform
         var i = 0 ;
         var index ;
 	 	
 	 	//if we have subnodes ...
 		if( typeof this.nodes[0] !== 'undefined' ) {
-			index = getIndex( pRect );
+			index = getIndex( player );
 	 
 		  	if( index !== -1 ) {
-				this.nodes[index].Insert( pRect );	 
+				this.nodes[index].Insert( player );	 
 			 	return;
 			}
 		}
 	 
-	 	this.objects.push( pRect );
+	 	this.objects.push( player );
 		
 		if( this.objects.length > this.max_objects && this.level < this.max_levels ) {
 			
@@ -114,21 +142,22 @@ class Quadtree {
 		}
     }
 
-    Retrieve(rect) {
-        var index = getIndex( pRect ) ;
+    Retrieve(player , camera) {
+        var index = this.getIndex( player , camera) ;
 		var	returnObjects = this.objects ;
-			
+		// console.log(this.objects);
+		// console.log("returned objects - "+returnObjects);
 		//if we have subnodes ...
 		if( typeof this.nodes[0] !== 'undefined' ) {
 			
-			//if pRect fits into a subnode ..
+			//if rect fits into a subnode ..
 			if( index !== -1 ) {
-				returnObjects = returnObjects.concat( this.nodes[index].Retrieve( pRect ) );
+				returnObjects = returnObjects.concat( this.nodes[index].Retrieve( player  , camera) );
 				
-			//if pRect does not fit into a subnode, check it against all subnodes
+			//if rect does not fit into a subnode, check it against all subnodes
 			} else {
 				for( var i=0; i < this.nodes.length; i=i+1 ) {
-					returnObjects = returnObjects.concat( this.nodes[i].Retrieve( pRect ) );
+					returnObjects = returnObjects.concat( this.nodes[i].Retrieve( player , camera) );
 				}
 			}
 		}

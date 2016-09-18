@@ -4,6 +4,7 @@
 
 // var Body = require('../module/body.js');
 var Octopod = require('../module/octopod.js');
+var Component = require('../module/component.js');
 var Mathfw = require('../module/mathfw.js');
 class Map {
     constructor(rect , type) {
@@ -11,7 +12,7 @@ class Map {
         this.foods= [] ;
         // this.players = [[],[]] ;
         this.players = [] ;
-        this.quadTree = new Octopod.Component.QuadTree(rect) ;
+        this.quadTree = new Component.QuadTree(rect) ;
     }
    
     AddFood() {
@@ -42,15 +43,16 @@ class Map {
         //     }
         // }
     }
-    getObjectsInFieldView(fieldView) {
-        var gameObjectsInRange = this.quadTree.Retrieve(fieldView);
+    getObjectsInFieldView(player) {
+        // var fie
+        var gameObjectsInRange = this.quadTree.Retrieve(player , true); //for Camera
         var gameObjectsInFieldView = [] ;
-
+        // console.log(gameObjectsInRange);
         for(var i = 0 ; i < gameObjectsInRange.length ; i++) {
-            if( gameObjectsInRange[i].Transform.position.x > fieldView.x && 
-                gameObjectsInRange[i].Transform.position.y > fieldView.y && 
-                gameObjectsInRange[i].Transform.position.x < fieldView.x + fieldView.width &&
-                gameObjectsInRange[i].Transform.position.y < fieldView.y + fieldView.height) {
+            if( gameObjectsInRange[i].Transform.position.x > player.Camera.x && 
+                gameObjectsInRange[i].Transform.position.y > player.Camera.y && 
+                gameObjectsInRange[i].Transform.position.x < player.Camera.x + player.Camera.width &&
+                gameObjectsInRange[i].Transform.position.y < player.Camera.y + player.Camera.height) {
                     gameObjectsInFieldView.push(gameObjectsInRange[i].getPlayer());
                 }
         }

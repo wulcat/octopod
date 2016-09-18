@@ -1,7 +1,7 @@
 "use strict";
-var Octopod = require('../module/octopod.js');
+// var Octopod = require('../module/octopod.js');
 var Component = require('../module/component.js');
-// var Octopod = require('../module/octomath.js');
+var Geometry = require('../module/geometry.js');
 var OctoMath = require('../module/octomath.js');
 class Player {
     constructor(oath , id , name , secId) {
@@ -9,9 +9,9 @@ class Player {
         this.id = id ;
         this.name = "mystry" ;
         this.Transform = new Component.Transform() ;
-        this.Camera = new Octopod.Geometry.Rect(0,0,700,550);
+        this.Camera = new Geometry.Rect(0,0,700,550);
         this.status = false ;
-
+        
         // this.oath = "socket" ;
         this.secId = secId ; 
         // this.mapid ; //= rank ;
