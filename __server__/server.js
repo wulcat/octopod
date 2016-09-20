@@ -132,7 +132,9 @@ fw.on('connection' , function(socket) {
 
                 socket.join(player.getMap());
                 socket.emit('joined');
+                // console.log(Players[socket.id]);
                 Players[socket.id].Start() ;
+                // console.log(Players[socket.id]);
     //             for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
     // // socket.to(Maps[rank].GetMap()).broadcast.emit('');
     //                 fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
@@ -165,7 +167,8 @@ fw.on('connection' , function(socket) {
     });
     socket.on('MouseUpdate' , function(x,y) {
         // var oathid = S_GetOathId(oath) ;
-
+        // console.log(x+","+y);
+        // console.log(Players[socket.id]);
         var player = Players[socket.id] ;
         // var player = Players[oathid][socket.u_id] ;
         // console.log(player);
@@ -174,7 +177,7 @@ fw.on('connection' , function(socket) {
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
 
         socket.emit('SyncPlayer' , player.getPlayer() , true);
-        // console.log(Players[socket.id]);
+        
         for(var i = 0 ; i < player.Camera.VisiblePlayers.length ; i++) {
             // console.log(player.Camera.VisiblePlayers);
             socket.emit('SyncPlayer' , player.Camera.VisiblePlayers[i] , true) ;

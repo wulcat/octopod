@@ -25,6 +25,7 @@ class Player {
         this.Jerk = 0 ;
         this.JerkSpeed = jerkSpeed ;
         this.Speed = 0 ;
+        this.__angle = 0 ;
         // this.Camera = new Component.Camera(0,0,300,230) ;
         // this.RotWidthMax = RotWidth ;
         // this.RotWidthMin = 3 ;

@@ -979,7 +979,7 @@ function Send() {
     var y = MouseHandler.position.y - window.innerHeight/2 ;
     socket.emit('MouseUpdate' , x , y);
 
-    console.log(x+","+y) ;
+    // console.log(x+","+y) ;
 }
 
 //___________________________________________________________________
