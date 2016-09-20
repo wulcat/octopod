@@ -83,6 +83,8 @@ class Player {
 
         this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
         this.UpdateCamera() ;
+
+        // console.log(this);
         
     }
     UpdateCamera() {

@@ -622,20 +622,25 @@ class Mouse {
         this.leftDOWN = false ;
         this.leftUP = false ;
         var t = this ;
+        console.log("moving "+this.position.x+","+this.position.y);;
         canvas.addEventListener("mousemove" , function(event) {
             t.position = t.calcMouseAxis(event) ;
+            console.log("moving "+this.position.x+","+this.position.y);;
         });
         canvas.addEventListener("mousedown" , function() {
             t.leftDOWN = true ;
             t.left = true ;
+            console.log("moving "+this.position.x+","+this.position.y);;
         });
         canvas.addEventListener("mouseup" , function() {
             t.leftUP = true ;
             t.left = false ;
+            console.log("moving "+this.position.x+","+this.position.y);;
         });
 
     }
     calcMouseAxis(event) {
+        // console
         return new Vector2(event.clientX , event.clientY) ;
     }
     Reset() {
@@ -970,8 +975,11 @@ function Prepare(data) {
 // var id = 1 ;
 function Send() {
     // var result = Logged() ;
-    socket.emit('MouseUpdate' , MouseHandler.position.x - window.innerWidth/2 ,
-                                MouseHandler.position.y - window.innerHeight/2 );
+    var x = MouseHandler.position.x - window.innerWidth/2 ;
+    var y = MouseHandler.position.y - window.innerHeight/2 ;
+    socket.emit('MouseUpdate' , x , y);
+
+    console.log(x+","+y) ;
 }
 
 //___________________________________________________________________
@@ -1049,6 +1057,7 @@ function Loading() {
 }
 
 function Frame() {
+    // console.log(event);
     Update() ;
     Draw() ;
 }

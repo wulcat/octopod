@@ -84,9 +84,16 @@ fw.on('connection' , function(socket) {
             // var id = "3452436";
             // socket.u_id = id ;
             console.log("init : oath-"+oath+" , id-"+id+" , secid-"+secId);
-            var __player = new Octopod.Body.Player(oath , id , secId) ;
+
             if(Players["/#"+id] == null) {
+                 var __player = new Octopod.Body.Player(oath , id , secId) ;
+                __player.Init(20,1,5);
+                
                 Players["/#"+id] = __player ;
+
+                socket.init = true ;
+                // Players[id] = __player ;
+                socket.emit('init' , true);
             }
             else {
                 //Send the previos player if connected as error
@@ -99,9 +106,7 @@ fw.on('connection' , function(socket) {
             //         Players[0][socket.id] = __player ;
             //         break ;
             // }
-            socket.init = true ;
-            // Players[id] = __player ;
-            socket.emit('init' , true);
+        
         // }
     });
     socket.on('S_Connect' , function(type) {
@@ -127,6 +132,7 @@ fw.on('connection' , function(socket) {
 
                 socket.join(player.getMap());
                 socket.emit('joined');
+                Players[socket.id].Start() ;
     //             for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
     // // socket.to(Maps[rank].GetMap()).broadcast.emit('');
     //                 fw.sockets.connected[socket.id].emit('SyncFood' , Maps[player.mapid].foods[i].getFood() );
@@ -168,7 +174,7 @@ fw.on('connection' , function(socket) {
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
 
         socket.emit('SyncPlayer' , player.getPlayer() , true);
-
+        // console.log(Players[socket.id]);
         for(var i = 0 ; i < player.Camera.VisiblePlayers.length ; i++) {
             // console.log(player.Camera.VisiblePlayers);
             socket.emit('SyncPlayer' , player.Camera.VisiblePlayers[i] , true) ;
@@ -262,6 +268,7 @@ function S_Connect(player , type) {
         }
 }
 function S_Disconnect(mapid , player) {
+    player.Stop() ;
     Maps[mapid][player.mapid].players.splice (
         Maps[mapid][player.mapid].players.indexOf (
             player.id
