@@ -1,7 +1,8 @@
 "use strict";
 // var Octopod = require('../module/octopod.js');
-var Component = require('../module/component.js');
 var Geometry = require('../module/geometry.js');
+var Component = require('../module/component.js');
+// var Geometry = require('../module/geometry.js');
 var OctoMath = require('../module/octomath.js');
 class Player {
     constructor(oath , id , name , secId) {
@@ -9,11 +10,12 @@ class Player {
         this.id = id ;
         this.name = "mystry" ;
         this.Transform = new Component.Transform() ;
-        this.Camera = new Geometry.Rect(0,0,700,550);
+        // this.Camera = new Geometry.Rect(0,0,700,550);
+        this.Camera = new Component.Camera(0,0,700,550);
         this.status = false ;
         
         // this.oath = "socket" ;
-        this.secId = secId ; 
+        this.secId = secId ;
         // this.mapid ; //= rank ;
         //this.maptype ; //= type ;
     }
@@ -23,7 +25,7 @@ class Player {
         this.Jerk = 0 ;
         this.JerkSpeed = jerkSpeed ;
         this.Speed = 0 ;
-        this.Camera = new Component.Camera(300,230)
+        // this.Camera = new Component.Camera(0,0,300,230) ;
         // this.RotWidthMax = RotWidth ;
         // this.RotWidthMin = 3 ;
     }
@@ -40,9 +42,11 @@ class Player {
     getPlayer() {
         var object_player = {} ;
 
+        object_player["id"] = this.id ;
         object_player["name"] = this.name ;
         object_player["Transform"] = this.Transform ;
         object_player["oath"] = this.oath ;
+        object_player["active"] = false ;
 
         return object_player ;
         
@@ -82,8 +86,8 @@ class Player {
         
     }
     UpdateCamera() {
-        this.Camera.x = this.Transform.position.x - this.Camera.width/2 ;
-        this.Camera.y = this.Transform.position.y - this.Camera.height/2 ;
+        this.Camera.Rect.x = this.Transform.position.x - this.Camera.Rect.width/2 ;
+        this.Camera.Rect.y = this.Transform.position.y - this.Camera.Rect.height/2 ;
     }
     Stop() {
         if(this.Updating != null || this.Updating != undefined) clearInterval(this.Updating);

@@ -104,26 +104,27 @@ fw.on('connection' , function(socket) {
             socket.emit('init' , true);
         // }
     });
-    socket.on('S_Connect' , function(oath , id , type) {
+    socket.on('S_Connect' , function(type) {
         
         if(socket.init) {
-            var oathid = S_GetOathId(oath);
+            // var oathid = S_GetOathId(oath);
             // var player = Players[oathid]["/#"+id];
-            var player = Players["/#"+id];
+            var player = Players[socket.id];
             // console.log("/#"+id);
             // console.log(Players[oathid]["/#"+id]);
             // console.log(player);
             if(player.status == true) {
                 socket.leave(player.getMap()) ;
-                var typeid = S_GetMapId(type) ;
-                S_Disconnect(typeid , player , oathid) ;
+                var mapid = S_GetMapId(type) ;
+                S_Disconnect(mapid , player) ;
             }
             // console.log(oathid);
-            var status = S_Connect(player,oathid,type) ;
-            console.log("S_Connect : oath-"+oath+" , id-"+id+" , type-"+type+" , status-"+status) ;
+            var status = S_Connect(player,type) ;
+            console.log("S_Connect : id-"+socket.id+" , type-"+type+" , status-"+status) ;
             if(status) {
                 // update everything needed to client 
                 // broadcast
+
                 socket.join(player.getMap());
                 socket.emit('joined');
     //             for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
@@ -146,18 +147,18 @@ fw.on('connection' , function(socket) {
     // });
     socket.on('disconnect' , function(){
         console.log(socket.id+" disconnected");
-        var oathid = S_GetOathId(socket.oath);
+        // var oathid = S_GetOathId(socket.oath);
         var player = Players[socket.id] ;
         // var player = Players[oathid][socket.u_id] ;
         // console.log(Players);
         // console.log(player);
         var mapid = S_GetMapId(player.maptype);
-        S_Disconnect(mapid , player ,oathid);
+        S_Disconnect(mapid , player);
         // Players[socket.id].Stop() ;
         // Players[socket.id] = null ;
     });
-    socket.on('MouseUpdate' , function(oath ,id, x,y) {
-        var oathid = S_GetOathId(oath) ;
+    socket.on('MouseUpdate' , function(x,y) {
+        // var oathid = S_GetOathId(oath) ;
 
         var player = Players[socket.id] ;
         // var player = Players[oathid][socket.u_id] ;
@@ -166,7 +167,14 @@ fw.on('connection' , function(socket) {
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
 
-        fw.to(player.getMap()).emit('SyncPlayer' , player.getPlayer() );
+        socket.emit('SyncPlayer' , player.getPlayer() , true);
+
+        for(var i = 0 ; i < player.Camera.VisiblePlayers.length ; i++) {
+            socket.emit('SyncPlayer' , player.Camera.VisiblePlayers[i].getPlayer() , true) ;
+        }
+    });
+    socket.on('SyncPlayer' , function() {
+        
     });
 });
 
@@ -205,7 +213,7 @@ function S_CreateMap(type) {
     // console.log(Maps[mapid][0].players);
     return true ;
 }
-function S_Connect(player,oathid , type) {
+function S_Connect(player , type) {
         // console.log(i)
         var rank = -1 ;
         var mapid = S_GetMapId(type) ; 
@@ -222,22 +230,34 @@ function S_Connect(player,oathid , type) {
         if(rank > -1) {
             player.status = true ;
             player.setMap(rank , type);
+
             // console.log()
             Maps[mapid][rank].players.push(player.id);
+            var object_data = [] ;
+
+            for(var i = 0 ; i < Maps[mapid][rank].players.length ; i++) {
+                object_data.push( Players["/#"+Maps[mapid][rank].players[i] ].getPlayer() );
+            }
+            // console.log(player.id);
+            fw.sockets.connected["/#"+player.id].emit('SyncPlayer' , object_data , false) ;
             return true ;
         }
         else {
             var result = S_CreateMap(type) ;
             if(result) {
-                return S_Connect(player,oathid,type) ;
+                return S_Connect(player,type) ;
             }
             else {
                 return false ;
             }
         }
 }
-function S_Disconnect(mapid , player , oathid) {
-    Maps[mapid][player.mapid].players[oathid].splice(Maps[mapid][player.mapid].players[oathid].indexOf(player.id) , 1);
+function S_Disconnect(mapid , player) {
+    Maps[mapid][player.mapid].players.splice (
+        Maps[mapid][player.mapid].players.indexOf (
+            player.id
+        ) , 1
+    );
 }
 var update_rate = setInterval(Update , 3000);
 function Update() {
@@ -273,9 +293,12 @@ function Send() {
                 var player = Players[ "/#"+Maps[i][j].players[k] ] ;
                 var gameObjects = Maps[i][j].getObjectsInFieldView(player) ;
                 
-                for(var m = 0 ; m < gameObjects.length ; m++) {
-                    fw.sockets.connected[Maps[i][j].players[k]].emit('SyncPlayer', gameObjects[k].getPlayer());
-                }
+                player.Camera.VisiblePlayers = gameObjects ;
+                // plae
+                // for(var m = 0 ; m < gameObjects.length ; m++) {
+                //     fw.sockets.connected[Maps[i][j].players[k]].emit('SyncPlayer', gameObjects[k].getPlayer());
+                    
+                // }
             }
         }
     }

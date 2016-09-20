@@ -478,6 +478,9 @@ class Camera {
 }
 
 class Body {
+    // static Instantiate() {
+
+    // }
     constructor(bound , position , scale , angle ) {
         this.Transform = new Transform() ;
 
@@ -789,8 +792,9 @@ var socket ;
 var isConnected = false ;
 var isInit = false ;
 var loaded = false ;
-var Players = [] ;
-var player ;
+var Players = {} ;
+var IDs = [] ;
+// var player ;
 var foods = [] ;
 
 var camera ;
@@ -814,16 +818,17 @@ function SelectWorld(world) {
 var canConnect = false ;
 function Logged() {
     if(isInit) {
-        return{ oath : "user" ,
+        return{ oath : "none" ,
                 id : socket.id ,
+                secId : "none" ,
                 name : elements.index_name } ;
     }
 }
-function Instantiate(type , position , size , angle) {
-    var object ;
-    return object ;
-}
-function Start() {
+// function Instantiate(type , position , size , angle) {
+//     var object ;
+//     return object ;
+// }
+function Start() { // Removed The oath and id stuff recieved from Logged() ;
     if(loaded) {
         if(!isInit) {
             socket = io.connect() ;
@@ -837,7 +842,7 @@ function Start() {
         else if(!isConnected && canConnect) {
             // socket.connect() ;
             var result = Logged() ;
-            socket.emit('S_Connect' , result.oath , result.id , CurrentWorld.type ) ;
+            socket.emit('S_Connect' , CurrentWorld.type ) ;
             clearInterval(intervals.preUpdate);
             intervals.loading = setInterval(Loading , 20) ;
             // isConnected = true ;
@@ -856,18 +861,18 @@ function Init() {
     socket.on('connected' , function(data) {
         // Start() ;
         var result = Logged() ;
-        socket.emit('init' , result.oath , result.id) ;
+        socket.emit('init' , result.oath , result.id , result.secId) ;
     });
     socket.on('init' ,function(status) {
         canConnect = status ;
         Start() ;
     });
-    socket.on('joined' , function() {
+    socket.on('joined' , function(data) {
         elements.control_container.style.display = "none" ;
         elements.display_container.style.display = "flex" ;
         // elements.display_container.style.height = window.innerHeight+"px" ;
         clearInterval(intervals.loading);
-        Prepare() ;
+        Prepare(data) ;
         intervals.update = setInterval(Frame , 1000/30);
         // intervals.update = setInterval(Frame , 1000);
         // intervals.Add(ClearCanvas , 500);
@@ -895,14 +900,34 @@ function Init() {
         position.y += elements.canvas.height ;
         player.newTransform.position = position ;
     });
-    socket.on('SyncPlayer' , function(data) {
+    // socket.on('')
+    socket.on('SyncPlayer' , function(data , single) {
         // var result = Logged() ;
-        Players[data.id].newTransform.angle = data.Transform.angle ;
+        if(single) {
+            // console.log(data.id , socket.id);
+            if(typeof(Players[data.id]) !== 'undefined') {
+                Players[data.id].newTransform.angle = data.Transform.angle ;
 
-        data.position.x += elements.canvas.width ;
-        data.position.y += elements.canvas.height ;
+                data.Transform.position.x += elements.canvas.width ;
+                data.Transform.position.y += elements.canvas.height ;
 
-        Players[data.id].newTransform.position = data.Transform.position ;
+                Players[data.id].newTransform.position = data.Transform.position ;
+            }
+            else {
+                // socket.emit('SyncPlayer') ;
+            }
+        }
+        else {
+            for(var i = 0 ; i < data.length ; i++) {
+                if(data[i].id == socket.id) {
+                    Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
+                }
+                else {
+                    Players[data[i].id] = data[i] ;
+                }
+                IDs.push(data[i].id) ;
+            }
+        }
     });
     socket.on('SyncFood' , function(data) {
         Food[data.id] = data.Transform ;
@@ -911,7 +936,7 @@ function Init() {
     //     // start the game
     // });
 }
-function Prepare() {
+function Prepare(data) {
     // room = {
     //     width : 2000 ,
     //     height : 2000 ,
@@ -926,7 +951,7 @@ function Prepare() {
     
     // var food = new Food(new Vector2(500 , 500) , new Vector2(1,1) , 35 , 20);
     // foods.push(food);
-    // camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
+    camera.Target(Players[socket.id].Transform.position , elements.canvas.width/2 , elements.canvas.height/2);
 
     camera.Update() ;
     
@@ -937,10 +962,8 @@ function Prepare() {
 // var oath = "user";
 // var id = 1 ;
 function Send() {
-    var result = Logged() ;
-    socket.emit('MouseUpdate' , result.oath ,
-                                result.id ,
-                                MouseHandler.position.x - window.innerWidth/2 ,
+    // var result = Logged() ;
+    socket.emit('MouseUpdate' , MouseHandler.position.x - window.innerWidth/2 ,
                                 MouseHandler.position.y - window.innerHeight/2 );
 }
 
@@ -981,21 +1004,21 @@ window.onload = function() {
     // var INTERVAL = 1000/FPS ;
     // var STEP = INTERVAL/1000 ;
 
-    room = {
-        width : 2000 ,
-        height : 2000 ,
-        map : new Map(2000, 2000)
-    };
+    // room = {
+    //     width : 2000 ,
+    //     height : 2000 ,
+    //     map : new Map(2000, 2000)
+    // };
 
     // room.map.Generate() ;
 
-    camera = new Camera(0,0, canvas.width , canvas.height , room.width , room.height);
+    // camera = new Camera(0,0, canvas.width , canvas.height , room.width , room.height);
 
-    player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
+    // player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
     
     // var food = new Food(new Vector2(500 , 500) , new Vector2(1,1) , 35 , 20);
     // foods.push(food);
-    camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
+    // camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
 
     // camera.Update() ;
     
@@ -1035,11 +1058,14 @@ function Draw() {
     for(var i = 0 ; i < foods.length ; i++) {
         foods[i].Draw(elements.ctx , camera.xView , camera.yView) ;
     }
+    
 
-    for(var i=0 ; i < player.tentacles.length ;i++) {
-        player.tentacles[i].Draw(elements.ctx , camera.xView , camera.yView) ;
+    for(var i=0 ; i < IDs.length ;i++) {
+        for(var j = 0 ; j < Players[IDs[i]].tentacles.length ; j++) { 
+            Players[IDs[i]].tentacles[j].Draw(elements.ctx , camera.xView , camera.yView) ;
+        }
+        Players[IDs[i]].Draw(elements.ctx , camera.xView , camera.yView) ;
     }
-    player.Draw(elements.ctx , camera.xView , camera.yView) ;
 
     
 }
@@ -1051,14 +1077,22 @@ function Update() {
        // player.Transform.position.x = player.newTransform.position.x ;//+ window.innerWidth/2 ;
        // player.Transform.position.y = player.newTransform.position.y ;//+ window.innerHeight/2 ;
     //}
+    for(var i = 0 ; i < IDs.length ; i++) {
+        var pos = Vector2.Lerp(Players[IDs[i]].Transform.position  , Players[IDs[i]].newTransform.position  , __interpolateMoveSpeed * 0.05);
+        Players[IDs[i]].Translate(pos);
 
-    var pos = Vector2.Lerp(player.Transform.position  , player.newTransform.position  , __interpolateMoveSpeed * 0.05);
-    player.Translate(pos);
-
-   	for(var i = 0 ; i< player.tentacles.length ; i++) {
-        // player.tentacles[i].Move(player.Transform.position , false);
-        player.tentacles[i].Update( player.radius , player.gravity , player.wind) ;
+        for(var j = 0 ; j < Players[IDs[i]].tentacles.length ; j++) {
+            // player.tentacles[i].Move(player.Transform.position , false);
+            Players[IDs[i]].tentacles[j].Update( Players[IDs[i]].radius , Players[IDs[i]].gravity , Players[IDs[i]].wind) ;
+        }
     }
+    // var pos = Vector2.Lerp(player.Transform.position  , player.newTransform.position  , __interpolateMoveSpeed * 0.05);
+    // player.Translate(pos);
+
+   	// for(var i = 0 ; i< player.tentacles.length ; i++) {
+    //     // player.tentacles[i].Move(player.Transform.position , false);
+    //     player.tentacles[i].Update( player.radius , player.gravity , player.wind) ;
+    // }
     for(var i = 0 ; i < foods.length ; i++) {
         foods[i].Update() ;
     }

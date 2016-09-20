@@ -1,17 +1,15 @@
 function s_AddTentacle() {
-    player.AddTentacle(Mathf.RandomFloat(30,90) ,
+    Player[socket.id].AddTentacle(Mathf.RandomFloat(30,90) ,
                 Mathf.RandomFloat(0.5,1) ,
                 5 , 4);
 }
 function s_IncreaseTension() {
     foods[0].tension += 0.1 ;
-    console.log(foods[0].tension);
 }
 
 function s_DecreaseTension() {
     foods[0].tension -= 0.1 ;
 }
-
 
 function s_IncreaseSeg() {
     foods[0].numOfSeg += 1 ;

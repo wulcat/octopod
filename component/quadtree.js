@@ -53,14 +53,14 @@ class Quadtree {
 		var	horizontalMidpoint 	= this.rect.y + (this.rect.height / 2) ;
 		
 		if(camera) {
-			var topQuadrant = (player.Camera.y < horizontalMidpoint && player.Camera.y < horizontalMidpoint) ;
+			var topQuadrant = (player.Camera.Rect.y < horizontalMidpoint && player.Camera.Rect.y < horizontalMidpoint) ;
 
 				
 				//rect can completely fit within the bottom quadrants
-			var bottomQuadrant = (player.Camera.y+player.Camera.height > horizontalMidpoint);
+			var bottomQuadrant = (player.Camera.Rect.y+player.Camera.Rect.height > horizontalMidpoint);
 			
 			//rect can completely fit within the left quadrants
-			if( player.Camera.x < verticalMidpoint && player.Camera.x + player.Camera.width < verticalMidpoint ) {
+			if( player.Camera.Rect.x < verticalMidpoint && player.Camera.Rect.x + player.Camera.Rect.width < verticalMidpoint ) {
 				if( topQuadrant ) {
 					index = 1;
 				} else if( bottomQuadrant ) {
