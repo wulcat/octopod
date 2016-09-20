@@ -622,10 +622,10 @@ class Mouse {
         this.leftDOWN = false ;
         this.leftUP = false ;
         var t = this ;
-        console.log("moving "+this.position.x+","+this.position.y);;
+        // console.log("moving "+this.position.x+","+this.position.y);;
         canvas.addEventListener("mousemove" , function(event) {
             t.position = t.calcMouseAxis(event) ;
-            console.log("moving "+this.position.x+","+this.position.y);;
+            // console.log("moving "+this.position.x+","+this.position.y);;
         });
         canvas.addEventListener("mousedown" , function() {
             t.leftDOWN = true ;
