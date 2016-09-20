@@ -800,6 +800,8 @@ var foods = [] ;
 var camera ;
 var room ;
 
+var debug = true ;
+
 var World = {
     underwater : {  value : 0 , 
                     type : "underwater" }
@@ -914,11 +916,14 @@ function Init() {
                 Players[data.id].newTransform.position = data.Transform.position ;
             }
             else {
-                // socket.emit('SyncPlayer') ;
+                // var CurrentWorld
+                socket.emit('SyncPlayer') ;
             }
         }
         else {
             for(var i = 0 ; i < data.length ; i++) {
+                IDs = [] ;
+                Players = [] ;
                 if(data[i].id == socket.id) {
                     Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
                 }
@@ -928,6 +933,8 @@ function Init() {
                 IDs.push(data[i].id) ;
             }
         }
+        // console.log(single) ;
+        // console.log(data) ;
     });
     socket.on('SyncFood' , function(data) {
         Food[data.id] = data.Transform ;
@@ -1098,7 +1105,9 @@ function Update() {
     }
     MouseHandler.Reset() ;
 }
-
+function Debug() {
+    
+}
   // canvas.width = this.width;
     // canvas.height = this.height ;
     // canvas.style.display = "none" ;

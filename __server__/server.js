@@ -170,11 +170,20 @@ fw.on('connection' , function(socket) {
         socket.emit('SyncPlayer' , player.getPlayer() , true);
 
         for(var i = 0 ; i < player.Camera.VisiblePlayers.length ; i++) {
-            socket.emit('SyncPlayer' , player.Camera.VisiblePlayers[i].getPlayer() , true) ;
+            // console.log(player.Camera.VisiblePlayers);
+            socket.emit('SyncPlayer' , player.Camera.VisiblePlayers[i] , true) ;
         }
     });
     socket.on('SyncPlayer' , function() {
+        var player = Players[socket.id] ;
+        var mapid = S_GetMapId(player.maptype) ;
         
+        var object_data = [] ;
+
+        for(var i = 0 ; i < Maps[mapid][player.mapid].players.length ; i++) {
+            object_data.push(Players["/#"+Maps[mapid][player.mapid].players[i]].getPlayer());
+        }
+        socket.emit(object_data,false);
     });
 });
 
@@ -294,6 +303,7 @@ function Send() {
                 var gameObjects = Maps[i][j].getObjectsInFieldView(player) ;
                 
                 player.Camera.VisiblePlayers = gameObjects ;
+                // console.log(gameObjects);
                 // plae
                 // for(var m = 0 ; m < gameObjects.length ; m++) {
                 //     fw.sockets.connected[Maps[i][j].players[k]].emit('SyncPlayer', gameObjects[k].getPlayer());

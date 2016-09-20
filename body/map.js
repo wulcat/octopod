@@ -49,14 +49,20 @@ class Map {
         var gameObjectsInFieldView = [] ;
         // console.log(gameObjectsInRange);
         for(var i = 0 ; i < gameObjectsInRange.length ; i++) {
-            if( gameObjectsInRange[i].Transform.position.x > player.Camera.Rect.x && 
-                gameObjectsInRange[i].Transform.position.y > player.Camera.Rect.y && 
-                gameObjectsInRange[i].Transform.position.x < player.Camera.Rect.x + player.Camera.Rect.width &&
-                gameObjectsInRange[i].Transform.position.y < player.Camera.Rect.y + player.Camera.Rect.height) {
+            if( gameObjectsInRange[i].Transform.position.x >= player.Camera.Rect.x && 
+                gameObjectsInRange[i].Transform.position.y >= player.Camera.Rect.y && 
+                gameObjectsInRange[i].Transform.position.x <= player.Camera.Rect.x + player.Camera.Rect.width &&
+                gameObjectsInRange[i].Transform.position.y <= player.Camera.Rect.y + player.Camera.Rect.height &&
+                gameObjectsInRange[i].id != player.id) {
                     gameObjectsInFieldView.push(gameObjectsInRange[i].getPlayer());
                 }
+            // console.log(gameObjectsInRange[i].Transform.position.x+","+player.Camera.Rect.x+","+
+            //             gameObjectsInRange[i].Transform.position.y+","+player.Camera.Rect.y+","+
+            //             player.Camera.Rect.x+","+player.Camera.Rect.width+","+
+            //             player.Camera.Rect.y+","+player.Camera.Rect.height+",") ;
         }
 
+        // console.log(gameObjectsInRange) ;
         return gameObjectsInFieldView ;
     }
 }
