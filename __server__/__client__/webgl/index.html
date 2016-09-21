@@ -5,12 +5,13 @@
         <!--<script src="webgl/js/phaser.min.js"></script>-->
         <link type="text/css" rel="stylesheet" href="webgl/css/align.css">
         <script src="/socket.io/socket.io.js/"></script>
-<!--        <link type="text/css" rel="stylesheet" href="css/align.css">-->
+        <link type="text/css" rel="stylesheet" href="css/align.css">
     </head>
     <body style="margin:0;padding:0;">
         <div id="control-container">
             <div id="control-frame">
                 <button id="start-game" onclick="Start();">Play</button>
+                <input id="player-name" type="text" name="">
                 <button id="game-type" onclick="SelectWorld(World.underwater)">Under Water</button>
             </div>
         </div>
@@ -20,6 +21,7 @@
                 <div id="current-score">: 50</div>
             </div>
         </div>
+<!--
         <div id="main-setting">
             <button id="show-setting-button" onclick="s_show();">Settings</button>
             <div id="show-setting">
@@ -31,9 +33,10 @@
             </div>
             
         </div>
+-->
         <canvas id="game"></canvas>
         <script src="webgl/js/main.js"></script>
-        <script src="webgl/js/setting.js"></script>
+<!--        <script src="webgl/js/setting.js"></script>-->
 
     </body>
 </html>

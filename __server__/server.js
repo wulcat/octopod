@@ -109,7 +109,7 @@ fw.on('connection' , function(socket) {
         
         // }
     });
-    socket.on('S_Connect' , function(type) {
+    socket.on('S_Connect' , function(name , type) {
         
         if(socket.init) {
             // var oathid = S_GetOathId(oath);
@@ -125,6 +125,12 @@ fw.on('connection' , function(socket) {
             }
             // console.log(oathid);
             var status = S_Connect(player,type) ;
+            if(name == "") {
+                player.name = "Mystry" ;
+            }
+            else {
+                player.name = name ;
+            }
             console.log("S_Connect : id-"+socket.id+" , type-"+type+" , status-"+status) ;
             if(status) {
                 // update everything needed to client 

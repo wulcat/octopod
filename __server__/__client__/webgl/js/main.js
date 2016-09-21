@@ -535,6 +535,7 @@ class Body {
         var angle_sin = Math.sin(this.Transform.angle) * this.Transform.scale.x;
         var angle_cos = Math.cos(this.Transform.angle) * this.Transform.scale.y;
 
+
         ctx.save();
         ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
 
@@ -548,7 +549,18 @@ class Body {
         ctx.stroke();
         ctx.fill();
         ctx.stroke();
+
         ctx.restore();
+        ctx.save() ;
+        var bounds = ctx.measureText(this.Name) ;
+        
+        // console.log(ctx.measureText(this.Name));
+        ctx.font="30px Georgia";
+        ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+        
+        console.log(parseInt(ctx.font)) ;
+        ctx.fillText(this.Name,-bounds.width,0);
+        ctx.restore() ;
     }
 }
 class Map {
@@ -794,6 +806,7 @@ var elements = new Elements() ;
 var MouseHandler ;
 elements.control_container = document.getElementById("control-container") ; 
 elements.display_container = document.getElementById("display-container") ;
+elements.index_name = document.getElementById("player-name");
 var socket ;
 var isConnected = false ;
 var isInit = false ;
@@ -829,7 +842,7 @@ function Logged() {
         return{ oath : "none" ,
                 id : socket.id ,
                 secId : "none" ,
-                name : elements.index_name } ;
+                name : elements.index_name.value } ;
     }
 }
 // function Instantiate(type , position , size , angle) {
@@ -837,6 +850,7 @@ function Logged() {
 //     return object ;
 // }
 function Start() { // Removed The oath and id stuff recieved from Logged() ;
+    
     if(loaded) {
         if(!isInit) {
             socket = io.connect() ;
@@ -850,7 +864,7 @@ function Start() { // Removed The oath and id stuff recieved from Logged() ;
         else if(!isConnected && canConnect) {
             // socket.connect() ;
             var result = Logged() ;
-            socket.emit('S_Connect' , CurrentWorld.type ) ;
+            socket.emit('S_Connect' , result.name , CurrentWorld.type ) ;
             clearInterval(intervals.preUpdate);
             intervals.loading = setInterval(Loading , 20) ;
             // isConnected = true ;
@@ -936,6 +950,7 @@ function Init() {
                 
                 // if(data[i].id == socket.id) {
                     Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
+                    Players[data[i].id].Name = data[i].name ;
                 // }
                 // else {
                     // Players[data[i].id] = data[i] ;
