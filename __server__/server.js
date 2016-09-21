@@ -179,6 +179,7 @@ fw.on('connection' , function(socket) {
         socket.emit('SyncPlayer' , player.getPlayer() , true);
         
         for(var i = 0 ; i < player.Camera.VisiblePlayers.length ; i++) {
+            // console.log(socket.id);
             // console.log(player.Camera.VisiblePlayers);
             socket.emit('SyncPlayer' , player.Camera.VisiblePlayers[i] , true) ;
         }
@@ -192,7 +193,7 @@ fw.on('connection' , function(socket) {
         for(var i = 0 ; i < Maps[mapid][player.mapid].players.length ; i++) {
             object_data.push(Players["/#"+Maps[mapid][player.mapid].players[i]].getPlayer());
         }
-        socket.emit(object_data,false);
+        socket.emit('SyncPlayer' , object_data , false);
     });
 });
 

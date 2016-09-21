@@ -482,6 +482,7 @@ class Body {
 
     // }
     constructor(bound , position , scale , angle ) {
+        this.Name = "Mystry" ;
         this.Transform = new Transform() ;
 
         this.Transform.position = position || new Vector2(0,0) ;
@@ -911,7 +912,8 @@ function Init() {
     socket.on('SyncPlayer' , function(data , single) {
         // var result = Logged() ;
         if(single) {
-            // console.log(data.id , socket.id);
+            // console.log(data.id +" , "+ socket.id);
+            // console.log(IDs);
             if(typeof(Players[data.id]) !== 'undefined') {
                 Players[data.id].newTransform.angle = data.Transform.angle ;
 
@@ -922,21 +924,26 @@ function Init() {
             }
             else {
                 // var CurrentWorld
+                // console.log("error");
                 socket.emit('SyncPlayer') ;
             }
         }
         else {
+            console.log(data);
+            IDs = [] ;
+            Players = [] ;
             for(var i = 0 ; i < data.length ; i++) {
-                IDs = [] ;
-                Players = [] ;
-                if(data[i].id == socket.id) {
+                
+                // if(data[i].id == socket.id) {
                     Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
-                }
-                else {
-                    Players[data[i].id] = data[i] ;
-                }
+                // }
+                // else {
+                    // Players[data[i].id] = data[i] ;
+                // }
                 IDs.push(data[i].id) ;
+
             }
+            
         }
         // console.log(single) ;
         // console.log(data) ;
@@ -1081,6 +1088,7 @@ function Draw() {
             Players[IDs[i]].tentacles[j].Draw(elements.ctx , camera.xView , camera.yView) ;
         }
         Players[IDs[i]].Draw(elements.ctx , camera.xView , camera.yView) ;
+        // console.log(IDs[i] +" , "+socket.id);
     }
 
     
