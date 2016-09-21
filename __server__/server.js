@@ -172,7 +172,7 @@ fw.on('connection' , function(socket) {
         var player = Players[socket.id] ;
         // var player = Players[oathid][socket.u_id] ;
         // console.log(player);
-        player.___angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
+        player.__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
 

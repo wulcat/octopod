@@ -630,12 +630,12 @@ class Mouse {
         canvas.addEventListener("mousedown" , function() {
             t.leftDOWN = true ;
             t.left = true ;
-            console.log("moving "+this.position.x+","+this.position.y);;
+            // console.log("moving "+this.position.x+","+this.position.y);;
         });
         canvas.addEventListener("mouseup" , function() {
             t.leftUP = true ;
             t.left = false ;
-            console.log("moving "+this.position.x+","+this.position.y);;
+            // console.log("moving "+this.position.x+","+this.position.y);;
         });
 
     }
