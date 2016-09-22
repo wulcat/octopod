@@ -552,14 +552,18 @@ class Body {
 
         ctx.restore();
         ctx.save() ;
-        var bounds = ctx.measureText(this.Name) ;
+       
+        // console.log(ctx.measureText(width));
+        ctx.font="23px Georgia";
+
+        var width = ctx.measureText(this.Name).width/2 ;
+        var height = parseInt(ctx.font)/4 ;
+
+        ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x-width , y+height);
         
-        // console.log(ctx.measureText(this.Name));
-        ctx.font="30px Georgia";
-        ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+        // console.log(parseInt(ctx.font)) ;
+        ctx.fillText(this.Name, 0 , 0);
         
-        console.log(parseInt(ctx.font)) ;
-        ctx.fillText(this.Name,-bounds.width,0);
         ctx.restore() ;
     }
 }
@@ -863,7 +867,9 @@ function Start() { // Removed The oath and id stuff recieved from Logged() ;
         }
         else if(!isConnected && canConnect) {
             // socket.connect() ;
+            
             var result = Logged() ;
+            console.log(result.name);
             socket.emit('S_Connect' , result.name , CurrentWorld.type ) ;
             clearInterval(intervals.preUpdate);
             intervals.loading = setInterval(Loading , 20) ;
@@ -951,6 +957,7 @@ function Init() {
                 // if(data[i].id == socket.id) {
                     Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
                     Players[data[i].id].Name = data[i].name ;
+                    console.log(data[i].name);
                 // }
                 // else {
                     // Players[data[i].id] = data[i] ;

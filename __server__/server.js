@@ -124,14 +124,13 @@ fw.on('connection' , function(socket) {
                 S_Disconnect(mapid , player) ;
             }
             // console.log(oathid);
-            var status = S_Connect(player,type) ;
+            
             if(name == "") {
-                player.name = "Mystry" ;
+                name = "Mystry" ;
             }
-            else {
-                player.name = name ;
-            }
-            console.log("S_Connect : id-"+socket.id+" , type-"+type+" , status-"+status) ;
+
+            var status = S_Connect(player,name,type) ;
+            console.log("S_Connect : id-"+socket.id+" name-"+name+", type-"+type+" , status-"+status) ;
             if(status) {
                 // update everything needed to client 
                 // broadcast
@@ -238,7 +237,7 @@ function S_CreateMap(type) {
     // console.log(Maps[mapid][0].players);
     return true ;
 }
-function S_Connect(player , type) {
+function S_Connect(player ,name , type) {
         // console.log(i)
         var rank = -1 ;
         var mapid = S_GetMapId(type) ; 
@@ -255,7 +254,7 @@ function S_Connect(player , type) {
         if(rank > -1) {
             player.status = true ;
             player.setMap(rank , type);
-
+            player.name = name ;
             // console.log()
             Maps[mapid][rank].players.push(player.id);
             var object_data = [] ;
@@ -270,7 +269,7 @@ function S_Connect(player , type) {
         else {
             var result = S_CreateMap(type) ;
             if(result) {
-                return S_Connect(player,type) ;
+                return S_Connect(player,name,type) ;
             }
             else {
                 return false ;
