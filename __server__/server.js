@@ -138,7 +138,7 @@ fw.on('connection' , function(socket) {
                 socket.join(player.getMap());
                 socket.emit('joined');
                 // console.log(Players[socket.id]);
-                Players[socket.id].Start() ;
+                Players[socket.id].Start(200) ;
                 // console.log(Players[socket.id]);
     //             for(var i = 0 ; i < Maps[player.mapid].foods.length ;i++) {
     // // socket.to(Maps[rank].GetMap()).broadcast.emit('');
