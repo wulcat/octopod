@@ -818,7 +818,8 @@ var loaded = false ;
 var Players = {} ;
 var IDs = [] ;
 // var player ;
-var foods = [] ;
+var Foods = {} ;
+var IDsFood = [] ;
 
 var camera ;
 var room ;
@@ -934,13 +935,20 @@ function Init() {
         if(single) {
             // console.log(data.id +" , "+ socket.id);
             // console.log(IDs);
-            if(typeof(Players[data.id]) !== 'undefined') {
-                Players[data.id].newTransform.angle = data.Transform.angle ;
+            if(typeof(Players[data.id]) !== 'undefined' || typeof(Foods[data.id]) !== 'undefined') {
+                if(data.type == 'player') {
+                    Players[data.id].newTransform.angle = data.Transform.angle ;
 
-                data.Transform.position.x += elements.canvas.width ;
-                data.Transform.position.y += elements.canvas.height ;
+                    data.Transform.position.x += elements.canvas.width ;
+                    data.Transform.position.y += elements.canvas.height ;
 
-                Players[data.id].newTransform.position = data.Transform.position ;
+                    Players[data.id].newTransform.position = data.Transform.position ;
+                }
+                else if(data.type == 'food') {
+                    Foods[data.id].position = data.Transform.position ;
+                    Foods[data.id].angle = data.Transform.angle ;
+                    Foods[data.id].scale = data.Transform.scale ;
+                }
             }
             else {
                 // var CurrentWorld
@@ -952,9 +960,13 @@ function Init() {
             console.log(data);
             IDs = [] ;
             Players = [] ;
+            IDsFood = [] ;
+            Foods = [] ;
             for(var i = 0 ; i < data.length ; i++) {
                 
                 // if(data[i].id == socket.id) {
+
+                if(data[i].type == "player") {
                     Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
                     Players[data[i].id].Name = data[i].name ;
                     console.log(data[i].name);
@@ -962,7 +974,14 @@ function Init() {
                 // else {
                     // Players[data[i].id] = data[i] ;
                 // }
-                IDs.push(data[i].id) ;
+                    IDs.push(data[i].id) ;
+                }
+                else if(data[i].type == "food") {
+                    Foods[data[i].id] = new Food (  data[i].Transform.position ,
+                                                    data[i].Transform.scale ,
+                                                    3,3 );
+                    IDsFood.push(data[i].id) ;
+                }
 
             }
             
@@ -991,7 +1010,7 @@ function Prepare(data) {
     // player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
     
     // var food = new Food(new Vector2(500 , 500) , new Vector2(1,1) , 35 , 20);
-    // foods.push(food);
+    // Foods.push(food);
     camera.Target(Players[socket.id].Transform.position , elements.canvas.width/2 , elements.canvas.height/2);
 
     camera.Update() ;
@@ -1061,7 +1080,7 @@ window.onload = function() {
     // player = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
     
     // var food = new Food(new Vector2(500 , 500) , new Vector2(1,1) , 35 , 20);
-    // foods.push(food);
+    // Foods.push(food);
     // camera.Target(player.Transform.position , canvas.width/2 , canvas.height/2);
 
     // camera.Update() ;
@@ -1100,8 +1119,8 @@ function Draw() {
 
     room.Draw(elements.ctx , camera.xView , camera.yView) ;
     
-    for(var i = 0 ; i < foods.length ; i++) {
-        foods[i].Draw(elements.ctx , camera.xView , camera.yView) ;
+    for(var i = 0 ; i < IDsFood.length ; i++) {
+        Foods[IDsFood[i]].Draw(elements.ctx , camera.xView , camera.yView) ;
     }
     
 
@@ -1139,8 +1158,8 @@ function Update() {
     //     // player.tentacles[i].Move(player.Transform.position , false);
     //     player.tentacles[i].Update( player.radius , player.gravity , player.wind) ;
     // }
-    for(var i = 0 ; i < foods.length ; i++) {
-        foods[i].Update() ;
+    for(var i = 0 ; i < IDsFood.length ; i++) {
+        Foods[IDsFood[i]].Update() ;
     }
     MouseHandler.Reset() ;
 }

@@ -87,7 +87,7 @@ fw.on('connection' , function(socket) {
 
             if(Players["/#"+id] == null) {
                  var __player = new Octopod.Body.Player(oath , id , secId) ;
-                __player.Init(20,1,5);
+                __player.Init(10,1,5);
                 
                 Players["/#"+id] = __player ;
 
@@ -181,13 +181,15 @@ fw.on('connection' , function(socket) {
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
 
-        socket.emit('SyncPlayer' , player.getPlayer() , true);
+        socket.emit('SyncPlayer' , player.getData() , true);
         
-        for(var i = 0 ; i < player.Camera.VisiblePlayers.length ; i++) {
+        console.log(player.Camera.VisibleObjects);
+        for(var i = 0 ; i < player.Camera.VisibleObjects.length ; i++) {
             // console.log(socket.id);
             // console.log(player.Camera.VisiblePlayers);
-            socket.emit('SyncPlayer' , player.Camera.VisiblePlayers[i] , true) ;
+            socket.emit('SyncPlayer' , player.Camera.VisibleObjects[i].getData() , true) ;
         }
+        
     });
     socket.on('SyncPlayer' , function() {
         var player = Players[socket.id] ;
@@ -196,7 +198,10 @@ fw.on('connection' , function(socket) {
         var object_data = [] ;
 
         for(var i = 0 ; i < Maps[mapid][player.mapid].players.length ; i++) {
-            object_data.push(Players["/#"+Maps[mapid][player.mapid].players[i]].getPlayer());
+            object_data.push(Players["/#"+Maps[mapid][player.mapid].players[i]].getData());
+        }
+        for(var i = 0 ; i < Maps[mapid][player.mapid].foods.length ; i++) {
+            object_data.push(Maps[mapid][player.mapid].foods[i].getData() );
         }
         socket.emit('SyncPlayer' , object_data , false);
     });
@@ -260,7 +265,7 @@ function S_Connect(player ,name , type) {
             var object_data = [] ;
 
             for(var i = 0 ; i < Maps[mapid][rank].players.length ; i++) {
-                object_data.push( Players["/#"+Maps[mapid][rank].players[i] ].getPlayer() );
+                object_data.push( Players["/#"+Maps[mapid][rank].players[i] ].getData() );
             }
             // console.log(player.id);
             fw.sockets.connected["/#"+player.id].emit('SyncPlayer' , object_data , false) ;
@@ -289,11 +294,25 @@ function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
         // Maps[i].Update() ;
         for(var j = 0 ; j < Maps[i].length ; j++) {
-            Maps[i][j].Update() ;
+            // Maps[i][j].Update() ;
             Maps[i][j].quadTree.Clear() ;
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
-                Maps[i][j].quadTree.Insert(Players["/#"+Maps[i][j].players[k]]) ;
+                Maps[i][j].quadTree.Insert(Players["/#"+Maps[i][j].players[k]] ) ;
             }
+            for(var k = 0 ; k < Maps[i][j].foods.length ; k++) {
+                Maps[i][j].quadTree.Insert(Maps[i][j].foods[k] ) ;
+            }
+            // var food = new Octopod.Body.Food() ;
+
+            for(var m = 0 ; m< 20 ; m++) {
+                Maps[i][j].AddFood(
+                    new Octopod.Body.Food()
+                ) ;
+            }
+
+            
+            // var x , y ;
+            // x = Math
             // Maps[i][j].AddFood() ;
             // fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getFood() ) ;
         }
@@ -318,7 +337,7 @@ function Send() {
                 var player = Players[ "/#"+Maps[i][j].players[k] ] ;
                 var gameObjects = Maps[i][j].getObjectsInFieldView(player) ;
                 
-                player.Camera.VisiblePlayers = gameObjects ;
+                player.Camera.VisibleObjects = gameObjects ;
                 // console.log(gameObjects);
                 // plae
                 // for(var m = 0 ; m < gameObjects.length ; m++) {

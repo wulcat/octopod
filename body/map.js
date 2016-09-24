@@ -1,11 +1,15 @@
 "use strict"
-// var Geometry = require('../module/geometry.js');
+var Geometry = require('../module/geometry.js');
 // var Component = require('../module/component.js');
 
-// var Body = require('../module/body.js');
-var Octopod = require('../module/octopod.js');
+
+
+// var Octopod = require('../module/octopod.js');
 var Component = require('../module/component.js');
 var Mathfw = require('../module/mathfw.js');
+
+var Body = require('../module/body.js');
+
 class Map {
     constructor(rect , type) {
         this.rect = rect ;
@@ -13,21 +17,30 @@ class Map {
         // this.players = [[],[]] ;
         this.players = [] ;
         this.quadTree = new Component.QuadTree(rect) ;
+        this.foodLength = 0 ;
     }
    
-    AddFood() {
+    AddFood(food) {
         var x , y ;
         x = Mathfw.RandomFloat(0,this.rect.width) ;
         y = Mathfw.RandomFloat(0,this.rect.height) ;
+        console.log(x,y);
+        // var food = new Body.Food(this.foodLength , new Geometry.Vector2(x,y) ,
+        //     new Geometry.Vector2(1,1)
+        // )
+        // food.x = x ;
+        // food.y = y ;
+        food.id = this.foodLength ;
+        food.Transform.position = new Geometry.Vector2(x,y);
+        food.Transform.scale = new Geometry.Vector2(1,1);
 
-        var food = new Octopod.Body.Food(new Geometry.Vector2(x,y) ,
-            new Geometry.Vector2(1,1)
-        )
-        this.foods.push() ;
+        this.foods.push(food) ;
+
+        this.foodLength++ ;
     }
     UpdateFood() {
         for(var i = 0 ; i < this.foods.length ;i++) {
-            if(this.food[i].mass < 8) this.food[i].mass += 1;
+            if(this.foods[i].mass < 8) this.foods[i].mass += 1;
         }
     }
     Update() {
@@ -54,7 +67,7 @@ class Map {
                 gameObjectsInRange[i].Transform.position.x <= player.Camera.Rect.x + player.Camera.Rect.width &&
                 gameObjectsInRange[i].Transform.position.y <= player.Camera.Rect.y + player.Camera.Rect.height &&
                 gameObjectsInRange[i].id != player.id) {
-                    gameObjectsInFieldView.push(gameObjectsInRange[i].getPlayer());
+                    gameObjectsInFieldView.push(gameObjectsInRange[i]);
                 }
             // console.log(gameObjectsInRange[i].Transform.position.x+","+player.Camera.Rect.x+","+
             //             gameObjectsInRange[i].Transform.position.y+","+player.Camera.Rect.y+","+

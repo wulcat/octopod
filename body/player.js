@@ -21,9 +21,12 @@ class Player {
     }
     Init(moveSpeed , jerkSpeed , jerkMax) {
         this.MoveSpeed = moveSpeed ;
-        this.JerkMax = jerkMax ;
+        
         this.Jerk = 0 ;
         this.JerkSpeed = jerkSpeed ;
+
+        this.JerkMax = jerkMax ;
+        
         this.Speed = 0 ;
         this.__angle = 0 ;
         // this.Camera = new Component.Camera(0,0,300,230) ;
@@ -40,9 +43,10 @@ class Player {
     // getView() {
     //     // var gameObjects 
     // }
-    getPlayer() {
+    getData() {
         var object_player = {} ;
 
+        object_player["type"] = "player" ;
         object_player["id"] = this.id ;
         object_player["name"] = this.name ;
         object_player["Transform"] = this.Transform ;
