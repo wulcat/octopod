@@ -351,7 +351,7 @@ class Tentacle {
 
             node.vx += w ;
             node.vy += g ;
-            if(player.newTransform.position.x > node.x) {
+            if(Players[IDs[0]].newTransform.position.x > node.x) {
                 if(this.angle > forceAngle) 
                     g += d ;
                 else if(this.angle < -forceAngle)
@@ -364,7 +364,7 @@ class Tentacle {
                     g += d ;
             }
 
-            if(node.y > player.newTransform.position.y) {
+            if(node.y > Players[IDs[0]].newTransform.position.y) {
                 if(this.angle > forceAngle) 
                     w += d ;
                 else if(this.angle < -forceAngle)
@@ -397,8 +397,12 @@ class Tentacle {
         s = this.outer[0] ;
         e = this.inner[0] ;
 
+        if(typeof(this.outer[0]) == 'undefined' || typeof(this.inner[0]) == 'undefined') {
+            return ;
+        }
         var angle_sin = Math.sin(this.angle) * this.scale.x ;
         var angle_cos = Math.cos(this.angle) * this.scale.y;
+        
         var x = (s.x+e.x)/2 ;
         var y = (s.y+e.y)/2 ;
 
@@ -665,8 +669,60 @@ class Mouse {
         this.leftUP = false ;
     }
 }
+class Keyboard {
+    constructor(canvas) {
+        // console.log("gsd");
+        this.q = false ;
+        this.qDOWN = false ;
+        this.qDOWNCoolDown = true ;
+        this.qUP = false ;
+        var t = this ;
+        canvas.addEventListener("keypress" , function(event) {
+            const keyName = event.key;
+            // console.log("sf");
+            if (keyName === 'Control') {
+                // not alert when only Control key is pressed.
+                return;
+            }
 
-
+            if (event.ctrlKey) {
+                // Even though event.key is not 'Control' (i.e. 'a' is pressed),
+                // event.ctrlKey may be true if Ctrl key is pressed at the time.
+                console.log(`Combination of ctrlKey + ${keyName}`);
+            } else {
+                console.log(`Key pressed ${keyName}`);
+            }
+        } , false);
+        window.addEventListener("keydown" , function(event) {
+            console.log(event.keyCode);
+            switch(event.keyCode) {
+                case 81 :
+                    t.q = true ;
+                    if(t.qDOWNCoolDown == true) {
+                        t.qDOWN = true ;
+                        t.qDOWNCoolDown = false ;
+                    }
+                    break ;
+                default :
+                    break ;
+            }
+        } , false);
+        window.addEventListener("keyup" , function(event) {
+            switch(event.keyCode) {
+                case 81 :
+                    t.q = false ;
+                    t.qDOWNCoolDown = true ;
+                    t.qUP = true ;
+                default :
+                    break ;
+            }
+        } , false);
+    }
+    Reset() {
+        this.qDOWN = false ;
+        this.qUP = false ;
+    }
+}
 
 class Food {
     constructor(position , scale , radius , shear) {
@@ -808,6 +864,7 @@ class Food {
 var intervals = new Intervals() ;
 var elements = new Elements() ;
 var MouseHandler ;
+var KeyboardHandler ;
 elements.control_container = document.getElementById("control-container") ; 
 elements.display_container = document.getElementById("display-container") ;
 elements.index_name = document.getElementById("player-name");
@@ -1059,7 +1116,8 @@ window.onload = function() {
     canvas.width = window.innerWidth ;
     canvas.height = window.innerHeight ;
 
-    MouseHandler = new Mouse(canvas);
+    MouseHandler = new Mouse(canvas) ;
+    KeyboardHandler = new Keyboard(canvas) ;
     elements.canvas = canvas ;
     elements.ctx = ctx ;
 
@@ -1108,6 +1166,8 @@ function Frame() {
     // console.log(event);
     Update() ;
     Draw() ;
+
+   
 }
 
 var __interpolateMoveSpeed = 1.2 ;
@@ -1151,6 +1211,7 @@ function Update() {
             Players[IDs[i]].tentacles[j].Update( Players[IDs[i]].radius , Players[IDs[i]].gravity , Players[IDs[i]].wind) ;
         }
     }
+
     // var pos = Vector2.Lerp(player.Transform.position  , player.newTransform.position  , __interpolateMoveSpeed * 0.05);
     // player.Translate(pos);
 
@@ -1161,7 +1222,16 @@ function Update() {
     for(var i = 0 ; i < IDsFood.length ; i++) {
         Foods[IDsFood[i]].Update() ;
     }
+    if(KeyboardHandler.qDOWN) {
+        for(var i = 0 ; i < IDs.length ; i++) {
+             Players[IDs[i]].AddTentacle(Mathf.RandomFloat(30,90) ,
+                Mathf.RandomFloat(0.5,1) ,
+                5 , 4);
+        }
+        console.log("sdfasd");
+    }
     MouseHandler.Reset() ;
+    KeyboardHandler.Reset() ;
 }
 function Debug() {
     

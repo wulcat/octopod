@@ -183,7 +183,7 @@ fw.on('connection' , function(socket) {
 
         socket.emit('SyncPlayer' , player.getData() , true);
         
-        console.log(player.Camera.VisibleObjects);
+        // console.log(player.Camera.VisibleObjects);
         for(var i = 0 ; i < player.Camera.VisibleObjects.length ; i++) {
             // console.log(socket.id);
             // console.log(player.Camera.VisiblePlayers);
@@ -304,13 +304,13 @@ function Update() {
             }
             // var food = new Octopod.Body.Food() ;
 
-            for(var m = 0 ; m< 20 ; m++) {
-                Maps[i][j].AddFood(
-                    new Octopod.Body.Food()
-                ) ;
-            }
+            // for(var m = 0 ; m< 20 ; m++) {
+            //     Maps[i][j].AddFood(
+            //         new Octopod.Body.Food()
+            //     ) ;
+            // }
 
-            
+
             // var x , y ;
             // x = Math
             // Maps[i][j].AddFood() ;
