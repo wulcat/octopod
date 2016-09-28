@@ -676,6 +676,38 @@ class Keyboard {
         this.qDOWN = false ;
         this.qDOWNCoolDown = true ;
         this.qUP = false ;
+
+        this.s = false ;
+        this.sDOWN = false ;
+        this.sDOWNCoolDown = true ;
+        this.sUP = false ;
+
+        this.y = false ;
+        this.yDOWN = false ;
+        this.yDOWNCoolDown = true ;
+        this.yUP = false ;
+
+        this.u = false ;
+        this.uDOWN = false ;
+        this.uDOWNCoolDown = true ;
+        this.uUP = false ;
+
+        this.i = false ;
+        this.iDOWN = false ;
+        this.iDOWNCoolDown = true ;
+        this.iUP = false ;
+
+        this.o = false ;
+        this.oDOWN = false ;
+        this.oDOWNCoolDown = true ;
+        this.oUP = false ;
+
+        this.p = false ;
+        this.pDOWN = false ;
+        this.pDOWNCoolDown = true ;
+        this.pUP = false ;
+
+
         var t = this ;
         canvas.addEventListener("keypress" , function(event) {
             const keyName = event.key;
@@ -696,11 +728,53 @@ class Keyboard {
         window.addEventListener("keydown" , function(event) {
             console.log(event.keyCode);
             switch(event.keyCode) {
+                case 73 :
+                    t.i = true ;
+                    if(t.iDOWNCoolDown == true) {
+                        t.iDOWN = true ;
+                        t.iDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 79 :
+                    t.o = true ;
+                    if(t.oDOWNCoolDown == true) {
+                        t.oDOWN = true ;
+                        t.oDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 80 :
+                    t.p = true ;
+                    if(t.pDOWNCoolDown == true) {
+                        t.pDOWN = true ;
+                        t.pDOWNCoolDown = false ;
+                    }
+                    break ;
                 case 81 :
                     t.q = true ;
                     if(t.qDOWNCoolDown == true) {
                         t.qDOWN = true ;
                         t.qDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 83 :
+                    t.s = true ;
+                    if(t.sDOWNCoolDown == true) {
+                        t.sDOWN = true ;
+                        t.qDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 85 :
+                    t.u = true ;
+                    if(t.uDOWNCoolDown == true) {
+                        t.uDOWN = true ;
+                        t.uDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 89 :
+                    t.y = true ;
+                    if(t.yDOWNCoolDown == true) {
+                        t.yDOWN = true ;
+                        t.yDOWNCoolDown = false ;
                     }
                     break ;
                 default :
@@ -709,10 +783,41 @@ class Keyboard {
         } , false);
         window.addEventListener("keyup" , function(event) {
             switch(event.keyCode) {
+                 case 73 :
+                    t.i = false ;
+                    t.iDOWNCoolDown = true ;
+                    t.iUP = true ;
+                    break ;
+                case 79 :
+                    t.o = false ;
+                    t.oDOWNCoolDown = true ;
+                    t.oUP = true ;
+                    break ;
+                case 80 :
+                    t.p = false ;
+                    t.pDOWNCoolDown = true ;
+                    t.pUP = true ;
+                    break ;
                 case 81 :
                     t.q = false ;
                     t.qDOWNCoolDown = true ;
                     t.qUP = true ;
+                    break ;
+                case 83 :
+                    t.s = false ;
+                    t.sDOWNCoolDown = true ;
+                    t.sUP = true ;
+                    break ;
+                case 85 :
+                    t.u = false ;
+                    t.uDOWNCoolDown = true ;
+                    t.uUP = true ;
+                    break ;
+                case 89 :
+                    t.y = false ;
+                    t.yDOWNCoolDown = true ;
+                    t.yUP = true ;
+                    break ;
                 default :
                     break ;
             }
@@ -721,6 +826,24 @@ class Keyboard {
     Reset() {
         this.qDOWN = false ;
         this.qUP = false ;
+
+        this.sDOWN = false ;
+        this.sUP = false ;
+
+        this.yDOWN = false ;
+        this.yUP = false ;
+
+        this.uDOWN = false ;
+        this.uUP = false ;
+        
+        this.iDOWN = false ;
+        this.iUP = false ;
+
+        this.oDOWN = false ;
+        this.oUP = false ;
+
+        this.pDOWN = false ;
+        this.pUP = false ;
     }
 }
 
@@ -1175,7 +1298,7 @@ var __interpolateAngleSpeed = 2.5 ;
 
 function Draw() {
 
-    camera.Update();
+    
 
     room.Draw(elements.ctx , camera.xView , camera.yView) ;
     
@@ -1203,12 +1326,16 @@ function Update() {
        // player.Transform.position.y = player.newTransform.position.y ;//+ window.innerHeight/2 ;
     //}
     for(var i = 0 ; i < IDs.length ; i++) {
-        var pos = Vector2.Lerp(Players[IDs[i]].Transform.position  , Players[IDs[i]].newTransform.position  , __interpolateMoveSpeed * 0.05);
+        var pos = Vector2.Lerp( Players[IDs[i]].Transform.position  , 
+                                Players[IDs[i]].newTransform.position  , 
+                                __interpolateMoveSpeed * 0.05);
         Players[IDs[i]].Translate(pos);
 
         for(var j = 0 ; j < Players[IDs[i]].tentacles.length ; j++) {
             // player.tentacles[i].Move(player.Transform.position , false);
-            Players[IDs[i]].tentacles[j].Update( Players[IDs[i]].radius , Players[IDs[i]].gravity , Players[IDs[i]].wind) ;
+            Players[IDs[i]].tentacles[j].Update(Players[IDs[i]].radius , 
+                                                Players[IDs[i]].gravity , 
+                                                Players[IDs[i]].wind) ;
         }
     }
 
@@ -1230,8 +1357,11 @@ function Update() {
         }
         console.log("sdfasd");
     }
+    camera.Update();
+
     MouseHandler.Reset() ;
     KeyboardHandler.Reset() ;
+
 }
 function Debug() {
     
