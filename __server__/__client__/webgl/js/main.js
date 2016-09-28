@@ -671,7 +671,11 @@ class Mouse {
 }
 class Keyboard {
     constructor(canvas) {
-        // console.log("gsd");
+        this.enter = false ;
+        this.enterDOWN = false ;
+        this.enterDOWNCoolDown = true ;
+        this.enterUP = false ;
+
         this.q = false ;
         this.qDOWN = false ;
         this.qDOWNCoolDown = true ;
@@ -726,8 +730,15 @@ class Keyboard {
             }
         } , false);
         window.addEventListener("keydown" , function(event) {
-            console.log(event.keyCode);
+            // console.log(event.keyCode);
             switch(event.keyCode) {
+                case 13 :
+                    t.enter = true ;
+                    if(t.enterDOWNCoolDown == true) {
+                        t.enterDOWN = true ;
+                        t.enterDOWNCoolDown = false ;
+                    }
+                    break ;
                 case 73 :
                     t.i = true ;
                     if(t.iDOWNCoolDown == true) {
@@ -783,7 +794,12 @@ class Keyboard {
         } , false);
         window.addEventListener("keyup" , function(event) {
             switch(event.keyCode) {
-                 case 73 :
+                case 13 :
+                    t.enter = false ;
+                    t.enterDOWNCoolDown = true ;
+                    t.enterUP = true ;
+                    break ;
+                case 73 :
                     t.i = false ;
                     t.iDOWNCoolDown = true ;
                     t.iUP = true ;
@@ -824,6 +840,9 @@ class Keyboard {
         } , false);
     }
     Reset() {
+        this.enterDOWN = false ;
+        this.enterUP = false ; 
+
         this.qDOWN = false ;
         this.qUP = false ;
 
@@ -1276,6 +1295,10 @@ window.onload = function() {
 
 
 function PreUpdate() {
+    if(KeyboardHandler.enterDOWN) {
+        Start() ;
+    } 
+    KeyboardHandler.Reset() ;
     // elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height);
     // room.Draw(elements.ctx , camera.xView , camera.yView) ;
 }
@@ -1355,7 +1378,6 @@ function Update() {
                 Mathf.RandomFloat(0.5,1) ,
                 5 , 4);
         }
-        console.log("sdfasd");
     }
     camera.Update();
 
