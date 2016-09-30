@@ -170,6 +170,36 @@ fw.on('connection' , function(socket) {
         // Players[socket.id].Stop() ;
         // Players[socket.id] = null ;
     });
+    socket.on('Bind-Tentacle' , function(x,y) {
+        var angleToMouse = Octopod.OctoMath.Angle.MouseToAngle(x,y) * Math.PI/180 ;
+        var player = Players[socket.id];
+        var d1 = Octopod.Geometry.Vector2.Distance(
+            new Octopod.Geometry.Vector2(x,y) ,
+            new Octopod.Geometry.Vector2() 
+        )
+        // var c_angle = player.Transform.angle ;
+
+        var boundX = Math.cos(angleToMouse-Math.PI/2)*player.totalLengthBound ;
+        // var boundY = Math.sin(angleToMouse-Math.PI/2)*player.totalLengthBound ;
+        var boundY = Math.sin(angleToMouse-Math.PI/2)*player.wideLengthMultiplier ;
+
+        var d2 = Octopod.Geometry.Vector2.Distance(
+            new Octopod.Geometry.Vector2(boundX, boundY) ,
+            new Octopod.Geometry.Vector2()
+        )
+
+        if(d1 > d2) {
+            x = boundX ;
+            y = boundY ;
+        }
+        // console.log(x,y,d1,d2);
+        if(debug) {
+            socket.emit("debug-Bind-Tentacle" , player.totalLengthBound ,
+                                                player.wideLengthMultiplier ,
+                                                angleToMouse ,
+                                                x , y) ;
+        }
+    });
     socket.on('MouseUpdate' , function(x,y) {
         // var oathid = S_GetOathId(oath) ;
         // console.log(x+","+y);
@@ -289,6 +319,7 @@ function S_Disconnect(mapid , player) {
         ) , 1
     );
 }
+var debug = true ;
 var update_rate = setInterval(Update , 3000);
 function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {

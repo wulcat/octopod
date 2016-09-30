@@ -1069,7 +1069,7 @@ function Start() { // Removed The oath and id stuff recieved from Logged() ;
             // socket.connect() ;
             
             var result = Logged() ;
-            console.log(result.name);
+            // console.log(result.name);
             socket.emit('S_Connect' , result.name , CurrentWorld.type ) ;
             clearInterval(intervals.preUpdate);
             intervals.loading = setInterval(Loading , 20) ;
@@ -1156,7 +1156,7 @@ function Init() {
             }
         }
         else {
-            console.log(data);
+            // console.log(data);
             IDs = [] ;
             Players = [] ;
             IDsFood = [] ;
@@ -1168,7 +1168,7 @@ function Init() {
                 if(data[i].type == "player") {
                     Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
                     Players[data[i].id].Name = data[i].name ;
-                    console.log(data[i].name);
+                    // console.log(data[i].name);
                 // }
                 // else {
                     // Players[data[i].id] = data[i] ;
@@ -1191,10 +1191,31 @@ function Init() {
     socket.on('SyncFood' , function(data) {
         Food[data.id] = data.Transform ;
     });
-    // socket.on('joined' , function(){
-    //     // start the game
-    // });
+    //___________________________________________________________________
+    socket.on('debug-Bind-Tentacle' , function(a,b,c,d,e) {
+        debugData.totalLengthBound = a ;
+        debugData.wideLengthMultiplier = b ;
+        debugData.angleToMouse = c ;
+        debugData.maxBoundX = d ;
+        debugData.maxBoundY = e ;
+    });
+    //___________________________________________________________________
 }
+//___________________________________________________________________
+class DebugData {
+    constructor() {
+        this.totalLengthBound = 0 ;
+        this.wideLengthMultiplier = 0 ;
+        this.angleToMouse = 0 ;
+        this.maxBoundX = 0 ;
+        this.maxBoundY = 0 ;
+    }
+}
+var debugData ;
+if(debug)
+    debugData = new DebugData() ;
+
+//___________________________________________________________________
 function Prepare(data) {
     // room = {
     //     width : 2000 ,
@@ -1310,9 +1331,11 @@ function Loading() {
 
 function Frame() {
     // console.log(event);
+    
     Update() ;
     Draw() ;
 
+    if(debug) Debug(elements.ctx , Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
    
 }
 
@@ -1341,6 +1364,9 @@ function Draw() {
     
 }
 function Update() {
+    // if(MouseHandler.leftDOWN) {
+        socket.emit("Bind-Tentacle" , MouseHandler.position.x - window.innerWidth/2 , MouseHandler.position.y - window.innerHeight/2) ;
+    // }
     // player.Rotate( Mathf.LerpAngle(Mathf.RadToAngle(player.Transform.angle) , player.newTransform.angle , __interpolateAngleSpeed * 0.05 , true) );
 
    // if(isNaN(player.Transform.position.x) || isNaN(player.Transform.position.y)) {
@@ -1385,8 +1411,30 @@ function Update() {
     KeyboardHandler.Reset() ;
 
 }
-function Debug() {
-    
+function Debug(ctx , x , y , xView , yView) {
+    // Debug.Log
+    x = x - xView ;
+    y = y - yView ;
+
+    ctx.save() ;
+    ctx.setTransform(1, 0 , 0 , 1 , x , y);
+    ctx.beginPath() ;
+    // ctx.arc(0,0,36,0,2*Math.PI,false);
+    for(var i = 0 ; i < 360 ; i++) {
+        var angle = i * Math.PI /180 ;
+        var x1 = Math.sin(angle)*debugData.totalLengthBound  ;
+        var y1 = Math.cos(angle)*debugData.wideLengthMultiplier ;
+        ctx.lineTo(x1,y1);  
+    }
+    // console.log(debugData.wideLengthMultiplier);
+    ctx.closePath() ;
+    ctx.stroke() ;
+    ctx.beginPath();
+    ctx.moveTo(0,0); 
+    ctx.lineTo(debugData.maxBoundX,debugData.maxBoundY);
+    ctx.closePath();
+    ctx.stroke() ;
+    ctx.restore() ;
 }
   // canvas.width = this.width;
     // canvas.height = this.height ;

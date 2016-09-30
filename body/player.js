@@ -16,6 +16,9 @@ class Player {
         
         // this.oath = "socket" ;
         this.secId = secId ;
+        // this.range = 0 ;
+        this.wideLengthMultiplier = 120;
+        this.totalLengthBound = 150 ;
         // this.mapid ; //= rank ;
         //this.maptype ; //= type ;
     }
@@ -64,6 +67,7 @@ class Player {
     }
   
     Update() {
+
         if(this.Jerk > this.JerkMax) {
             this.JerkSpeed = -Math.abs(this.JerkSpeed) ;
         }
@@ -81,12 +85,14 @@ class Player {
         this.Speed = this.Jerk * this.MoveSpeed ;
 
         var newAngle = OctoMath.Angle.LerpAngle(this.Transform.angle , this.__angle , this.RotSpeed * 0.05) ;
-        // var LerpAngle = OctoMath.Interpolate.Lerp([this.Transform.angle] , [this.___angle] , 0.5) ;
+        // var LerpAngle = OctoMath.Interpolate.Lerp([this.Transform.angle] , [this.__angle] , 0.5) ;
         // console.log(this.__angle , newAngle);
         this.Transform.angle = newAngle ;
         newAngle = newAngle * Math.PI/180 ;
 
         this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
+
+        
         this.UpdateCamera() ;
 
         // console.log(this);
