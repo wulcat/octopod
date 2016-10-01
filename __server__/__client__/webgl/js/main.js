@@ -59,6 +59,14 @@ class Vector2 {
 
         return new Vector2(x,y);
     }
+    static Distance(vec1 , vec2) {
+        var a = vec1.x - vec2.x ;
+        a *= a ;
+        var b = vec1.y - vec2.y ;
+        b *= b ;
+        // var distance = Math.sqrt(a+b);
+        return  Math.sqrt(a+b) ;
+    }
 }
 
 class Transform {
@@ -1002,7 +1010,75 @@ class Food {
     }
 }
 
-//___________________________________________________________________ Classes
+class MouseTentatcle {
+    constructor(l,t1,t2) {
+        this.length = l ;
+        this.nodes = [] ;
+        for(var i = 0 ; i < this.length ; i++) {
+            this.nodes.push(new TentacleNode(0,0));
+        }
+        this.tension1 = t1 ;
+        this.tension2 = t2 ;
+
+        var x = this.length * Math.PI/180 ;
+        var y = Math.sin(Math.cos(x))*x ;
+
+        this.nodes[this.nodes.length-1].x = x ;
+        this.nodes[this.nodes.length-1].y = y ;
+    }
+    Update(posX , posY) {
+        // if(posX =
+
+        // d2 = d2 == 0 ? 1 : d2 ;
+        // d1 = d1 == 0 ? 1 : d1 ;
+        
+
+
+        for(var i=0 ; i < this.length ; i++) {
+            var angle = i * Math.PI/180 ;
+            var x = angle ;
+            var y = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2);
+
+            this.nodes[i].x = x ;
+            this.nodes[i].y = y ;
+            // console.log(m , posX , posY);
+        }
+
+        var d1 = Vector2.Distance(new Vector2(0,0) , new Vector2(posX , 0));
+        var d2 = Vector2.Distance(new Vector2(0,0) , new Vector2(this.nodes[this.nodes.length-1].x,this.nodes[this.nodes.length-1].y)) ;
+
+        var m = d1/d2 ;
+
+        for(var i = 0 ; i < this.length ; i++) {
+            if(posX > 0)
+                this.nodes[i].x *= m ;
+            else
+                this.nodes[i].x *= -m ;
+
+            var x = posX*Math.cos(30) - posY*Math.sin(30);
+            var y = posX*Math.sin(30) + posY*Math.cos(30);
+            this.nodes[i].y *= this.tension1*Math.cos(Math.atan2(y,x)) ;
+        }
+        console.log(m);
+    }
+    Draw(ctx , x , y , xView , yView) {
+
+        x = x - xView ;
+        y = y - yView ;
+        ctx.save() ;
+        ctx.setTransform(1,0,0,1,x,y)
+        ctx.beginPath() ;
+        for(var i = 0 ; i < this.length ; i++) {
+            ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
+        }
+        // ctx.closePath() ;
+        ctx.stroke() ;
+        ctx.restore() ;
+    }
+}
+
+
+//___________________________________________________________________End Classes
 var intervals = new Intervals() ;
 var elements = new Elements() ;
 var MouseHandler ;
@@ -1266,10 +1342,10 @@ window.onresize = function() {
     ctx.clearRect(0 , 0 , canvas.width , canvas.height) ;
 
     if(room != null)
-        room.Draw(ctx , camera.xView , camera.yView);
+        room.Draw(ctx , camera. xView , camera.yView);
 }
 
-
+var customTent = new MouseTentatcle(90,30,1);
 window.onload = function() {
 
     var canvas = document.getElementById("game" );
@@ -1336,11 +1412,13 @@ function Frame() {
     Draw() ;
 
     if(debug) Debug(elements.ctx , Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
-   
+    
+    customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
+    customTent.Draw(elements.ctx, Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
 }
 
 var __interpolateMoveSpeed = 1.2 ;
-var __interpolateAngleSpeed = 2.5 ;
+// var __interpolateAngleSpeed = 2.5 ;
 
 function Draw() {
 
@@ -1367,7 +1445,7 @@ function Update() {
     if(MouseHandler.left) {
         socket.emit("Bind-Tentacle" , MouseHandler.position.x - window.innerWidth/2 , MouseHandler.position.y - window.innerHeight/2) ;
     }
-    // player.Rotate( Mathf.LerpAngle(Mathf.RadToAngle(player.Transform.angle) , player.newTransform.angle , __interpolateAngleSpeed * 0.05 , true) );
+    // Players[socket.id].Rotate( Mathf.LerpAngle(Mathf.RadToAngle(Players[socket.id].Transform.angle) , Players[socket.id].newTransform.angle , __interpolateAngleSpeed * 0.05 , true) );
 
    // if(isNaN(player.Transform.position.x) || isNaN(player.Transform.position.y)) {
      //   console.log(player.newTransform.position.x);
