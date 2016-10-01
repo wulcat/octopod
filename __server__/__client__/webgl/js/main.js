@@ -132,6 +132,236 @@ class Rect {
     }
 }
 
+class Mouse {
+    constructor(canvas) {
+        this.position = new Vector2() ;
+        this.left = false ;
+        this.leftDOWN = false ;
+        this.leftUP = false ;
+        var t = this ;
+        // console.log("moving "+this.position.x+","+this.position.y);;
+        canvas.addEventListener("mousemove" , function(event) {
+            t.position = t.calcMouseAxis(event) ;
+            // console.log("moving "+this.position.x+","+this.position.y);;
+        });
+        canvas.addEventListener("mousedown" , function() {
+            t.leftDOWN = true ;
+            t.left = true ;
+            // console.log("moving "+this.position.x+","+this.position.y);;
+        });
+        canvas.addEventListener("mouseup" , function() {
+            t.leftUP = true ;
+            t.left = false ;
+            // console.log("moving "+this.position.x+","+this.position.y);;
+        });
+
+    }
+    calcMouseAxis(event) {
+        // console
+        return new Vector2(event.clientX , event.clientY) ;
+    }
+    Reset() {
+        this.leftDOWN = false ;
+        this.leftUP = false ;
+    }
+}
+class Keyboard {
+    constructor(canvas) {
+        this.enter = false ;
+        this.enterDOWN = false ;
+        this.enterDOWNCoolDown = true ;
+        this.enterUP = false ;
+
+        this.q = false ;
+        this.qDOWN = false ;
+        this.qDOWNCoolDown = true ;
+        this.qUP = false ;
+
+        this.s = false ;
+        this.sDOWN = false ;
+        this.sDOWNCoolDown = true ;
+        this.sUP = false ;
+
+        this.y = false ;
+        this.yDOWN = false ;
+        this.yDOWNCoolDown = true ;
+        this.yUP = false ;
+
+        this.u = false ;
+        this.uDOWN = false ;
+        this.uDOWNCoolDown = true ;
+        this.uUP = false ;
+
+        this.i = false ;
+        this.iDOWN = false ;
+        this.iDOWNCoolDown = true ;
+        this.iUP = false ;
+
+        this.o = false ;
+        this.oDOWN = false ;
+        this.oDOWNCoolDown = true ;
+        this.oUP = false ;
+
+        this.p = false ;
+        this.pDOWN = false ;
+        this.pDOWNCoolDown = true ;
+        this.pUP = false ;
+
+
+        var t = this ;
+        canvas.addEventListener("keypress" , function(event) {
+            const keyName = event.key;
+            // console.log("sf");
+            if (keyName === 'Control') {
+                // not alert when only Control key is pressed.
+                return;
+            }
+
+            if (event.ctrlKey) {
+                // Even though event.key is not 'Control' (i.e. 'a' is pressed),
+                // event.ctrlKey may be true if Ctrl key is pressed at the time.
+                console.log(`Combination of ctrlKey + ${keyName}`);
+            } else {
+                console.log(`Key pressed ${keyName}`);
+            }
+        } , false);
+        window.addEventListener("keydown" , function(event) {
+            // console.log(event.keyCode);
+            switch(event.keyCode) {
+                case 13 :
+                    t.enter = true ;
+                    if(t.enterDOWNCoolDown == true) {
+                        t.enterDOWN = true ;
+                        t.enterDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 73 :
+                    t.i = true ;
+                    if(t.iDOWNCoolDown == true) {
+                        t.iDOWN = true ;
+                        t.iDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 79 :
+                    t.o = true ;
+                    if(t.oDOWNCoolDown == true) {
+                        t.oDOWN = true ;
+                        t.oDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 80 :
+                    t.p = true ;
+                    if(t.pDOWNCoolDown == true) {
+                        t.pDOWN = true ;
+                        t.pDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 81 :
+                    t.q = true ;
+                    if(t.qDOWNCoolDown == true) {
+                        t.qDOWN = true ;
+                        t.qDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 83 :
+                    t.s = true ;
+                    if(t.sDOWNCoolDown == true) {
+                        t.sDOWN = true ;
+                        t.qDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 85 :
+                    t.u = true ;
+                    if(t.uDOWNCoolDown == true) {
+                        t.uDOWN = true ;
+                        t.uDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 89 :
+                    t.y = true ;
+                    if(t.yDOWNCoolDown == true) {
+                        t.yDOWN = true ;
+                        t.yDOWNCoolDown = false ;
+                    }
+                    break ;
+                default :
+                    break ;
+            }
+        } , false);
+        window.addEventListener("keyup" , function(event) {
+            switch(event.keyCode) {
+                case 13 :
+                    t.enter = false ;
+                    t.enterDOWNCoolDown = true ;
+                    t.enterUP = true ;
+                    break ;
+                case 73 :
+                    t.i = false ;
+                    t.iDOWNCoolDown = true ;
+                    t.iUP = true ;
+                    break ;
+                case 79 :
+                    t.o = false ;
+                    t.oDOWNCoolDown = true ;
+                    t.oUP = true ;
+                    break ;
+                case 80 :
+                    t.p = false ;
+                    t.pDOWNCoolDown = true ;
+                    t.pUP = true ;
+                    break ;
+                case 81 :
+                    t.q = false ;
+                    t.qDOWNCoolDown = true ;
+                    t.qUP = true ;
+                    break ;
+                case 83 :
+                    t.s = false ;
+                    t.sDOWNCoolDown = true ;
+                    t.sUP = true ;
+                    break ;
+                case 85 :
+                    t.u = false ;
+                    t.uDOWNCoolDown = true ;
+                    t.uUP = true ;
+                    break ;
+                case 89 :
+                    t.y = false ;
+                    t.yDOWNCoolDown = true ;
+                    t.yUP = true ;
+                    break ;
+                default :
+                    break ;
+            }
+        } , false);
+    }
+    Reset() {
+        this.enterDOWN = false ;
+        this.enterUP = false ; 
+
+        this.qDOWN = false ;
+        this.qUP = false ;
+
+        this.sDOWN = false ;
+        this.sUP = false ;
+
+        this.yDOWN = false ;
+        this.yUP = false ;
+
+        this.uDOWN = false ;
+        this.uUP = false ;
+        
+        this.iDOWN = false ;
+        this.iUP = false ;
+
+        this.oDOWN = false ;
+        this.oUP = false ;
+
+        this.pDOWN = false ;
+        this.pUP = false ;
+    }
+}
+
 class Intervals {
     constructor() {
         this.preUpdate ;
@@ -636,236 +866,6 @@ class Map {
     }
 }
 
-class Mouse {
-    constructor(canvas) {
-        this.position = new Vector2() ;
-        this.left = false ;
-        this.leftDOWN = false ;
-        this.leftUP = false ;
-        var t = this ;
-        // console.log("moving "+this.position.x+","+this.position.y);;
-        canvas.addEventListener("mousemove" , function(event) {
-            t.position = t.calcMouseAxis(event) ;
-            // console.log("moving "+this.position.x+","+this.position.y);;
-        });
-        canvas.addEventListener("mousedown" , function() {
-            t.leftDOWN = true ;
-            t.left = true ;
-            // console.log("moving "+this.position.x+","+this.position.y);;
-        });
-        canvas.addEventListener("mouseup" , function() {
-            t.leftUP = true ;
-            t.left = false ;
-            // console.log("moving "+this.position.x+","+this.position.y);;
-        });
-
-    }
-    calcMouseAxis(event) {
-        // console
-        return new Vector2(event.clientX , event.clientY) ;
-    }
-    Reset() {
-        this.leftDOWN = false ;
-        this.leftUP = false ;
-    }
-}
-class Keyboard {
-    constructor(canvas) {
-        this.enter = false ;
-        this.enterDOWN = false ;
-        this.enterDOWNCoolDown = true ;
-        this.enterUP = false ;
-
-        this.q = false ;
-        this.qDOWN = false ;
-        this.qDOWNCoolDown = true ;
-        this.qUP = false ;
-
-        this.s = false ;
-        this.sDOWN = false ;
-        this.sDOWNCoolDown = true ;
-        this.sUP = false ;
-
-        this.y = false ;
-        this.yDOWN = false ;
-        this.yDOWNCoolDown = true ;
-        this.yUP = false ;
-
-        this.u = false ;
-        this.uDOWN = false ;
-        this.uDOWNCoolDown = true ;
-        this.uUP = false ;
-
-        this.i = false ;
-        this.iDOWN = false ;
-        this.iDOWNCoolDown = true ;
-        this.iUP = false ;
-
-        this.o = false ;
-        this.oDOWN = false ;
-        this.oDOWNCoolDown = true ;
-        this.oUP = false ;
-
-        this.p = false ;
-        this.pDOWN = false ;
-        this.pDOWNCoolDown = true ;
-        this.pUP = false ;
-
-
-        var t = this ;
-        canvas.addEventListener("keypress" , function(event) {
-            const keyName = event.key;
-            // console.log("sf");
-            if (keyName === 'Control') {
-                // not alert when only Control key is pressed.
-                return;
-            }
-
-            if (event.ctrlKey) {
-                // Even though event.key is not 'Control' (i.e. 'a' is pressed),
-                // event.ctrlKey may be true if Ctrl key is pressed at the time.
-                console.log(`Combination of ctrlKey + ${keyName}`);
-            } else {
-                console.log(`Key pressed ${keyName}`);
-            }
-        } , false);
-        window.addEventListener("keydown" , function(event) {
-            // console.log(event.keyCode);
-            switch(event.keyCode) {
-                case 13 :
-                    t.enter = true ;
-                    if(t.enterDOWNCoolDown == true) {
-                        t.enterDOWN = true ;
-                        t.enterDOWNCoolDown = false ;
-                    }
-                    break ;
-                case 73 :
-                    t.i = true ;
-                    if(t.iDOWNCoolDown == true) {
-                        t.iDOWN = true ;
-                        t.iDOWNCoolDown = false ;
-                    }
-                    break ;
-                case 79 :
-                    t.o = true ;
-                    if(t.oDOWNCoolDown == true) {
-                        t.oDOWN = true ;
-                        t.oDOWNCoolDown = false ;
-                    }
-                    break ;
-                case 80 :
-                    t.p = true ;
-                    if(t.pDOWNCoolDown == true) {
-                        t.pDOWN = true ;
-                        t.pDOWNCoolDown = false ;
-                    }
-                    break ;
-                case 81 :
-                    t.q = true ;
-                    if(t.qDOWNCoolDown == true) {
-                        t.qDOWN = true ;
-                        t.qDOWNCoolDown = false ;
-                    }
-                    break ;
-                case 83 :
-                    t.s = true ;
-                    if(t.sDOWNCoolDown == true) {
-                        t.sDOWN = true ;
-                        t.qDOWNCoolDown = false ;
-                    }
-                    break ;
-                case 85 :
-                    t.u = true ;
-                    if(t.uDOWNCoolDown == true) {
-                        t.uDOWN = true ;
-                        t.uDOWNCoolDown = false ;
-                    }
-                    break ;
-                case 89 :
-                    t.y = true ;
-                    if(t.yDOWNCoolDown == true) {
-                        t.yDOWN = true ;
-                        t.yDOWNCoolDown = false ;
-                    }
-                    break ;
-                default :
-                    break ;
-            }
-        } , false);
-        window.addEventListener("keyup" , function(event) {
-            switch(event.keyCode) {
-                case 13 :
-                    t.enter = false ;
-                    t.enterDOWNCoolDown = true ;
-                    t.enterUP = true ;
-                    break ;
-                case 73 :
-                    t.i = false ;
-                    t.iDOWNCoolDown = true ;
-                    t.iUP = true ;
-                    break ;
-                case 79 :
-                    t.o = false ;
-                    t.oDOWNCoolDown = true ;
-                    t.oUP = true ;
-                    break ;
-                case 80 :
-                    t.p = false ;
-                    t.pDOWNCoolDown = true ;
-                    t.pUP = true ;
-                    break ;
-                case 81 :
-                    t.q = false ;
-                    t.qDOWNCoolDown = true ;
-                    t.qUP = true ;
-                    break ;
-                case 83 :
-                    t.s = false ;
-                    t.sDOWNCoolDown = true ;
-                    t.sUP = true ;
-                    break ;
-                case 85 :
-                    t.u = false ;
-                    t.uDOWNCoolDown = true ;
-                    t.uUP = true ;
-                    break ;
-                case 89 :
-                    t.y = false ;
-                    t.yDOWNCoolDown = true ;
-                    t.yUP = true ;
-                    break ;
-                default :
-                    break ;
-            }
-        } , false);
-    }
-    Reset() {
-        this.enterDOWN = false ;
-        this.enterUP = false ; 
-
-        this.qDOWN = false ;
-        this.qUP = false ;
-
-        this.sDOWN = false ;
-        this.sUP = false ;
-
-        this.yDOWN = false ;
-        this.yUP = false ;
-
-        this.uDOWN = false ;
-        this.uUP = false ;
-        
-        this.iDOWN = false ;
-        this.iUP = false ;
-
-        this.oDOWN = false ;
-        this.oUP = false ;
-
-        this.pDOWN = false ;
-        this.pUP = false ;
-    }
-}
-
 class Food {
     constructor(position , scale , radius , shear) {
         this.position = position || new Vector2() ;
@@ -1364,9 +1364,9 @@ function Draw() {
     
 }
 function Update() {
-    // if(MouseHandler.leftDOWN) {
+    if(MouseHandler.left) {
         socket.emit("Bind-Tentacle" , MouseHandler.position.x - window.innerWidth/2 , MouseHandler.position.y - window.innerHeight/2) ;
-    // }
+    }
     // player.Rotate( Mathf.LerpAngle(Mathf.RadToAngle(player.Transform.angle) , player.newTransform.angle , __interpolateAngleSpeed * 0.05 , true) );
 
    // if(isNaN(player.Transform.position.x) || isNaN(player.Transform.position.y)) {
