@@ -1010,81 +1010,94 @@ class Food {
     }
 }
 
-class MouseTentatcle {
-    constructor(l,t1,t2) {
-        this.length = l ;
-        this.nodes = [] ;
-        for(var i = 0 ; i < this.length ; i++) {
-            this.nodes.push(new TentacleNode(0,0));
-        }
-        this.tension1 = t1 ;
-        this.tension2 = t2 ;
+// class MouseTentatcle {
+//     constructor(l,t1,t2,maxAngle) {
+//         this.length = l ;
+//         this.nodes = [] ;
+//         for(var i = 0 ; i < this.length ; i++) {
+//             this.nodes.push(new TentacleNode(0,0));
+//         }
+//         this.tension1 = t1 ;
+//         this.tension2 = t2 ;
+//         this.maxAngle = maxAngle ;
 
-        var x = this.length * Math.PI/180 ;
-        var y = Math.sin(Math.cos(x))*x ;
+//         var x = this.length * Math.PI/180 ;
+//         var y = Math.sin(Math.cos(x))*x ;
 
-        this.nodes[this.nodes.length-1].x = x ;
-        this.nodes[this.nodes.length-1].y = y ;
-    }
-    Update(posX , posY) {
-        // if(posX =
+//         this.nodes[this.nodes.length-1].x = x ;
+//         this.nodes[this.nodes.length-1].y = y ;
+//     }
+//     Update(posX , posY) {
+//         // if(posX =
 
-        // d2 = d2 == 0 ? 1 : d2 ;
-        // d1 = d1 == 0 ? 1 : d1 ;
+//         // d2 = d2 == 0 ? 1 : d2 ;
+//         // d1 = d1 == 0 ? 1 : d1 ;
         
 
 
-        for(var i=0 ; i < this.length ; i++) {
-            var angle = i * Math.PI/180 ;
-            var x = angle ;
-            var y = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2);
+//         // for(var i=0 ; i < this.length ; i++) {
+//         //     var angle = i * Math.PI/180 ;
+//         //     var x = angle ;
+//         //     var y = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2) ;
+//         //     var x1 = x*Math.cos(debugData.angleToMouse) - y*Math.sin(debugData.angleToMouse) ;
+//         //     var y1 = x*Math.sin(debugData.angleToMouse) + y*Math.cos(debugData.angleToMouse) ;
 
-            this.nodes[i].x = x ;
-            this.nodes[i].y = y ;
-            // console.log(m , posX , posY);
-        }
+//         //     this.nodes[i].x = x1 ;
+//         //     this.nodes[i].y = y1 ;
+//         //     // console.log(m , posX , posY);
+//         // }
 
-        var d1 = Vector2.Distance(new Vector2(0,0) , new Vector2(posX , 0));
-        var d2 = Vector2.Distance(new Vector2(0,0) , new Vector2(this.nodes[this.nodes.length-1].x,this.nodes[this.nodes.length-1].y)) ;
+//         // var d1 = Vector2.Distance(new Vector2(0,0) , new Vector2(posX , 0));
+//         // var d2 = Vector2.Distance(new Vector2(0,0) , new Vector2(this.nodes[this.nodes.length-1].x,this.nodes[this.nodes.length-1].y)) ;
 
-        var m = d1/d2 ;
+//         // var m = d1/d2 ;
 
-        for(var i = 0 ; i < this.length ; i++) {
-            if(posX > 0)
-                this.nodes[i].x *= m ;
-            else
-                this.nodes[i].x *= -m ;
+//         // for(var i = 0 ; i < this.length ; i++) {
+//         //     // if(posX > 0) {
+//         //         this.nodes[i].x *= m ;
+//         //         this.nodes[i].y *= m ;
+//         //     // }
+//         //     // else {
+//         //         // this.nodes[i].x *= -m ;
+//         //         // this.nodes[i].y *= -m ;
+//         //     // }
 
-            // var angle = Math.PI * 30 / 180 ;
+//         //     // var angle = Math.PI * 30 / 180 ;
 
-            // var x = posX*Math.cos(angle) - posY*Math.sin(angle);
-            // var y = posX*Math.sin(angle) + posY*Math.cos(angle);
+//         //     // var x = posX*Math.cos(angle) - posY*Math.sin(angle);
+//         //     // var y = posX*Math.sin(angle) + posY*Math.cos(angle);
 
-            var angle = Math.acos(posX/debugData.totalLengthBound) ;
-            var y = debugData.wideLengthMultiplier * Math.sin(angle) ;
+//         //     // var angle = Math.acos(posX/debugData.totalLengthBound) ;
+//         //     // var y = debugData.wideLengthMultiplier * Math.sin(angle) ;
             
-            this.nodes[i].y *= 2*this.tension1*Math.cos(Math.atan2(posX,y)) ;
-        }
-        // console.log(m);
-    }
-    Draw(ctx , x , y , xView , yView) {
+//         //     // var angle1 = Math.atan2(posX,y) ;
+//         //     // angle1 = Math.asin(Math.cos(angle1));
 
-        x = x - xView ;
-        y = y - yView ;
-        ctx.save() ;
-        // var angle_sin = Math.sin(debugData.angleToMouse - Math.PI*3/2) ;
-        // var angle_cos = Math.cos(debugData.angleToMouse- Math.PI*3/2) ;
+//         //     // this.nodes[i].y *= 2*this.tension1*Math.sin(angle1) ;// + debugData.angleToMouse ;// *Math.sin(debugData.angleToMouse) ;
 
-        ctx.setTransform(1,0,0,1,x,y)
-        ctx.beginPath() ;
-        for(var i = 0 ; i < this.length ; i++) {
-            ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
-        }
-        // ctx.closePath() ;
-        ctx.stroke() ;
-        ctx.restore() ;
-    }
-}
+//         //     // this.nodes[i].y *=  Math.cos(debugData.angleToMouse/2) * 5  ; //* (debugData.totalLengthBound + debugData.wideLengthMultiplier)/debugData.totalLengthBound;
+//         //     // console.log(Math.cos(debugData.angleToMouse));
+//         // }
+//         // console.log(m);
+//     }
+//     Draw(ctx , x , y , xView , yView) {
+
+//         x = x - xView ;
+//         y = y - yView ;
+//         ctx.save() ;
+//         // var angle_sin = Math.sin(debugData.angleToMouse - Math.PI*3/2) ;
+//         // var angle_cos = Math.cos(debugData.angleToMouse- Math.PI*3/2) ;
+
+//         ctx.setTransform(1,0,0,1,x,y)
+//         ctx.beginPath() ;
+//         for(var i = 0 ; i < this.length ; i++) {
+//             ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
+//         }
+//         // ctx.closePath() ;
+//         ctx.stroke() ;
+//         ctx.restore() ;
+//     }
+// }
 
 
 //___________________________________________________________________End Classes
@@ -1280,7 +1293,7 @@ function Init() {
     socket.on('debug-Bind-Tentacle' , function(a,b,c,d,e) {
         debugData.totalLengthBound = a ;
         debugData.wideLengthMultiplier = b ;
-        debugData.angleToMouse = c ;
+        debugData.angleToMouse = Math.asin(Math.cos(c) ) ;
         debugData.maxBoundX = d ;
         debugData.maxBoundY = e ;
     });
@@ -1354,7 +1367,7 @@ window.onresize = function() {
         room.Draw(ctx , camera. xView , camera.yView);
 }
 
-var customTent = new MouseTentatcle(90,50,1);
+// var customTent = new MouseTentatcle(90,50,30 , 50);
 window.onload = function() {
 
     var canvas = document.getElementById("game" );
@@ -1422,8 +1435,8 @@ function Frame() {
 
     if(debug) Debug(elements.ctx , Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
     
-    customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
-    customTent.Draw(elements.ctx, Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
+    // customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
+    // customTent.Draw(elements.ctx, Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
 }
 
 var __interpolateMoveSpeed = 1.2 ;
