@@ -1055,17 +1055,26 @@ class MouseTentatcle {
             else
                 this.nodes[i].x *= -m ;
 
-            var x = posX*Math.cos(30) - posY*Math.sin(30);
-            var y = posX*Math.sin(30) + posY*Math.cos(30);
-            this.nodes[i].y *= this.tension1*Math.cos(Math.atan2(y,x)) ;
+            // var angle = Math.PI * 30 / 180 ;
+
+            // var x = posX*Math.cos(angle) - posY*Math.sin(angle);
+            // var y = posX*Math.sin(angle) + posY*Math.cos(angle);
+
+            var angle = Math.acos(posX/debugData.totalLengthBound) ;
+            var y = debugData.wideLengthMultiplier * Math.sin(angle) ;
+            
+            this.nodes[i].y *= 2*this.tension1*Math.cos(Math.atan2(posX,y)) ;
         }
-        console.log(m);
+        // console.log(m);
     }
     Draw(ctx , x , y , xView , yView) {
 
         x = x - xView ;
         y = y - yView ;
         ctx.save() ;
+        // var angle_sin = Math.sin(debugData.angleToMouse - Math.PI*3/2) ;
+        // var angle_cos = Math.cos(debugData.angleToMouse- Math.PI*3/2) ;
+
         ctx.setTransform(1,0,0,1,x,y)
         ctx.beginPath() ;
         for(var i = 0 ; i < this.length ; i++) {
@@ -1345,7 +1354,7 @@ window.onresize = function() {
         room.Draw(ctx , camera. xView , camera.yView);
 }
 
-var customTent = new MouseTentatcle(90,30,1);
+var customTent = new MouseTentatcle(90,50,1);
 window.onload = function() {
 
     var canvas = document.getElementById("game" );
@@ -1476,7 +1485,7 @@ function Update() {
     for(var i = 0 ; i < IDsFood.length ; i++) {
         Foods[IDsFood[i]].Update() ;
     }
-    if(KeyboardHandler.qDOWN) {
+    if(KeyboardHandler.q) {
         for(var i = 0 ; i < IDs.length ; i++) {
              Players[IDs[i]].AddTentacle(Mathf.RandomFloat(30,90) ,
                 Mathf.RandomFloat(0.5,1) ,
