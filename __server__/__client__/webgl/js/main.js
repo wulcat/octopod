@@ -1009,7 +1009,7 @@ class Food {
         ctx.restore() ;
     }
 }
-
+// var daf = false ;
 class MouseTentatcle {
     constructor(l,t1,t2,maxAngle) {
         this.length = l ;
@@ -1033,18 +1033,21 @@ class MouseTentatcle {
         d2 = d2 == 0 ? 1 : d2 ;
         d1 = d1 == 0 ? 1 : d1 ;
         
+        // if(daf) {return ;}
 
-
+        var adf ;
         for(var i=0 ; i < this.length ; i++) {
             var angle = i * Math.PI/180 ;
             var x = angle ;
             var y = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2) ;
+            adf = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2) ;
             // var x1 = x*Math.cos(debugData.angleToMouse) - y*Math.sin(debugData.angleToMouse) ;
             // var y1 = x*Math.sin(debugData.angleToMouse) + y*Math.cos(debugData.angleToMouse) ;
-
+            // console.log(adf);
             this.nodes[i].x = x ;
             this.nodes[i].y = y ;
             // console.log(m , posX , posY);
+            // daf = true ;
         }
 
         var d1 = Vector2.Distance(new Vector2(0,0) , new Vector2(posX , 0));
@@ -1053,26 +1056,31 @@ class MouseTentatcle {
         var m = d1/d2 ;
 
         for(var i = 0 ; i < this.length ; i++) {
-            if(posX > 0) {
+            // if(posX > 0) {
                 this.nodes[i].x *= m ;
-                this.nodes[i].y *= m ;
-            }
-            else {
-                this.nodes[i].x *= -m ;
-                this.nodes[i].y *= -m ;
-            }
+                this.nodes[i].y *= 90 ;
+            // }
+            // else {
+                // this.nodes[i].x *= -m ;
+                // this.nodes[i].y *= -m ;
+            // }
 
-            var angle = Math.PI * 30 / 180 ;
+            // var angle = Math.PI ;//* 30 / 180 ;
 
             // var x = posX*Math.cos(angle) - posY*Math.sin(angle);
             // var y = posX*Math.sin(angle) + posY*Math.cos(angle);
+            // if()
 
+            // if(d1 > debugData.totalLengthBound/2) {
             var angle = Math.acos(posX/debugData.totalLengthBound) ;
             var y = debugData.wideLengthMultiplier * Math.sin(angle) ;
             
             var angle1 = Math.atan2(posX,y) ;
             angle1 = Math.asin(Math.cos(angle1));
             this.nodes[i].y *= angle1 ;
+            // console.log("s");
+            // }
+            // console.log(m , angle ,angle1);
             //   this.nodes[i].y *= 2*this.tension1*Math.sin(angle1) ;// + debugData.angleToMouse ;// *Math.sin(debugData.angleToMouse) ;
 
             //   this.nodes[i].y *=  Math.cos(debugData.angleToMouse/2) * 5  ; //* (debugData.totalLengthBound + debugData.wideLengthMultiplier)/debugData.totalLengthBound;
