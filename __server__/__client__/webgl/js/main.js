@@ -1375,7 +1375,6 @@ window.onresize = function() {
         room.Draw(ctx , camera. xView , camera.yView);
 }
 
-var customTent = new MouseTentatcle(90,50,30 , 50);
 window.onload = function() {
 
     var canvas = document.getElementById("game" );
@@ -1434,7 +1433,7 @@ function Loading() {
     elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height);
 
 }
-
+var customTent = new MouseTentatcle(90,50,30 , 50);
 function Frame() {
     // console.log(event);
     
