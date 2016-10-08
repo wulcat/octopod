@@ -1047,7 +1047,6 @@ class MouseTentatcle {
         var m = d1/d2 ;
 
         for(var i = 0 ; i < this.length ; i++) {
-    
             this.nodes[i].x *= m ;
             this.nodes[i].y *= 90 ;
             
@@ -1057,9 +1056,7 @@ class MouseTentatcle {
             var angle1 = Math.atan2(posX,y) ;
             angle1 = Math.asin(Math.cos(angle1));
             this.nodes[i].y *= angle1 ;
-           
         }
-
     }
     Draw(ctx , x , y , xView , yView) {
 
