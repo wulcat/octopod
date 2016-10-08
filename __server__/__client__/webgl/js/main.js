@@ -1011,7 +1011,7 @@ class Food {
 }
 // var daf = false ;
 class MouseTentatcle {
-    constructor(l,t1,t2,) {
+    constructor(l,t1,t2) {
         this.length = l ;
         this.nodes = [] ;
         for(var i = 0 ; i < this.length ; i++) {
@@ -1021,7 +1021,23 @@ class MouseTentatcle {
         this.tension2 = t2 ;
     }
     Update(posX , posY) {
-    
+        var prev ;
+
+        prev = this.nodes[0] ;
+
+        for(var i = 1 ; i < this.length ; i++) {
+            
+            // var dx = prev.x - this.nodes[i].x ;
+            // var dy = prev.y - this.nodes[i].y ;
+
+            // var d1 = Vector2.Distance(new Vector2(0,0) , new Vector2(posX , posY)) ;
+            // var x = prev.x + d1/this.length ;
+            // var y = prev.y + Math.sin(Math.atan2(dy,dx)) ;
+
+            // this.nodes[i].x = x ;
+            // this.nodes[i].y = y ;
+            prev = this.nodes[i] ;
+        }
     }
     Draw(ctx , x , y , xView , yView) {
 
