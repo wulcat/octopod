@@ -1015,7 +1015,7 @@ class MouseTentatcle {
         this.length = l ;
         this.nodes = [] ;
         for(var i = 0 ; i < this.length ; i++) {
-            this.nodes.push(new TentacleNode(0,0));
+            this.nodes.push(new TentacleNode(0.000000001,0.000000001));
         }
         this.tension1 = t1 ;
         this.tension2 = t2 ;
@@ -1024,9 +1024,20 @@ class MouseTentatcle {
         var prev ;
 
         prev = this.nodes[0] ;
-
+        var dxy = debugData.totalLengthBound/this.length ;
+        var d1 = Vector2.Distance(new Vector2(0,0) , new Vector2(posX , posY))/(this.length*this.nodes.length) ;
+        
         for(var i = 1 ; i < this.length ; i++) {
-            
+
+            var m = (dxy - dxy*dxy + prev.x*prev.x + prev.y*prev.y)/2 ;
+
+            var x2 = d1*i ;
+            var y2 = (m - prev.x*x2)/prev.y ; 
+
+            this.nodes[i].x = x2 ;
+            this.nodes[i].y = y2 ;
+
+
             // var dx = prev.x - this.nodes[i].x ;
             // var dy = prev.y - this.nodes[i].y ;
 
@@ -1038,6 +1049,7 @@ class MouseTentatcle {
             // this.nodes[i].y = y ;
             prev = this.nodes[i] ;
         }
+        console.log(this.nodes)
     }
     Draw(ctx , x , y , xView , yView) {
 
