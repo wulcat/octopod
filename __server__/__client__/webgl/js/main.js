@@ -1040,7 +1040,48 @@ class MouseTentatcle {
         ctx.restore() ;
     }
 }
+class BeizerCurve5Degree {
+    static Draw(steps , vecset5) {
+        var s,t,n,points ;
 
+        s = 1/steps ;
+        points = [] ;
+
+        for(t = 0 ; t < s ; t += s) {
+            var tk = 1-t ;
+
+            for(n = 0 ; n < 5 ; n++) {
+                var x = tk*tk*tk*tk*tk*vecset5[n].x +
+                        tk*tk*tk*tk*vecset5[n].x*t*5 +
+                        tk*tk*tk*vecset5[n].x*t*t*10 +
+                        tk*tk*vecset5[n].x*t*t*t*10 +
+                        tk*vecset5[n].x*t*t*t*t*5 +
+                        vecset5[n].x*t*t*t*t*t ;
+                    
+                var y = tk*tk*tk*tk*tk*vecset5[n].y +
+                        tk*tk*tk*tk*vecset5[n].y*t*5 +
+                        tk*tk*tk*vecset5[n].y*t*t*10 +
+                        tk*tk*vecset5[n].y*t*t*t*10 +
+                        tk*vecset5[n].y*t*t*t*t*5 +
+                        vecset5[n].y*t*t*t*t*t ;
+                
+                points.push(new Vector2(x,y)) ;
+            }
+
+        }
+    }
+    VectorSet5(x1,y1 , x2,y2 , x3,y3 , x4,y4 , x5,y5) {
+        var set = [] ;
+         
+        set.push(new Vector2(x1,y1)) ;
+        set.push(new Vector2(x2,y2)) ;
+        set.push(new Vector2(x3,y3)) ;
+        set.push(new Vector2(x4,y4)) ;
+        set.push(new Vector2(x5,y5)) ;
+
+        return set ;
+    }
+}
 
 //___________________________________________________________________End Classes
 var intervals = new Intervals() ;
