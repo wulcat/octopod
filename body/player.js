@@ -90,7 +90,7 @@ class Player {
         this.Transform.angle = newAngle ;
         newAngle = newAngle * Math.PI/180 ;
 
-        // this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
+        this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
 
         
         this.UpdateCamera() ;

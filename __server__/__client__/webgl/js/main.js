@@ -1407,10 +1407,10 @@ function Frame() {
     Update() ;
     Draw() ;
 
-    if(debug) Debug(elements.ctx , Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
+    // if(debug) Debug(elements.ctx , Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
     
-    customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
-    customTent.Draw(elements.ctx, Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
+    // customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
+    // customTent.Draw(elements.ctx, Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
 }
 
 var __interpolateMoveSpeed = 1.2 ;
@@ -1472,7 +1472,7 @@ function Update() {
     for(var i = 0 ; i < IDsFood.length ; i++) {
         Foods[IDsFood[i]].Update() ;
     }
-    if(KeyboardHandler.q) {
+    if(KeyboardHandler.qDOWN) {
         for(var i = 0 ; i < IDs.length ; i++) {
              Players[IDs[i]].AddTentacle(Mathf.RandomFloat(30,90) ,
                 Mathf.RandomFloat(0.5,1) ,
