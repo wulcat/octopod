@@ -96,6 +96,14 @@ class Vector2 {
         // var distance = Math.sqrt(a+b);
         return  Math.sqrt(a+b) ;
     }
+    static Set(points) {
+        var set = [] ;
+        for(var i = 0 ; i < points.length ; i += 2) {
+            set.push(new Vector2(points[i] , points[i+1])) ;
+
+        }
+        return set ;
+    }
 }
 
 class Transform {
@@ -1052,20 +1060,15 @@ class MouseTentatcle {
 
     }
     Update(posX , posY) {
-        // var points = new BeizerCurve5Degree.VectorSet5( 0,0 ,
-        //                                                 1,1 ,
-        //                                                 2,2 ,
-        //                                                 3,3 ,
-        //                                                 4,4) ;
-        // var bpoints = BeizerCurve5Degree.Draw(0.1,points) ;                                                
+                                        
     }
     Draw(ctx , x , y , xView , yView) {
-        var points = BeizerCurve5Degree.VectorSet6( 0,0 ,
-                                                    20,-90 ,
-                                                    100,-90 ,
-                                                    120,-20 ,
-                                                    160,-40 ,
-                                                    180,-5) ;
+        var points = Vector2.Set( [ 0,0 ,
+                                    20,-90 ,
+                                    100,-90 ,
+                                    120,-20 ,
+                                    160,-40 ,
+                                    180,-5 ] ) ;
         var bpoints = BeizerCurve5Degree.Draw(ctx , x , y , xView , yView ,30,points) ;       
     }
 }
@@ -1084,7 +1087,6 @@ class BeizerCurve5Degree {
         ctx.beginPath() ;
         for(n = 0 ; n <= 5 ; n++) {
             ctx.moveTo(vecset6[n].x , vecset6[n].y) ;
-            // ctx.lineTo(vecset6[n].x , vecset6[n].y);
             ctx.arc(vecset6[n].x , vecset6[n].y , 4 , 0 , Math.PI*2);
         }
         ctx.stroke() ;
@@ -1101,7 +1103,6 @@ class BeizerCurve5Degree {
         y1 = vecset6[0].y ;
 
         for(t = 0 ; t < 1 ; t += s) {
-            // var tk = 1-t ;
             var x2 = 0 ;
             var y2 = 0 ;
             for(n = 0 ; n <= 5 ; n++) {
@@ -1116,18 +1117,14 @@ class BeizerCurve5Degree {
         ctx.stroke() ;
         ctx.restore() ;
     }
-    static VectorSet6(x1,y1 , x2,y2 , x3,y3 , x4,y4 , x5,y5 , x6,y6) {
-        var set = [] ;
-         
-        set.push(new Vector2(x1,y1)) ;
-        set.push(new Vector2(x2,y2)) ;
-        set.push(new Vector2(x3,y3)) ;
-        set.push(new Vector2(x4,y4)) ;
-        set.push(new Vector2(x5,y5)) ;
-        set.push(new Vector2(x6,y6)) ;
+    // static VectorSet(points) {
+    //     var set = [] ;
+    //     for(var i = 0 ; i < points.length ; i += 2) {
+    //         set.push(new Vector2(points[i] , points[i+1])) ;
 
-        return set ;
-    }
+    //     }
+    //     return set ;
+    // }
 }
 
 //___________________________________________________________________End Classes
