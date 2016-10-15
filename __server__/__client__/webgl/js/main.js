@@ -8,6 +8,11 @@ class Mathf {
         }
         return num ;
     }
+    static NchooseK(n,k) {
+        var d ; 
+        d = Mathf.Factorial(n)/(Mathf.Factorial(k)*Mathf.Factorial(n-k)) ;
+        return d ;
+    }
     static RandomFloat(min, max) {
         return Math.random() * (max - min) + min;
     }
