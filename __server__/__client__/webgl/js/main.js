@@ -1,6 +1,13 @@
 "use strict";
 
 class Mathf {
+    static Factorial(num) {
+        var j = num ;
+        for(var i = 0 ; i < j ; i++) {
+            num *= j-i ;
+        }
+        return num ;
+    }
     static RandomFloat(min, max) {
         return Math.random() * (max - min) + min;
     }
@@ -1067,7 +1074,9 @@ class BeizerCurve5Degree {
         ctx.setTransform(1,0,0,1,x,y) ;
         ctx.beginPath() ;
         for(n = 0 ; n < 5 ; n++) {
-            ctx.lineTo(vecset6[n].x , vecset6[n].y);
+            ctx.moveTo(vecset6[n].x , vecset6[n].y) ;
+            // ctx.lineTo(vecset6[n].x , vecset6[n].y);
+            ctx.arc(vecset6[n].x , vecset6[n].y , 4 , 0 , Math.PI*2);
         }
         ctx.stroke() ;
         ctx.restore() ;
@@ -1075,28 +1084,33 @@ class BeizerCurve5Degree {
         ctx.save() ;
         ctx.setTransform(1,0,0,1,x,y) ;
         ctx.beginPath() ;
-        // for(t = 0 ; t < s ; t += s) {
-        //     var tk = 1-t ;
 
-        //     // for(n = 0 ; n < 5 ; n++) {
-        //         var x1 = tk*tk*tk*tk*tk*vecset6[0].x +
-        //                 tk*tk*tk*tk*vecset6[1].x*t*5 +
-        //                 tk*tk*tk*vecset6[2].x*t*t*10 +
-        //                 tk*tk*vecset6[3].x*t*t*t*10 +
-        //                 tk*vecset6[4].x*t*t*t*t*5 +
-        //                 vecset6[5].x*t*t*t*t*t ;
+
+
+
+        for(t = 0 ; t < s ; t += s) {
+            var tk = 1-t ;
+            var x1 = 0 ;
+            var y1 = 0 ;
+            for(n = 0 ; n < 5 ; n++) {
+                x1 += tk*tk*tk*tk*tk*vecset6[0].x +
+                        tk*tk*tk*tk*vecset6[1].x*t*5 +
+                        tk*tk*tk*vecset6[2].x*t*t*10 +
+                        tk*tk*vecset6[3].x*t*t*t*10 +
+                        tk*vecset6[4].x*t*t*t*t*5 +
+                        vecset6[5].x*t*t*t*t*t ;
                     
-        //         var y1 = tk*tk*tk*tk*tk*vecset6[0].y +
-        //                 tk*tk*tk*tk*vecset6[1].y*t*5 +
-        //                 tk*tk*tk*vecset6[2].y*t*t*10 +
-        //                 tk*tk*vecset6[3].y*t*t*t*10 +
-        //                 tk*vecset6[4].y*t*t*t*t*5 +
-        //                 vecset6[5].y*t*t*t*t*t ;
-        //         console.log(x1,y1);
-        //         ctx.lineTo(x1 , y1) ;
-        //         // points.push(new Vector2(x,y)) ;
-        //     // }
-        // }
+                y1 += tk*tk*tk*tk*tk*vecset6[0].y +
+                        tk*tk*tk*tk*vecset6[1].y*t*5 +
+                        tk*tk*tk*vecset6[2].y*t*t*10 +
+                        tk*tk*vecset6[3].y*t*t*t*10 +
+                        tk*vecset6[4].y*t*t*t*t*5 +
+                        vecset6[5].y*t*t*t*t*t ;
+                console.log(x1,y1);
+                ctx.lineTo(x1 , y1) ;
+                // points.push(new Vector2(x,y)) ;
+            }
+        }
         ctx.stroke() ;
         ctx.restore() ;
     }
