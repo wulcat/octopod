@@ -1023,54 +1023,84 @@ class MouseTentatcle {
 
     }
     Update(posX , posY) {
-        
+        // var points = new BeizerCurve5Degree.VectorSet5( 0,0 ,
+        //                                                 1,1 ,
+        //                                                 2,2 ,
+        //                                                 3,3 ,
+        //                                                 4,4) ;
+        // var bpoints = BeizerCurve5Degree.Draw(0.1,points) ;                                                
     }
     Draw(ctx , x , y , xView , yView) {
+        var points = BeizerCurve5Degree.VectorSet6( 0,0 ,
+                                                    20,90 ,
+                                                    100,90 ,
+                                                    120,20 ,
+                                                    160,40 ,
+                                                    180,5) ;
+        var bpoints = BeizerCurve5Degree.Draw(ctx , x , y , xView , yView ,0.01,points) ;       
 
-        x = x - xView ;
-        y = y - yView ;
-        ctx.save() ;
 
-        ctx.setTransform(1,0,0,1,x,y)
-        ctx.beginPath() ;
-        for(var i = 0 ; i < this.length ; i++) {
-            ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
-        }
-        ctx.stroke() ;
-        ctx.restore() ;
+        // x = x - xView ;
+        // y = y - yView ;
+        // ctx.save() ;
+
+        // ctx.setTransform(1,0,0,1,x,y)
+        // ctx.beginPath() ;
+        // for(var i = 0 ; i < this.length ; i++) {
+        //     ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
+        // }
+        // ctx.stroke() ;
+        // ctx.restore() ;
     }
 }
 class BeizerCurve5Degree {
-    static Draw(steps , vecset5) {
+    static Draw(ctx , x , y , xView , yView , steps , vecset6) {
         var s,t,n,points ;
 
         s = 1/steps ;
         points = [] ;
 
-        for(t = 0 ; t < s ; t += s) {
-            var tk = 1-t ;
+        x = x - xView ;
+        y = y - yView ;
 
-            for(n = 0 ; n < 5 ; n++) {
-                var x = tk*tk*tk*tk*tk*vecset5[n].x +
-                        tk*tk*tk*tk*vecset5[n].x*t*5 +
-                        tk*tk*tk*vecset5[n].x*t*t*10 +
-                        tk*tk*vecset5[n].x*t*t*t*10 +
-                        tk*vecset5[n].x*t*t*t*t*5 +
-                        vecset5[n].x*t*t*t*t*t ;
-                    
-                var y = tk*tk*tk*tk*tk*vecset5[n].y +
-                        tk*tk*tk*tk*vecset5[n].y*t*5 +
-                        tk*tk*tk*vecset5[n].y*t*t*10 +
-                        tk*tk*vecset5[n].y*t*t*t*10 +
-                        tk*vecset5[n].y*t*t*t*t*5 +
-                        vecset5[n].y*t*t*t*t*t ;
-                
-                points.push(new Vector2(x,y)) ;
-            }
-
+        ctx.save() ;
+        ctx.setTransform(1,0,0,1,x,y) ;
+        ctx.beginPath() ;
+        for(n = 0 ; n < 5 ; n++) {
+            ctx.lineTo(vecset6[n].x , vecset6[n].y);
         }
+        ctx.stroke() ;
+        ctx.restore() ;
+
+        ctx.save() ;
+        ctx.setTransform(1,0,0,1,x,y) ;
+        ctx.beginPath() ;
+        // for(t = 0 ; t < s ; t += s) {
+        //     var tk = 1-t ;
+
+        //     // for(n = 0 ; n < 5 ; n++) {
+        //         var x1 = tk*tk*tk*tk*tk*vecset6[0].x +
+        //                 tk*tk*tk*tk*vecset6[1].x*t*5 +
+        //                 tk*tk*tk*vecset6[2].x*t*t*10 +
+        //                 tk*tk*vecset6[3].x*t*t*t*10 +
+        //                 tk*vecset6[4].x*t*t*t*t*5 +
+        //                 vecset6[5].x*t*t*t*t*t ;
+                    
+        //         var y1 = tk*tk*tk*tk*tk*vecset6[0].y +
+        //                 tk*tk*tk*tk*vecset6[1].y*t*5 +
+        //                 tk*tk*tk*vecset6[2].y*t*t*10 +
+        //                 tk*tk*vecset6[3].y*t*t*t*10 +
+        //                 tk*vecset6[4].y*t*t*t*t*5 +
+        //                 vecset6[5].y*t*t*t*t*t ;
+        //         console.log(x1,y1);
+        //         ctx.lineTo(x1 , y1) ;
+        //         // points.push(new Vector2(x,y)) ;
+        //     // }
+        // }
+        ctx.stroke() ;
+        ctx.restore() ;
     }
-    VectorSet5(x1,y1 , x2,y2 , x3,y3 , x4,y4 , x5,y5) {
+    static VectorSet6(x1,y1 , x2,y2 , x3,y3 , x4,y4 , x5,y5 , x6,y6) {
         var set = [] ;
          
         set.push(new Vector2(x1,y1)) ;
@@ -1078,6 +1108,7 @@ class BeizerCurve5Degree {
         set.push(new Vector2(x3,y3)) ;
         set.push(new Vector2(x4,y4)) ;
         set.push(new Vector2(x5,y5)) ;
+        set.push(new Vector2(x6,y6)) ;
 
         return set ;
     }
@@ -1417,7 +1448,7 @@ function Frame() {
 
     if(debug) Debug(elements.ctx , Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
     
-    customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
+    // customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
     customTent.Draw(elements.ctx, Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
 }
 
