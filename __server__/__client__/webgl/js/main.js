@@ -1066,20 +1066,7 @@ class MouseTentatcle {
                                                     120,-20 ,
                                                     160,-40 ,
                                                     180,-5) ;
-        var bpoints = BeizerCurve5Degree.Draw(ctx , x , y , xView , yView ,100,points) ;       
-
-
-        // x = x - xView ;
-        // y = y - yView ;
-        // ctx.save() ;
-
-        // ctx.setTransform(1,0,0,1,x,y)
-        // ctx.beginPath() ;
-        // for(var i = 0 ; i < this.length ; i++) {
-        //     ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
-        // }
-        // ctx.stroke() ;
-        // ctx.restore() ;
+        var bpoints = BeizerCurve5Degree.Draw(ctx , x , y , xView , yView ,30,points) ;       
     }
 }
 class BeizerCurve5Degree {
@@ -1108,35 +1095,23 @@ class BeizerCurve5Degree {
         ctx.beginPath() ;
 
 
+        var x1 , x2 , y1 ,y2 ;
 
+        x1 = vecset6[0].x ;
+        y1 = vecset6[0].y ;
 
-        for(t = 0 ; t < 1 ; t = t+s) {
-            var tk = 1-t ;
-            var x1 = 0 ;
-            var y1 = 0 ;
+        for(t = 0 ; t < 1 ; t += s) {
+            // var tk = 1-t ;
+            var x2 = 0 ;
+            var y2 = 0 ;
             for(n = 0 ; n <= 5 ; n++) {
 
-                x1 += vecset6[n].x * Mathf.RaiseTo(t,n) * Mathf.RaiseTo(1-t , 5-n) * Mathf.NchooseK(5,n) ;
-                y1 += vecset6[n].y * Mathf.RaiseTo(t,n) * Mathf.RaiseTo(1-t , 5-n) * Mathf.NchooseK(5,n) ;
-
-                // x1 += tk*tk*tk*tk*tk*vecset6[0].x +
-                //         tk*tk*tk*tk*vecset6[1].x*t*5 +
-                //         tk*tk*tk*vecset6[2].x*t*t*10 +
-                //         tk*tk*vecset6[3].x*t*t*t*10 +
-                //         tk*vecset6[4].x*t*t*t*t*5 +
-                //         vecset6[5].x*t*t*t*t*t ;
-                    
-                // y1 += tk*tk*tk*tk*tk*vecset6[0].y +
-                //         tk*tk*tk*tk*vecset6[1].y*t*5 +
-                //         tk*tk*tk*vecset6[2].y*t*t*10 +
-                //         tk*tk*vecset6[3].y*t*t*t*10 +
-                //         tk*vecset6[4].y*t*t*t*t*5 +
-                //         vecset6[5].y*t*t*t*t*t ;
-                console.log(t,s) ;
-                console.log(x1,y1,t,n,Mathf.RaiseTo(t,n),Mathf.RaiseTo(1-t , 5-n) ,Mathf.NchooseK(5,n));
-                ctx.lineTo(x1 , y1) ;
-                // points.push(new Vector2(x,y)) ;
+                x2 += vecset6[n].x * Mathf.RaiseTo(t,n) * Mathf.RaiseTo(1-t , 5-n) * Mathf.NchooseK(5,n) ;
+                y2 += vecset6[n].y * Mathf.RaiseTo(t,n) * Mathf.RaiseTo(1-t , 5-n) * Mathf.NchooseK(5,n) ;
             }
+            x1 = x2 ;
+            y1 = y2 ;
+            ctx.lineTo(x1 , y1) ;
         }
         ctx.stroke() ;
         ctx.restore() ;
