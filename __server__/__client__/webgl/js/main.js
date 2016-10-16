@@ -252,6 +252,31 @@ class Keyboard {
         this.pDOWNCoolDown = true ;
         this.pUP = false ;
 
+        this.t = false ;
+        this.tDOWN = false ;
+        this.tDOWNCoolDown = true ;
+        this.tUP = false ;
+
+        this.h = false ;
+        this.hDOWN = false ;
+        this.hDOWNCoolDown = true ;
+        this.hUP = false ;
+
+        this.j = false ;
+        this.jDOWN = false ;
+        this.jDOWNCoolDown = true ;
+        this.jUP = false ;
+
+        this.k = false ;
+        this.kDOWN = false ;
+        this.kDOWNCoolDown = true ;
+        this.kUP = false ;
+
+        this.l = false ;
+        this.lDOWN = false ;
+        this.lDOWNCoolDown = true ;
+        this.lUP = false ;
+
 
         var t = this ;
         canvas.addEventListener("keypress" , function(event) {
@@ -271,7 +296,7 @@ class Keyboard {
             }
         } , false);
         window.addEventListener("keydown" , function(event) {
-            // console.log(event.keyCode);
+            console.log(event.keyCode);
             switch(event.keyCode) {
                 case 13 :
                     t.enter = true ;
@@ -280,11 +305,39 @@ class Keyboard {
                         t.enterDOWNCoolDown = false ;
                     }
                     break ;
+                case 72 :
+                    t.h = true ;
+                    if(t.hDOWNCoolDown == true) {
+                        t.hDOWN = true ;
+                        t.hDOWNCoolDown = false ;
+                    }
+                    break ;
                 case 73 :
                     t.i = true ;
                     if(t.iDOWNCoolDown == true) {
                         t.iDOWN = true ;
                         t.iDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 74 :
+                    t.j = true ;
+                    if(t.jDOWNCoolDown == true) {
+                        t.jDOWN = true ;
+                        t.jDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 75 :
+                    t.k = true ;
+                    if(t.kDOWNCoolDown == true) {
+                        t.kDOWN = true ;
+                        t.kDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 76 :
+                    t.l = true ;
+                    if(t.lDOWNCoolDown == true) {
+                        t.lDOWN = true ;
+                        t.lDOWNCoolDown = false ;
                     }
                     break ;
                 case 79 :
@@ -315,6 +368,13 @@ class Keyboard {
                         t.qDOWNCoolDown = false ;
                     }
                     break ;
+                case 84 :
+                    t.t = true ;
+                    if(t.tDOWNCoolDown == true) {
+                        t.tDOWN = true ;
+                        t.tDOWNCoolDown = false ;
+                    }
+                    break ;
                 case 85 :
                     t.u = true ;
                     if(t.uDOWNCoolDown == true) {
@@ -340,10 +400,38 @@ class Keyboard {
                     t.enterDOWNCoolDown = true ;
                     t.enterUP = true ;
                     break ;
+                case 72 :
+                    t.h= true ;
+                    if(t.hDOWNCoolDown == true) {
+                        t.hDOWN = true ;
+                        t.hDOWNCoolDown = false ;
+                    }
+                    break ;
                 case 73 :
                     t.i = false ;
                     t.iDOWNCoolDown = true ;
                     t.iUP = true ;
+                    break ;
+                case 74 :
+                    t.j = true ;
+                    if(t.jDOWNCoolDown == true) {
+                        t.jDOWN = true ;
+                        t.jDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 75 :
+                    t.k = true ;
+                    if(t.kDOWNCoolDown == true) {
+                        t.kDOWN = true ;
+                        t.kDOWNCoolDown = false ;
+                    }
+                    break ;
+                case 76 :
+                    t.l = true ;
+                    if(t.lDOWNCoolDown == true) {
+                        t.lDOWN = true ;
+                        t.lDOWNCoolDown = false ;
+                    }
                     break ;
                 case 79 :
                     t.o = false ;
@@ -364,6 +452,13 @@ class Keyboard {
                     t.s = false ;
                     t.sDOWNCoolDown = true ;
                     t.sUP = true ;
+                    break ;
+                case 84 :
+                    t.t = true ;
+                    if(t.tDOWNCoolDown == true) {
+                        t.tDOWN = true ;
+                        t.tDOWNCoolDown = false ;
+                    }
                     break ;
                 case 85 :
                     t.u = false ;
@@ -404,6 +499,21 @@ class Keyboard {
 
         this.pDOWN = false ;
         this.pUP = false ;
+
+        this.tDOWN = false ;
+        this.tUP = false ;
+
+        this.hDOWN = false ;
+        this.hUP = false ;
+        
+        this.jDOWN = false ;
+        this.jUP = false ;
+
+        this.kDOWN = false ;
+        this.kUP = false ;
+
+        this.lDOWN = false ;
+        this.lUP = false ;
     }
 }
 
@@ -1050,30 +1160,39 @@ class Food {
 class MouseTentatcle {
     constructor(l,t1,t2) {
         this.length = l ;
-        this.nodes = [] ;
-        for(var i = 0 ; i < this.length ; i++) {
-            this.nodes.push(new TentacleNode(0,0));
-        }
         this.tension1 = t1 ;
         this.tension2 = t2 ;
 
-
-    }
-    Update(posX , posY) {
-                                        
-    }
-    Draw(ctx , x , y , xView , yView) {
-        var points = Vector2.Set( [ 0,0 ,
+        this.nodes = Vector2.Set( [ 0,0 ,
                                     20,-90 ,
                                     100,-90 ,
                                     120,-20 ,
                                     160,-40 ,
                                     180,-5 ] ) ;
-        var bpoints = BeizerCurve5Degree.Draw(ctx , x , y , xView , yView ,30,points) ;       
+
+        // for(var i = 0 ; i < l ; i++) {
+        //     this.nodes.push(new TentacleNode(0,0));
+        // }
+    }
+    Update(posX , posY) {
+        // if(KeyboardHandler.p)
+            // this.nodes                        
+    }
+    Draw(ctx , x , y , xView , yView) {
+        // var points = Vector2.Set( [ 0,0 ,
+        //                             20,-90 ,
+        //                             100,-90 ,
+        //                             120,-20 ,
+        //                             160,-40 ,
+        //                             180,-5 ] ) ;
+        var bpoints = BeizerCurve.Draw(ctx , x , y , xView , yView ,30,this.nodes) ;
+    }
+    Debug() {
+
     }
 }
-class BeizerCurve5Degree {
-    static Draw(ctx , x , y , xView , yView , steps , vecset6) {
+class BeizerCurve {
+    static Draw(ctx , x , y , xView , yView , steps , pts) {
         var s,t,n,points ;
 
         s = 1/steps ;
@@ -1086,8 +1205,8 @@ class BeizerCurve5Degree {
         ctx.setTransform(1,0,0,1,x,y) ;
         ctx.beginPath() ;
         for(n = 0 ; n <= 5 ; n++) {
-            ctx.moveTo(vecset6[n].x , vecset6[n].y) ;
-            ctx.arc(vecset6[n].x , vecset6[n].y , 4 , 0 , Math.PI*2);
+            ctx.moveTo(pts[n].x , pts[n].y) ;
+            ctx.arc(pts[n].x , pts[n].y , 4 , 0 , Math.PI*2);
         }
         ctx.stroke() ;
         ctx.restore() ;
@@ -1099,16 +1218,16 @@ class BeizerCurve5Degree {
 
         var x1 , x2 , y1 ,y2 ;
 
-        x1 = vecset6[0].x ;
-        y1 = vecset6[0].y ;
+        x1 = pts[0].x ;
+        y1 = pts[0].y ;
 
         for(t = 0 ; t < 1 ; t += s) {
             var x2 = 0 ;
             var y2 = 0 ;
             for(n = 0 ; n <= 5 ; n++) {
 
-                x2 += vecset6[n].x * Mathf.RaiseTo(t,n) * Mathf.RaiseTo(1-t , 5-n) * Mathf.NchooseK(5,n) ;
-                y2 += vecset6[n].y * Mathf.RaiseTo(t,n) * Mathf.RaiseTo(1-t , 5-n) * Mathf.NchooseK(5,n) ;
+                x2 += pts[n].x * Mathf.RaiseTo(t,n) * Mathf.RaiseTo(1-t , 5-n) * Mathf.NchooseK(5,n) ;
+                y2 += pts[n].y * Mathf.RaiseTo(t,n) * Mathf.RaiseTo(1-t , 5-n) * Mathf.NchooseK(5,n) ;
             }
             x1 = x2 ;
             y1 = y2 ;
@@ -1452,7 +1571,7 @@ function Loading() {
     elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height);
 
 }
-var customTent = new MouseTentatcle(90,0.1,2);
+var customTent = new MouseTentatcle(6,0.1,2);
 function Frame() {
     // console.log(event);
     
