@@ -401,11 +401,9 @@ class Keyboard {
                     t.enterUP = true ;
                     break ;
                 case 72 :
-                    t.h= true ;
-                    if(t.hDOWNCoolDown == true) {
-                        t.hDOWN = true ;
-                        t.hDOWNCoolDown = false ;
-                    }
+                    t.h = false ;
+                    t.hDOWNCoolDown = true ;
+                    t.hUP = true ;
                     break ;
                 case 73 :
                     t.i = false ;
@@ -413,25 +411,19 @@ class Keyboard {
                     t.iUP = true ;
                     break ;
                 case 74 :
-                    t.j = true ;
-                    if(t.jDOWNCoolDown == true) {
-                        t.jDOWN = true ;
-                        t.jDOWNCoolDown = false ;
-                    }
+                    t.j = false ;
+                    t.jDOWNCoolDown = true ;
+                    t.jUP = true ;
                     break ;
                 case 75 :
-                    t.k = true ;
-                    if(t.kDOWNCoolDown == true) {
-                        t.kDOWN = true ;
-                        t.kDOWNCoolDown = false ;
-                    }
+                    t.k = false ;
+                    t.kDOWNCoolDown = true ;
+                    t.kUP = true ;
                     break ;
                 case 76 :
-                    t.l = true ;
-                    if(t.lDOWNCoolDown == true) {
-                        t.lDOWN = true ;
-                        t.lDOWNCoolDown = false ;
-                    }
+                    t.l = false ;
+                    t.lDOWNCoolDown = true ;
+                    t.lUP = true ;
                     break ;
                 case 79 :
                     t.o = false ;
@@ -454,11 +446,9 @@ class Keyboard {
                     t.sUP = true ;
                     break ;
                 case 84 :
-                    t.t = true ;
-                    if(t.tDOWNCoolDown == true) {
-                        t.tDOWN = true ;
-                        t.tDOWNCoolDown = false ;
-                    }
+                    t.t = false ;
+                    t.tDOWNCoolDown = true ;
+                    t.tUP = true ;
                     break ;
                 case 85 :
                     t.u = false ;
@@ -1175,8 +1165,11 @@ class MouseTentatcle {
         // }
     }
     Update(posX , posY) {
-        // if(KeyboardHandler.p)
-            // this.nodes                        
+        if(KeyboardHandler.t)
+            this.nodes[1].y += 1 ;
+        if(KeyboardHandler.y) 
+            this.nodes[1].y -= 1 ;
+                                    
     }
     Draw(ctx , x , y , xView , yView) {
         // var points = Vector2.Set( [ 0,0 ,
@@ -1580,7 +1573,7 @@ function Frame() {
 
     if(debug) Debug(elements.ctx , Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
     
-    // customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
+    customTent.Update(debugData.maxBoundX , debugData.maxBoundY) ;
     customTent.Draw(elements.ctx, Players[IDs[0]].Transform.position.x , Players[IDs[0]].Transform.position.y , camera.xView , camera.yView) ;
 }
 
