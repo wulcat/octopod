@@ -1154,11 +1154,11 @@ class MouseTentatcle {
         this.tension2 = t2 ;
 
         this.nodes = Vector2.Set( [ 0,0 ,
-                                    20,-90 ,
+                                    50,-40 ,
                                     100,-90 ,
-                                    120,-20 ,
-                                    160,-40 ,
-                                    180,-5 ] ) ;
+                                    150,-90 ,
+                                    200,-40 ,
+                                    250,0 ] ) ;
 
         // for(var i = 0 ; i < l ; i++) {
         //     this.nodes.push(new TentacleNode(0,0));
@@ -1169,6 +1169,30 @@ class MouseTentatcle {
             this.nodes[1].y += 1 ;
         if(KeyboardHandler.y) 
             this.nodes[1].y -= 1 ;
+
+        if(KeyboardHandler.u)
+            this.nodes[2].y += 1 ;
+        if(KeyboardHandler.i) 
+            this.nodes[2].y -= 1 ;
+
+        if(KeyboardHandler.o)
+            this.nodes[3].y += 1 ;
+        if(KeyboardHandler.p) 
+            this.nodes[3].y -= 1 ;
+
+        if(KeyboardHandler.h)
+            this.nodes[4].y += 1 ;
+        if(KeyboardHandler.j) 
+            this.nodes[4].y -= 1 ;
+
+        if(KeyboardHandler.k)
+            this.nodes[5].y += 1 ;
+        if(KeyboardHandler.l) 
+            this.nodes[5].y -= 1 ;
+        // if(KeyboardHandler.t)
+            // this.nodes[1].y += 1 ;
+        // if(KeyboardHandler.y) 
+            // this.nodes[1].y -= 1 ;
                                     
     }
     Draw(ctx , x , y , xView , yView) {
