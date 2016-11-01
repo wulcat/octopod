@@ -1165,34 +1165,37 @@ class MouseTentatcle {
         // }
     }
     Update(posX , posY) {
-        if(KeyboardHandler.t)
-            this.nodes[1].y += 1 ;
-        if(KeyboardHandler.y) 
-            this.nodes[1].y -= 1 ;
 
-        if(KeyboardHandler.u)
-            this.nodes[2].y += 1 ;
-        if(KeyboardHandler.i) 
-            this.nodes[2].y -= 1 ;
 
-        if(KeyboardHandler.o)
-            this.nodes[3].y += 1 ;
-        if(KeyboardHandler.p) 
-            this.nodes[3].y -= 1 ;
-
-        if(KeyboardHandler.h)
-            this.nodes[4].y += 1 ;
-        if(KeyboardHandler.j) 
-            this.nodes[4].y -= 1 ;
-
-        if(KeyboardHandler.k)
-            this.nodes[5].y += 1 ;
-        if(KeyboardHandler.l) 
-            this.nodes[5].y -= 1 ;
+        
         // if(KeyboardHandler.t)
-            // this.nodes[1].y += 1 ;
+        //     this.nodes[1].y += 1 ;
         // if(KeyboardHandler.y) 
-            // this.nodes[1].y -= 1 ;
+        //     this.nodes[1].y -= 1 ;
+
+        // if(KeyboardHandler.u)
+        //     this.nodes[2].y += 1 ;
+        // if(KeyboardHandler.i) 
+        //     this.nodes[2].y -= 1 ;
+
+        // if(KeyboardHandler.o)
+        //     this.nodes[3].y += 1 ;
+        // if(KeyboardHandler.p) 
+        //     this.nodes[3].y -= 1 ;
+
+        // if(KeyboardHandler.h)
+        //     this.nodes[4].y += 1 ;
+        // if(KeyboardHandler.j) 
+        //     this.nodes[4].y -= 1 ;
+
+        // if(KeyboardHandler.k)
+        //     this.nodes[5].y += 1 ;
+        // if(KeyboardHandler.l) 
+        //     this.nodes[5].y -= 1 ;
+        // // if(KeyboardHandler.t)
+        //     // this.nodes[1].y += 1 ;
+        // // if(KeyboardHandler.y) 
+        //     // this.nodes[1].y -= 1 ;
                                     
     }
     Draw(ctx , x , y , xView , yView) {
