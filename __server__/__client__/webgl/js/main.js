@@ -1009,54 +1009,13 @@ class Food {
         ctx.restore() ;
     }
 }
-// var daf = false ;
+
 class MouseTentatcle {
-    constructor(l,t1,t2,maxAngle) {
-        this.length = l ;
-        this.nodes = [] ;
-        for(var i = 0 ; i < this.length ; i++) {
-            this.nodes.push(new TentacleNode(0,0));
-        }
-        this.tension1 = t1 ;
-        this.tension2 = t2 ;
-        this.maxAngle = maxAngle ;
-
-        var x = this.length * Math.PI/180 ;
-        var y = Math.sin(Math.cos(x))*x ;
-
-        this.nodes[this.nodes.length-1].x = x ;
-        this.nodes[this.nodes.length-1].y = y ;
+    constructor() {
+     
     }
     Update(posX , posY) {
-        d2 = d2 == 0 ? 1 : d2 ;
-        d1 = d1 == 0 ? 1 : d1 ;
-        
-        // var adf ;
-        for(var i=0 ; i < this.length ; i++) {
-            var angle = i * Math.PI/180 ;
-            var x = angle ;
-            var y = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2) ;
-            // adf = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2) ;
-            this.nodes[i].x = x ;
-            this.nodes[i].y = y ;
-        }
-
-        var d1 = Vector2.Distance(new Vector2(0,0) , new Vector2(posX , 0));
-        var d2 = Vector2.Distance(new Vector2(0,0) , new Vector2(this.nodes[this.nodes.length-1].x,this.nodes[this.nodes.length-1].y)) ;
-
-        var m = d1/d2 ;
-
-        for(var i = 0 ; i < this.length ; i++) {
-            this.nodes[i].x *= m ;
-            this.nodes[i].y *= 90 ;
-            
-            var angle = Math.acos(posX/debugData.totalLengthBound) ;
-            var y = debugData.wideLengthMultiplier * Math.sin(angle) ;
-            
-            var angle1 = Math.atan2(posX,y) ;
-            angle1 = Math.asin(Math.cos(angle1));
-            this.nodes[i].y *= angle1 ;
-        }
+       
     }
     Draw(ctx , x , y , xView , yView) {
 
@@ -1066,9 +1025,9 @@ class MouseTentatcle {
 
         ctx.setTransform(1,0,0,1,x,y)
         ctx.beginPath() ;
-        for(var i = 0 ; i < this.length ; i++) {
-            ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
-        }
+        // for(var i = 0 ; i < this.length ; i++) {
+        //     ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
+        // }
         ctx.stroke() ;
         ctx.restore() ;
     }
@@ -1400,7 +1359,7 @@ function Loading() {
     elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height);
 
 }
-var customTent = new MouseTentatcle(90,50,30 , 50);
+var customTent = new MouseTentatcle();
 function Frame() {
     // console.log(event);
     
