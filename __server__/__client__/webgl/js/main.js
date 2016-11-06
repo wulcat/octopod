@@ -664,7 +664,7 @@ class Tentacle {
     }
 }
 class Camera {
-    constructor(xView , yView , canvasWidth , canvasHeight , worldWidth , worldHeight) { // canvas widht and height will constant depending upon server size
+    constructor(xView , yView , canvasWidth , canvasHeight , worldWidth , worldHeight) { // canvas width and height will constant depending upon server size
         this.xView = xView || 0;
         this.yView = yView || 0;
 
@@ -1010,28 +1010,74 @@ class Food {
     }
 }
 
-class MouseTentatcle {
-    constructor() {
-     
-    }
-    Update(posX , posY) {
+// class MouseTentatcle {
+//     constructor(origin, depth, branchLength, segmentCoef, theta) {
+//         var lineCoef = 0.7;
+// 		this.origin = origin;
+// 		this.base = new Particle(origin);
+// 		this.root = new Particle(origin.add(new Vec2(0,10)));
+		
+
+// 		var composite = new this.Composite();
+// 		composite.particles.push(this.base);
+// 		composite.particles.push(this.root);
+// 		composite.pin(0);
+// 		composite.pin(1);
+
+//         var firstBranch = MouseTentatcle.Branch(this.base, 0, depth, segmentCoef, new Vec2(0,-1));
+		
+// 		composite.constraints.push(new AngleConstraint(this.root, this.base, firstBranch, 1));
+		
+// 		// animates the tree at the beginning
+// 		var noise = 10;
+// 		var i;
+// 		for (i=0;i<composite.particles.length;++i)
+// 			composite.particles[i].pos.mutableAdd(new Vec2(Math.floor(Math.random()*noise, Math.floor(Math.random()*noise))));
+
+// 		this.composites.push(composite);
+// 		return composite;
+//     }
+//     static Branch(parent, i, nMax, coef, normal) {
+//         var particle = new Particle(parent.pos.add(normal.scale(branchLength*coef)));
+// 			composite.particles.push(particle);
+			
+// 			var dc = new DistanceConstraint(parent, particle, lineCoef);
+// 			dc.p = i/nMax; // a hint for drawing
+// 			composite.constraints.push(dc);
+			
+// 			particle.leaf = !(i < nMax);
+			
+// 			if (i < nMax)
+// 			{
+// 				var a = MouseTentatcle.Branch(particle, i+1, nMax, coef*coef, normal.rotate(new Vec2(0,0), -theta));
+// 				// var b = branch(particle, i+1, nMax, coef*coef, normal.rotate(new Vec2(0,0), theta));
+				
+				
+// 				var jointStrength = lerp(0.7, 0, i/nMax);
+// 				composite.constraints.push(new AngleConstraint(parent, particle, a, jointStrength));
+// 				// composite.constraints.push(new AngleConstraint(parent, particle, b, jointStrength));
+// 			}
+			
+// 			return particle;
+//     }
+//     Update(posX , posY) {
        
-    }
-    Draw(ctx , x , y , xView , yView) {
+//     }
+//     Draw(ctx , x , y , xView , yView) {
 
-        x = x - xView ;
-        y = y - yView ;
-        ctx.save() ;
+//         x = x - xView ;
+//         y = y - yView ;
+//         ctx.save() ;
 
-        ctx.setTransform(1,0,0,1,x,y)
-        ctx.beginPath() ;
-        // for(var i = 0 ; i < this.length ; i++) {
-        //     ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
-        // }
-        ctx.stroke() ;
-        ctx.restore() ;
-    }
-}
+//         ctx.setTransform(1,0,0,1,x,y)
+//         ctx.beginPath() ;
+//         // for(var i = 0 ; i < this.length ; i++) {
+//         //     ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
+//         // }
+//         ctx.stroke() ;
+//         ctx.restore() ;
+//     }
+// }
 
 
 //___________________________________________________________________End Classes
@@ -1301,20 +1347,33 @@ window.onresize = function() {
         room.Draw(ctx , camera. xView , camera.yView);
 }
 
+var sim  ; //= new VerletJS(width, height, canvas);
 window.onload = function() {
 
     var canvas = document.getElementById("game" );
     var ctx = canvas.getContext("2d");
     canvas.style.display = "flex" ;
 
-    canvas.width = window.innerWidth ;
-    canvas.height = window.innerHeight ;
+    var width , height ;
+
+    width = window.innerWidth ;
+    height = window.innerHeight ;
+
+    canvas.width = width ;
+    canvas.height = width ;
+
+    sim = new VerletJS(width, width, canvas);
 
     MouseHandler = new Mouse(canvas) ;
     KeyboardHandler = new Keyboard(canvas) ;
     elements.canvas = canvas ;
     elements.ctx = ctx ;
 
+
+    sim.gravity = new Vec2(0,0);
+    sim.friction = 0.98;
+	
+    var tree1 = sim.tree(new Vec2(width/2,height-120), 5, 70, 0.95, (Math.PI/2)/3);
     // var FPS =30 ;
     // var INTERVAL = 1000/FPS ;
     // var STEP = INTERVAL/1000 ;
@@ -1359,7 +1418,7 @@ function Loading() {
     elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height);
 
 }
-var customTent = new MouseTentatcle();
+// var customTent = new MouseTentatcle();
 function Frame() {
     // console.log(event);
     
@@ -1394,9 +1453,15 @@ function Draw() {
         // console.log(IDs[i] +" , "+socket.id);
     }
 
-    
+    sim.draw();
 }
+
 function Update() {
+   
+
+    sim.frame(16);
+    
+
     if(MouseHandler.left) {
         socket.emit("Bind-Tentacle" , MouseHandler.position.x - window.innerWidth/2 , MouseHandler.position.y - window.innerHeight/2) ;
     }
