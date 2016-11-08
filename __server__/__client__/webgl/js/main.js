@@ -1457,11 +1457,6 @@ function Draw() {
 }
 
 function Update() {
-   
-
-    sim.frame(16);
-    
-
     if(MouseHandler.left) {
         socket.emit("Bind-Tentacle" , MouseHandler.position.x - window.innerWidth/2 , MouseHandler.position.y - window.innerHeight/2) ;
     }
@@ -1503,6 +1498,8 @@ function Update() {
                 5 , 4);
         }
     }
+    sim.frame(16);
+    
     camera.Update();
 
     MouseHandler.Reset() ;
