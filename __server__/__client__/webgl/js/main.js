@@ -1453,7 +1453,7 @@ function Draw() {
         // console.log(IDs[i] +" , "+socket.id);
     }
 
-    sim.draw();
+    // sim.draw();
 }
 
 function Update() {
