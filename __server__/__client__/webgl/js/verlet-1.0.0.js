@@ -486,16 +486,16 @@ function VerletJS(width, height, canvas) {
 	this.selectionRadius = 20;
 	// this.highlightColor = "#4f545c";
 	
-	this.bounds = function (particle) {
-		if (particle.pos.y > this.height-1)
-			particle.pos.y = this.height-1;
+	// this.bounds = function (particle) {
+	// 	if (particle.pos.y > this.height-1)
+	// 		particle.pos.y = this.height-1;
 		
-		if (particle.pos.x < 0)
-			particle.pos.x = 0;
+	// 	if (particle.pos.x < 0)
+	// 		particle.pos.x = 0;
 
-		if (particle.pos.x > this.width-1)
-			particle.pos.x = this.width-1;
-	}
+	// 	if (particle.pos.x > this.width-1)
+	// 		particle.pos.x = this.width-1;
+	// }
 	
 	var _this = this;
 	
@@ -592,11 +592,11 @@ VerletJS.prototype.frame = function(step) {
 	}
 	
 	// bounds checking
-	for (c in this.composites) {
-		var particles = this.composites[c].particles;
-		for (i in particles)
-			this.bounds(particles[i]);
-	}
+	// for (c in this.composites) {
+	// 	var particles = this.composites[c].particles;
+	// 	for (i in particles)
+	// 		this.bounds(particles[i]);
+	// }
 }
 
 // VerletJS.prototype.draw = function() {
