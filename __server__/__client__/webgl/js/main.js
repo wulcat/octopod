@@ -1435,8 +1435,7 @@ var __interpolateMoveSpeed = 1.2 ;
 // var __interpolateAngleSpeed = 2.5 ;
 
 function Draw() {
-
-    
+   
 
     room.Draw(elements.ctx , camera.xView , camera.yView) ;
     
@@ -1453,7 +1452,23 @@ function Draw() {
         // console.log(IDs[i] +" , "+socket.id);
     }
 
-    // sim.draw();
+    var c , i ;
+    c=0;
+    i=0;
+    var ctx = elements.ctx ;
+    for (c in sim.composites) {
+		for (i in sim.composites[c].particles) {
+			var particles = sim.composites[c].particles;
+            
+            ctx.save() ;
+            ctx.beginPath() ;
+            ctx.arc(particles[i].pos.x , particles[i].pos.y , 10,0,Math.PI*2,false) ;
+            ctx.stroke() ;
+            ctx.fill() ;
+            ctx.restore() ;
+		}
+	}
+
 }
 
 function Update() {
