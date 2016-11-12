@@ -52,7 +52,7 @@ exports.AngleConstraint = AngleConstraint
 
 function DistanceConstraint(a, b, stiffness, distance /*optional*/) {
 	this.a = a; // A is particle
-	this.b = b;
+	this.b = b; 
 	this.distance = typeof distance != "undefined" ? distance : a.pos.sub(b.pos).length();
 	this.stiffness = stiffness;
 }
@@ -551,14 +551,15 @@ Composite.prototype.pin = function(index, pos) {
 
 VerletJS.prototype.frame = function(step) {
 	var i, j, c;
-
+	// console.log(this.composites.length);
 	for (c in this.composites) {
+		
 		for (i in this.composites[c].particles) {
 			var particles = this.composites[c].particles;
 			// console.log(particles[i]);
 			// calculate velocity
 			var velocity = particles[i].pos.sub(particles[i].lastPos).scale(this.friction);
-		
+			// velocity = particles[i]
 			// ground friction
 			if (particles[i].pos.y >= this.height-1 && velocity.length2() > 0.000001) {
 				var m = velocity.length();

@@ -4,6 +4,8 @@ var Geometry = require('../module/geometry.js');
 var Component = require('../module/component.js');
 // var Geometry = require('../module/geometry.js');
 var OctoMath = require('../module/octomath.js');
+
+var Tentacle = require('../body/tentacle.js') ;
 class Player {
     constructor(oath , id , name , secId) {
         this.oath = oath ;
@@ -14,6 +16,7 @@ class Player {
         this.Camera = new Component.Camera(0,0,700,550);
         this.status = false ;
         
+        this.tentacles = [] ;
         // this.oath = "socket" ;
         this.secId = secId ;
         // this.range = 0 ;
@@ -55,6 +58,10 @@ class Player {
         object_player["Transform"] = this.Transform ;
         object_player["oath"] = this.oath ;
         object_player["active"] = false ;
+        object_player["tentacles"] = [] ;
+
+        for(var i=0 ; i < this.tentacles.length ; i++) 
+            object_player["tentacles"].push(this.tentacles[i].particles) ;
 
         return object_player ;
         
@@ -65,9 +72,21 @@ class Player {
         // t.Transform.angle = 0 ;
         this.Updating = setInterval ( function() { t.Update(); } , time) ;
     }
-  
+    AddTentacle() {
+        // console.log(Tentacle) ;
+        // console.log(OctoMath) ;
+        // console.log(Geometry) ;
+        // console.log(Component) ;
+        this.tentacles.push(new Tentacle(this.Transform.position , 5, 70, 0.95, (Math.PI/2)/3)) ;
+    }
+    FocusTentacles(node) {
+        for(var i = 0 ; i < this.tentacles.length ; i++)
+            this.tentacles[i].particles[this.tentacles[i].particles.length - 1].pos.Renew(node) ;
+    }       
     Update() {
-
+        for(var i = 0 ; i < this.tentacles.length ; i++) 
+            this.tentacles[i].Update() ;
+        
         if(this.Jerk > this.JerkMax) {
             this.JerkSpeed = -Math.abs(this.JerkSpeed) ;
         }

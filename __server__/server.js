@@ -88,7 +88,7 @@ fw.on('connection' , function(socket) {
             if(Players["/#"+id] == null) {
                  var __player = new Octopod.Body.Player(oath , id , secId) ;
                 __player.Init(10,1,5);
-                
+                __player.AddTentacle() ;
                 Players["/#"+id] = __player ;
 
                 socket.init = true ;
@@ -170,7 +170,7 @@ fw.on('connection' , function(socket) {
         // Players[socket.id].Stop() ;
         // Players[socket.id] = null ;
     });
-    socket.on('Bind-Tentacle' , function(x,y) {
+    socket.on('Bind-Tentacle' , function(x,y) { // trash in this branch
         var angleToMouse = Octopod.OctoMath.Angle.MouseToAngle(x,y) * Math.PI/180 ;
         var player = Players[socket.id];
         var d1 = Octopod.Geometry.Vector2.Distance(
