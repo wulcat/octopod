@@ -817,25 +817,27 @@ class Body {
         ctx.restore();
         ctx.save() ;
        
-        // if(this.tentacle1) {
-        // var c , i ;
-        // c=0;
-        // i=0;
-        // console.log(this.tentacle1[0]) ;
-        // var ctx = elements.ctx ;
-        // for (i in this.tentacle1) {
-        //     for (j in this.tentacle1.pos) {
-        //         var particles = this.tentacle1[i] ;
-            
-        //         ctx.save() ;
-        //         ctx.beginPath() ;
-        //         ctx.arc(particles[j].pos.x , particles[j].pos.y , 10,0,Math.PI*2,false) ;
-        //         ctx.stroke() ;
-        //         ctx.fill() ;
-        //         ctx.restore() ;
-        //     }
-        // }
-        // }
+        if(this.tentacle1) {
+            // var c , i ;
+            // c=0;
+            // i=0;
+            // console.log(this.tentacle1[0]) ;
+            var ctx = elements.ctx ;
+            for (var i = 0 ; i < this.tentacle1.length ; i++) {
+                for (var j = 0 ; j < this.tentacle1[i].length ; j++) {
+                    var particles = this.tentacle1[i] ;
+                
+                    ctx.save() ;
+                    ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                    ctx.beginPath() ;
+                    ctx.arc(particles[j].pos.x , particles[j].pos.y , 3,0,Math.PI*2,false) ;
+                    ctx.stroke() ;
+                    ctx.fill() ;
+                    ctx.restore() ;
+                    // console.log(particles[j].pos);
+                }
+            }
+        }
 
         // console.log(ctx.measureText(width));
         ctx.font="23px Georgia";
@@ -1264,7 +1266,7 @@ function Init() {
                     Players[data.id].newTransform.position = data.Transform.position ;
 
 
-                    // Players[data.id].tentacle1 = data.tentacles ;
+                    Players[data.id].tentacle1 = data.tentacles ;
                     // var c , i ;
                     // c=0;
                     // i=0;
