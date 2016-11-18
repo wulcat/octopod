@@ -1355,7 +1355,7 @@ window.onload = function() {
     height = window.innerHeight ;
 
     canvas.width = width ;
-    canvas.height = width ;
+    canvas.height = height ;
 
     // sim = new VerletJS(width, width, canvas);
 
