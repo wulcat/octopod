@@ -80,8 +80,10 @@ class Player {
         this.tentacles.push(new Tentacle(this.Transform.position , 5, 70, 0.95, (Math.PI/2)/3)) ;
     }
     FocusTentacles(node) {
-        for(var i = 0 ; i < this.tentacles.length ; i++)
-            this.tentacles[i].particles[this.tentacles[i].particles.length - 1].pos.Renew(node) ;
+        for(var i = 0 ; i < this.tentacles.length ; i++) {}
+            // this.tentacles[i].particles[18].pos.Renew(node) ;
+
+            // this.tentacles[i].particles[this.tentacles[i].particles.length - 1].pos.Renew(node) ;
     }       
     Update() {
         for(var i = 0 ; i < this.tentacles.length ; i++) 
@@ -109,7 +111,7 @@ class Player {
         this.Transform.angle = newAngle ;
         newAngle = newAngle * Math.PI/180 ;
 
-        this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
+        // this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
 
         
         this.UpdateCamera() ;

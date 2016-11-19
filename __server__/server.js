@@ -171,34 +171,40 @@ fw.on('connection' , function(socket) {
         // Players[socket.id] = null ;
     });
     socket.on('Bind-Tentacle' , function(x,y) { // trash in this branch
-        var angleToMouse = Octopod.OctoMath.Angle.MouseToAngle(x,y) * Math.PI/180 ;
+
+
+
+        // var angleToMouse = Octopod.OctoMath.Angle.MouseToAngle(x,y) * Math.PI/180 ;
         var player = Players[socket.id];
-        var d1 = Octopod.Geometry.Vector2.Distance(
-            new Octopod.Geometry.Vector2(x,y) ,
-            new Octopod.Geometry.Vector2() 
-        )
-        // var c_angle = player.Transform.angle ;
+        // console.log(player.tentacles[0].particles.length);
+        player.tentacles[0].particles[7].pos.Renew(new Octopod.Geometry.Vector2(x,y));
+        
+        // var d1 = Octopod.Geometry.Vector2.Distance(
+        //     new Octopod.Geometry.Vector2(x,y) ,
+        //     new Octopod.Geometry.Vector2() 
+        // )
+        // // var c_angle = player.Transform.angle ;
 
-        var boundX = Math.cos(angleToMouse-Math.PI/2)*player.totalLengthBound ;
-        // var boundY = Math.sin(angleToMouse-Math.PI/2)*player.totalLengthBound ;
-        var boundY = Math.sin(angleToMouse-Math.PI/2)*player.wideLengthMultiplier ;
+        // var boundX = Math.cos(angleToMouse-Math.PI/2)*player.totalLengthBound ;
+        // // var boundY = Math.sin(angleToMouse-Math.PI/2)*player.totalLengthBound ;
+        // var boundY = Math.sin(angleToMouse-Math.PI/2)*player.wideLengthMultiplier ;
 
-        var d2 = Octopod.Geometry.Vector2.Distance(
-            new Octopod.Geometry.Vector2(boundX, boundY) ,
-            new Octopod.Geometry.Vector2()
-        )
+        // var d2 = Octopod.Geometry.Vector2.Distance(
+        //     new Octopod.Geometry.Vector2(boundX, boundY) ,
+        //     new Octopod.Geometry.Vector2()
+        // )
 
-        if(d1 > d2) {
-            x = boundX ;
-            y = boundY ;
-        }
+        // if(d1 > d2) {
+        //     x = boundX ;
+        //     y = boundY ;
+        // }
         // console.log(x,y,d1,d2);
-        if(debug) {
-            socket.emit("debug-Bind-Tentacle" , player.totalLengthBound ,
-                                                player.wideLengthMultiplier ,
-                                                angleToMouse ,
-                                                x , y) ;
-        }
+        // if(debug) {
+        //     socket.emit("debug-Bind-Tentacle" , player.totalLengthBound ,
+        //                                         player.wideLengthMultiplier ,
+        //                                         angleToMouse ,
+        //                                         x , y) ;
+        // }
     });
     socket.on('MouseUpdate' , function(x,y) {
         // var oathid = S_GetOathId(oath) ;

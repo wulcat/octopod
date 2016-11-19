@@ -38,7 +38,9 @@ class AngleConstraint {
 class PinConstraint {
     constructor(par) {
         this.parent = par ;
-        this.pos = par.pos ;
+        this.pos = new Vector2() ;  
+        this.pos.x = par.pos.x ;
+        this.pos.y = par.pos.y ;
     }
     Relax(stepCoef) {
         this.parent.pos.Renew(this.pos) ;
@@ -52,7 +54,7 @@ class DistanceConstraint {
         this.child = par2 ;
 
         this.stiffness = stiffness ;
-        this.distance = distance || Vector2.Distance(par1 , par2) ;
+        this.distance = typeof distance != "undefined" ? distance : Vector2.Distance(par1.pos , par2.pos) ;
     }
     Relax(stepCoef) {
         var normal = Vector2.Sub(this.parent.pos , this.child.pos) ;
@@ -139,42 +141,50 @@ class Tentacle {
         j=0 ;
         particles = this.particles ;
 
-        for(i in this.particles) {
+        for(i in particles) {
 
-            var velocity = Vector2.Sub( Vector2.Scale(particles[i].pos , this.friction) , 
+            // var velocity = Vector2.Sub( Vector2.Scale(particles[i].pos , this.friction) , 
+                                        // particles[i].lastPos) ;
+
+            var velocity = Vector2.Sub(  particles[i].pos , 
                                         particles[i].lastPos) ;
 
-            if(particles[i].pos.y >= this.height - 1 && Vector2.Square(velocity) > 0.000001 ) {
-                var m = Vector2.Length(velocity) ;
-                velocity.x /= m ;
-                velocity.y /= m ;
-                velocity = Vector2.Scale(velocity , m*this.groundFriction) ;
+            velocity = Vector2.Scale(velocity , this.friction) ;
 
+            // if(particles[i].pos.y >= this.height - 1 && Vector2.Square(velocity) > 0.000001 ) {
+            //     var m = Vector2.Length(velocity) ;
+            //     velocity.x /= m ;
+            //     velocity.y /= m ;
+            //     velocity = Vector2.Scale(velocity , m*this.groundFriction) ;
+            // }
                 particles[i].lastPos.Renew(particles[i].pos) ;
 
-                particles[i].pos = Vector2.Add(particles[i].pos , this.gravity);
+                particles[i].pos.Renew(Vector2.Add(particles[i].pos , this.gravity)) ;
 
-                particles[i].pos = Vector2.Add(particles[i].pos , velocity) ; 
-            }
+                particles[i].pos.Renew(Vector2.Add(particles[i].pos , velocity)) ; 
             
-            var stepCoef = 1/16 ;
-
-            // if(node)
-            //     this.particles[this.particles.length-1].pos.Renew(node) ;
-
-            var constraints = this.constraints ;
-            // console.log(constraints);
-            for(var i = 0 ; i < 16 ; i++) {
-                for(var j = 0 ; j < constraints.length ; j++) {
-                    // console.log(constraints[j]);
-                    constraints[j].Relax(stepCoef) ;
-
-                }
-            }
-            // bounds checking
-            // for (i in particles)
-            //     this.bounds(particles[i]);
+            
+           
         }
+
+        var stepCoef = 1/16 ;
+
+        // if(node)
+        //     this.particles[this.particles.length-1].pos.Renew(node) ;
+
+        var constraints = this.constraints ;
+
+        // console.log(constraints);
+        for(var i = 0 ; i < 16 ; ++i) {
+            for(j in constraints) {
+                // console.log(constraints[j]);
+                constraints[j].Relax(stepCoef) ;
+
+            }
+        }
+        // bounds checking
+        // for (i in particles)
+        //     this.bounds(particles[i]);
     }
 }
 

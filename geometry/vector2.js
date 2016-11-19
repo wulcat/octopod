@@ -6,6 +6,7 @@ class Vector2 {
         this.y = y || 0 ;
     }
     Renew(vec) {
+        // console.log(vec);
         this.x = vec.x || 0 ;
         this.y = vec.y || 0 ;
     }
