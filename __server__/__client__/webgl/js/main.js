@@ -824,18 +824,23 @@ class Body {
             // console.log(this.tentacle1[0]) ;
             var ctx = elements.ctx ;
             for (var i = 0 ; i < this.tentacle1.length ; i++) {
+                ctx.save() ;
+                ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                ctx.beginPath() ;
                 for (var j = 0 ; j < this.tentacle1[i].length ; j++) {
                     var particles = this.tentacle1[i] ;
-                
+                    if (j != 0)
+                        ctx.lineTo(particles[j].pos.x , particles[j].pos.y)
                     ctx.save() ;
-                    ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
-                    ctx.beginPath() ;
+                    // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                    
                     ctx.arc(particles[j].pos.x , particles[j].pos.y , 3,0,Math.PI*2,false) ;
                     ctx.stroke() ;
                     ctx.fill() ;
-                    ctx.restore() ;
+                    // ctx.restore() ;
                     // console.log(particles[j].pos);
                 }
+                ctx.restore() ;
             }
         }
 
