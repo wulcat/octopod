@@ -24,6 +24,7 @@ class Player {
         this.totalLengthBound = 150 ;
         // this.mapid ; //= rank ;
         //this.maptype ; //= type ;
+        this.mousePos = null ;
     }
     Init(moveSpeed , jerkSpeed , jerkMax) {
         this.MoveSpeed = moveSpeed ;
@@ -79,11 +80,14 @@ class Player {
         for(var i = 0 ; i < this.tentacles.length ; i++) {}
             // this.tentacles[i].particles[18].pos.Renew(node) ;
 
-            // this.tentacles[i].particles[this.tentacles[i].particles.length - 1].pos.Renew(node) ;
     }       
     Update() {
-        for(var i = 0 ; i < this.tentacles.length ; i++) 
-            this.tentacles[i].Update() ;
+        for(var i = 0 ; i < this.tentacles.length ; i++) {
+            if(this.mousePos)
+                this.tentacles[i].Update(this.mousePos.x , this.mousePos.y) ;
+            else    
+                this.tentacles[i].Update() ;
+        }
         
         if(this.Jerk > this.JerkMax) {
             this.JerkSpeed = -Math.abs(this.JerkSpeed) ;
@@ -111,6 +115,8 @@ class Player {
 
         
         this.UpdateCamera() ;
+
+        this.mousePos = null ;
     }
     UpdateCamera() {
         this.Camera.Rect.x = this.Transform.position.x - this.Camera.Rect.width/2 ;

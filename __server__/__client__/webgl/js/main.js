@@ -815,14 +815,9 @@ class Body {
         ctx.stroke();
 
         ctx.restore();
-        ctx.save() ;
+        // ctx.save() ;
        
         if(this.tentacle1) {
-            // var c , i ;
-            // c=0;
-            // i=0;
-            // console.log(this.tentacle1[0]) ;
-            var ctx = elements.ctx ;
             for (var i = 0 ; i < this.tentacle1.length ; i++) {
                 ctx.save() ;
                 ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
@@ -831,19 +826,17 @@ class Body {
                     var particles = this.tentacle1[i] ;
                     if (j != 0)
                         ctx.lineTo(particles[j].pos.x , particles[j].pos.y)
-                    ctx.save() ;
+                    // ctx.save() ;
                     // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
                     
                     ctx.arc(particles[j].pos.x , particles[j].pos.y , 3,0,Math.PI*2,false) ;
                     ctx.stroke() ;
-                    // ctx.fill() ;
                     // ctx.restore() ;
-                    // console.log(particles[j].pos);
                 }
                 ctx.restore() ;
             }
         }
-
+        ctx.save() ;
         // console.log(ctx.measureText(width));
         ctx.font="23px Georgia";
 

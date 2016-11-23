@@ -175,9 +175,9 @@ fw.on('connection' , function(socket) {
 
 
         // var angleToMouse = Octopod.OctoMath.Angle.MouseToAngle(x,y) * Math.PI/180 ;
-        // var player = Players[socket.id];
+        var player = Players[socket.id];
 
-        // player.tentacles[0].particles[7].pos.Renew(new Octopod.Geometry.Vector2(x,y));
+        player.mousePos = new Octopod.Geometry.Vector2(x,y) ;
         
         // var d1 = Octopod.Geometry.Vector2.Distance(
         //     new Octopod.Geometry.Vector2(x,y) ,
