@@ -73,10 +73,6 @@ class Player {
         this.Updating = setInterval ( function() { t.Update(); } , time) ;
     }
     AddTentacle() {
-        // console.log(Tentacle) ;
-        // console.log(OctoMath) ;
-        // console.log(Geometry) ;
-        // console.log(Component) ;
         this.tentacles.push(new Tentacle(this.Transform.position , 5, 70, 0.95, (Math.PI/2)/3)) ;
     }
     FocusTentacles(node) {
@@ -107,7 +103,7 @@ class Player {
 
         var newAngle = OctoMath.Angle.LerpAngle(this.Transform.angle , this.__angle , this.RotSpeed * 0.05) ;
         // var LerpAngle = OctoMath.Interpolate.Lerp([this.Transform.angle] , [this.__angle] , 0.5) ;
-        // console.log(this.__angle , newAngle);
+
         this.Transform.angle = newAngle ;
         newAngle = newAngle * Math.PI/180 ;
 
@@ -115,9 +111,6 @@ class Player {
 
         
         this.UpdateCamera() ;
-
-        // console.log(this);
-        
     }
     UpdateCamera() {
         this.Camera.Rect.x = this.Transform.position.x - this.Camera.Rect.width/2 ;

@@ -836,7 +836,7 @@ class Body {
                     
                     ctx.arc(particles[j].pos.x , particles[j].pos.y , 3,0,Math.PI*2,false) ;
                     ctx.stroke() ;
-                    ctx.fill() ;
+                    // ctx.fill() ;
                     // ctx.restore() ;
                     // console.log(particles[j].pos);
                 }

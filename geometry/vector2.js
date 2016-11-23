@@ -6,7 +6,6 @@ class Vector2 {
         this.y = y || 0 ;
     }
     Renew(vec) {
-        // console.log(vec);
         this.x = vec.x || 0 ;
         this.y = vec.y || 0 ;
     }
@@ -15,15 +14,8 @@ class Vector2 {
         a *= a ;
         var b = vec1.y - vec2.y ;
         b *= b ;
-        // var distance = Math.sqrt(a+b);
         return  Math.sqrt(a+b) ;
     }
-    // Add(vec) {
-    //     this.x += vec.x ;
-    //     this.y += vec.y ;
-
-    //     return this ; 
-    // }
     static Sub(vec1 , vec2) {
         var m = new Vector2(vec1.x - vec2.x , vec1.y - vec2.y) ;
         return m ;
