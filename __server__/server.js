@@ -177,8 +177,8 @@ fw.on('connection' , function(socket) {
         // var angleToMouse = Octopod.OctoMath.Angle.MouseToAngle(x,y) * Math.PI/180 ;
         var player = Players[socket.id];
 
-        player.mousePos = new Octopod.Geometry.Vector2(x,y) ;
-        
+        // player.mousePos = new Octopod.Geometry.Vector2(x,y) ;
+        player.focus = true ;
         // var d1 = Octopod.Geometry.Vector2.Distance(
         //     new Octopod.Geometry.Vector2(x,y) ,
         //     new Octopod.Geometry.Vector2() 
@@ -216,7 +216,8 @@ fw.on('connection' , function(socket) {
         player.__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
-
+        player.mousePos.Renew(new Octopod.Geometry.Vector2(x,y)) ;
+        
         socket.emit('SyncPlayer' , player.getData() , true);
         
         // console.log(player.Camera.VisibleObjects);
@@ -326,7 +327,7 @@ function S_Disconnect(mapid , player) {
     );
 }
 var debug = true ;
-var update_rate = setInterval(Update , 3000);
+var update_rate = setInterval(Update , 100);
 function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
         // Maps[i].Update() ;

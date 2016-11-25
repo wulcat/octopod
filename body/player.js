@@ -24,7 +24,8 @@ class Player {
         this.totalLengthBound = 150 ;
         // this.mapid ; //= rank ;
         //this.maptype ; //= type ;
-        this.mousePos = null ;
+        this.mousePos = new Geometry.Vector2(0,0) ;
+        this.focus = false ;
     }
     Init(moveSpeed , jerkSpeed , jerkMax) {
         this.MoveSpeed = moveSpeed ;
@@ -74,7 +75,7 @@ class Player {
         this.Updating = setInterval ( function() { t.Update(); } , time) ;
     }
     AddTentacle() {
-        this.tentacles.push(new Tentacle(this.Transform.position , 5, 70, 0.95, (Math.PI/2)/3)) ;
+        this.tentacles.push(new Tentacle(this.Transform.position , 5, 70, 0.95, (Math.PI/2)/3) ) ;
     }
     FocusTentacles(node) {
         for(var i = 0 ; i < this.tentacles.length ; i++) {}
@@ -82,11 +83,12 @@ class Player {
 
     }       
     Update() {
+
         for(var i = 0 ; i < this.tentacles.length ; i++) {
-            if(this.mousePos)
-                this.tentacles[i].Update(this.mousePos.x , this.mousePos.y) ;
+            if(this.focus)
+                this.tentacles[i].Update(this.mousePos.x , this.mousePos.y , true) ;
             else    
-                this.tentacles[i].Update() ;
+                this.tentacles[i].Update(this.mousePos.x , this.mousePos.y) ;
         }
         
         if(this.Jerk > this.JerkMax) {
@@ -116,7 +118,7 @@ class Player {
         
         this.UpdateCamera() ;
 
-        this.mousePos = null ;
+        this.focus = false ;
     }
     UpdateCamera() {
         this.Camera.Rect.x = this.Transform.position.x - this.Camera.Rect.width/2 ;

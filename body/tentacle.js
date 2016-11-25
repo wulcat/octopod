@@ -74,15 +74,15 @@ class Tentacle {
         this.groundFriction = 0.8;
 
         this.origin = origin ;
-        this.base = new Particle(origin) ;
-        this.root = new Particle(Vector2.Add(origin , new Vector2(0,10)) );
+        this.base = new Particle(Vector2.Add(origin , new Vector2(0,10))) ;
+        this.root = new Particle(origin );
 
         this.Pin(this.base) ;
         this.Pin(this.root) ;
 
-        var branch = this.CreateConstraint(this.base , 0 , depth , segementCoef , new Vector2(0,-1) , branchLength , theta, 0.7) ;
+        var branch = this.CreateConstraint(this.root , 0 , depth , segementCoef , new Vector2(0,-1) , branchLength , theta, 0.7) ;
 
-        this.constraints.push(new AngleConstraint(this.root , this.base , branch , 1) ) ;
+        this.constraints.push(new AngleConstraint(this.base , this.root , branch , 1) ) ;
     }
     Pin(particle) {
         this.particles.push(particle) ;
@@ -105,7 +105,9 @@ class Tentacle {
                                             nMax , 
                                             coef*coef , 
                                             Vector2.Rotate(new Vector2(0,0) , vec_normal , -theta),
-                                            branchLength , theta , lineCoef);
+                                            branchLength , 
+                                            theta , 
+                                            lineCoef);
 
             var jointStrength = Mathf.Lerp(0.7 , 0 , i/nMax) ;
 
@@ -116,13 +118,14 @@ class Tentacle {
         }
         return particle ;
     }
-    Update(x1,y1) {
-        
-
+    Update(x1,y1,focus) {
         var i , j , particles;
         i=0 ;
         j=0 ;
         particles = this.particles ;
+
+        // var angleToRotate =Vector2.MouseToAngle(new Vector2(x1,y1)) ;
+        
 
         for(i in particles) {
 
@@ -142,22 +145,30 @@ class Tentacle {
             }
                 particles[i].lastPos.Renew(particles[i].pos) ;
                 particles[i].pos.Renew(Vector2.Add(particles[i].pos , this.gravity)) ;
-                // particles[i].pos.Renew(Vector2.Add(particles[i].pos , velocity)) ; 
+                velocity.Renew(Vector2.Scale(velocity,0.9)) ;
+                particles[i].pos.Renew(Vector2.Add(particles[i].pos , velocity )) ;
         }
 
         var steps = 16 ;
         var stepCoef = 1/steps ;
         var constraints = this.constraints ;
 
-        if(x1 && y1)
-            this.particles[this.particles.length-1].pos.Renew(new Vector2(x1,y1));
+        // if(x1 && y1)
+        // this.constraints[0].pos.Renew(new Vector2(x1,y1)) ;
 
+        if(focus) 
+            this.particles[this.particles.length-1].pos.Renew(new Vector2(x1,y1));
+        
         for(var i = 0 ; i < steps ; ++i) {
             for(j in constraints) {
                 constraints[j].Relax(stepCoef) ;
             }
         }
+        this.constraints[0].pos.Renew(new Vector2(x1,y1)) ;
 
+        // var dd = Vector2.Rotate(particles[1].pos , particles[0].pos , Math.PI+ angle*Math.PI/180)  ;
+        // console.log(dd,angle);
+        
         // this.particles[1].pos.Renew(x1,y1);
         // bounds checking
         // for (i in particles)
