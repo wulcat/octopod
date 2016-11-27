@@ -74,13 +74,17 @@ class Tentacle {
         this.groundFriction = 0.8;
 
         this.origin = origin ;
-        this.base = new Particle(Vector2.Add(origin , new Vector2(0,10))) ;
+        this.base = new Particle(Vector2.Add(origin , new Vector2(0,50))) ;
         this.root = new Particle(origin );
 
         this.Pin(this.base) ;
         this.Pin(this.root) ;
 
-        var branch = this.CreateConstraint(this.root , 0 , depth , segementCoef , new Vector2(0,-1) , branchLength , theta, 0.7) ;
+        var branch ;
+        if(theta > 0)
+            branch = this.CreateConstraint(this.root , 0 , depth , segementCoef , new Vector2(-5,-1) , branchLength , theta, 0.7) ;
+        else    
+            branch = this.CreateConstraint(this.root , 0 , depth , segementCoef , new Vector2(5,-1) , branchLength , theta, 0.7) ;
 
         this.constraints.push(new AngleConstraint(this.base , this.root , branch , 1) ) ;
     }
@@ -100,11 +104,22 @@ class Tentacle {
         this.constraints.push(dc) ;
 
         if(i < nMax) {
-            var a = this.CreateConstraint(  particle ,
+            var a ;
+            if(i > 1)
+                a = this.CreateConstraint(  particle ,
                                             i+1 , 
                                             nMax , 
                                             coef*coef , 
                                             Vector2.Rotate(new Vector2(0,0) , vec_normal , -theta),
+                                            branchLength , 
+                                            theta , 
+                                            lineCoef);
+            else    
+                a = this.CreateConstraint(  particle ,
+                                            i+1 , 
+                                            nMax , 
+                                            coef*coef , 
+                                            Vector2.Rotate(new Vector2(0,0) , vec_normal , theta),
                                             branchLength , 
                                             theta , 
                                             lineCoef);
@@ -122,11 +137,9 @@ class Tentacle {
         var i , j , particles;
         i=0 ;
         j=0 ;
-        particles = this.particles ;
-
-        // var angleToRotate =Vector2.MouseToAngle(new Vector2(x1,y1)) ;
+        particles = this.particles ;        
+        // this.constraints[0].pos.Renew(new Vector2(x1,y1)) ;
         
-
         for(i in particles) {
 
             var velocity = Vector2.Sub( Vector2.Scale(particles[i].pos , this.friction) , 
@@ -161,11 +174,16 @@ class Tentacle {
         
         for(var i = 0 ; i < steps ; ++i) {
             for(j in constraints) {
-                constraints[j].Relax(stepCoef) ;
+                if(!focus)
+                    constraints[j].Relax(stepCoef*9) ;
+                else    
+                    constraints[j].Relax(stepCoef) ;
             }
         }
-        this.constraints[0].pos.Renew(new Vector2(x1,y1)) ;
-
+        // var ms = Vector2.Rotate(new Vector2(0,0) , new Vector2(x1,y1) , -angle);
+        // this.constraints[0].pos.Renew(ms) ;
+        // this.constraints[0].pos.Renew(new Vector2(x1,y1)) ;
+        // this.constraints[1].Relax() ;
         // var dd = Vector2.Rotate(particles[1].pos , particles[0].pos , Math.PI+ angle*Math.PI/180)  ;
         // console.log(dd,angle);
         

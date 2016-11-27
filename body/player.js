@@ -61,9 +61,11 @@ class Player {
         object_player["oath"] = this.oath ;
         object_player["active"] = false ;
         object_player["tentacles"] = [] ;
-
-        for(var i=0 ; i < this.tentacles.length ; i++) 
+        // object_player["extra"] = [] ;
+        for(var i=0 ; i < this.tentacles.length ; i++) {
             object_player["tentacles"].push(this.tentacles[i].particles) ;
+            // object_player["extra"].push(this.tentacles[i].extraData) ;
+        }
 
         return object_player ;
         
@@ -75,21 +77,17 @@ class Player {
         this.Updating = setInterval ( function() { t.Update(); } , time) ;
     }
     AddTentacle() {
-        this.tentacles.push(new Tentacle(this.Transform.position , 5, 70, 0.95, (Math.PI/2)/3) ) ;
+        this.tentacles.push(new Tentacle(this.Transform.position , 5, 7, 0.95, (Math.PI/2)/3) ) ;
+        this.tentacles.push(new Tentacle(this.Transform.position , 5, 7, 0.95, -(Math.PI/2)/3) ) ;
     }
     FocusTentacles(node) {
-        for(var i = 0 ; i < this.tentacles.length ; i++) {}
+        // for(var i = 0 ; i < this.tentacles.length ; i++) {}
             // this.tentacles[i].particles[18].pos.Renew(node) ;
 
     }       
     Update() {
 
-        for(var i = 0 ; i < this.tentacles.length ; i++) {
-            if(this.focus)
-                this.tentacles[i].Update(this.mousePos.x , this.mousePos.y , true) ;
-            else    
-                this.tentacles[i].Update(this.mousePos.x , this.mousePos.y) ;
-        }
+        
         
         if(this.Jerk > this.JerkMax) {
             this.JerkSpeed = -Math.abs(this.JerkSpeed) ;
@@ -112,10 +110,33 @@ class Player {
 
         this.Transform.angle = newAngle ;
         newAngle = newAngle * Math.PI/180 ;
+        // console.log(this.Transform.angle , newAngle) ;
+        this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
 
-        // this.Transform.position = OctoMath.Angle.MoveOver(this.Transform.position.x , this.Transform.position.y , newAngle , this.Speed) ;
+        for(var i = 0 ; i < this.tentacles.length ; i++) {
+            // for(var j = 0 ; j < 3 ; j++) {
+                if(this.focus)
+                    this.tentacles[i].Update(this.mousePos.x , this.mousePos.y , true ) ;
+                else    {
+                    // var ms = Geometry.Vector2.Rotate(this.Transform.position , this.tentacles[i].constraints[0].pos , newAngle) ;
+                    this.tentacles[i].Update(this.mousePos.x , this.mousePos.y ) ;
+                }
+            // }
+            var ms = Geometry.Vector2.Rotate(   this.tentacles[i].constraints[1].pos , 
+                                                // Geometry.Vector2.Add(   this.tentacles[i].particles[1].pos, 
+                                                                        new Geometry.Vector2(0,-100), 
+                                                newAngle) ;
+                                                // console.log(this.tentacles[i].particles[i].pos);
+            // this.tentacles[i].extraData = {"origin": this.tentacles[i].constraints[1].pos , 
+            //                                 "constraint" : this.tentacles[i].constraints[0].pos ,
+            //                             "angle" : newAngle ,
+            //                         "rotation" : ms} ;
+            // console.log(Geometry.Vector2.Sub(this.mousePos , ms)) ;
+            this.tentacles[i].constraints[0].pos.Renew(ms) ;
+            // this.tentacles[i].constraints[0].pos.Renew(this.mousePos) ;
+            this.tentacles[i].constraints[1].Relax() ;
+        }
 
-        
         this.UpdateCamera() ;
 
         this.focus = false ;

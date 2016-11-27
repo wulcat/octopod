@@ -737,7 +737,8 @@ class Body {
         this.tentacles = [] ;
         this.Settings() ;
 
-        this.tentacle1 ;
+        this.tentacle1 = {} ;
+        // this.extraData = {};
     }
     Settings() {
         this.gravity = 0 ;
@@ -834,6 +835,36 @@ class Body {
                     // ctx.restore() ;
                 }
                 ctx.restore() ;
+
+                // ctx.save() ;
+                // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                // ctx.beginPath() ;
+                // ctx.fillStyle = "#4d88ff" ;
+                // ctx.moveTo(this.extraData[i].origin.x , this.extraData[i].origin.y) ;
+                // ctx.arc(this.extraData[i].origin.x , this.extraData[i].origin.y , 5,0,Math.PI*2) ;
+                // ctx.fill() ;
+                // ctx.restore() ;
+
+
+                // ctx.save() ;
+                // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                // ctx.beginPath() ;
+                // ctx.fillStyle = "#003399" ;
+                // ctx.moveTo(this.extraData[i].constraint.x , this.extraData[i].constraint.y) ;
+                // ctx.arc(this.extraData[i].constraint.x , this.extraData[i].constraint.y , 5 , 0 , 2*Math.PI) ;
+                // ctx.fill() ;
+                // ctx.restore() ;
+
+
+                // ctx.save() ;
+                // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                // ctx.beginPath() ;
+                // ctx.fillStyle = "#ace600" ; //green
+                // ctx.moveTo(this.extraData[i].rotation.x , this.extraData[i].rotation.y) ;
+                // ctx.arc(this.extraData[i].rotation.x , this.extraData[i].rotation.y , 5 , 0 , Math.PI*2) ;
+                // // ctx.stroke() ;
+                // ctx.fill() ;
+                // ctx.restore() ;
             }
         }
         ctx.save() ;
@@ -1195,6 +1226,7 @@ function Init() {
 
 
                     Players[data.id].tentacle1 = data.tentacles ;
+                    // Players[data.id].extraData = data.extra;
                     // var c , i ;
                     // c=0;
                     // i=0;
@@ -1237,7 +1269,7 @@ function Init() {
                 // if(data[i].id == socket.id) {
 
                 if(data[i].type == "player") {
-                    Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
+                    Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(0.95,0.95), 0) ;
                     Players[data[i].id].Name = data[i].name ;
                     // console.log(data[i].name);
                 // }

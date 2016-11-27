@@ -327,7 +327,7 @@ function S_Disconnect(mapid , player) {
     );
 }
 var debug = true ;
-var update_rate = setInterval(Update , 100);
+var update_rate = setInterval(Update , 1100);
 function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
         // Maps[i].Update() ;
