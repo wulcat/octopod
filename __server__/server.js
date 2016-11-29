@@ -88,7 +88,7 @@ fw.on('connection' , function(socket) {
             if(Players["/#"+id] == null) {
                  var __player = new Octopod.Body.Player(oath , id , secId) ;
                 __player.Init(10,1,5);
-                
+                __player.AddTentacle() ;
                 Players["/#"+id] = __player ;
 
                 socket.init = true ;
@@ -170,35 +170,41 @@ fw.on('connection' , function(socket) {
         // Players[socket.id].Stop() ;
         // Players[socket.id] = null ;
     });
-    socket.on('Bind-Tentacle' , function(x,y) {
-        var angleToMouse = Octopod.OctoMath.Angle.MouseToAngle(x,y) * Math.PI/180 ;
+    socket.on('Bind-Tentacle' , function(x,y) { // trash in this branch
+
+
+
+        // var angleToMouse = Octopod.OctoMath.Angle.MouseToAngle(x,y) * Math.PI/180 ;
         var player = Players[socket.id];
-        var d1 = Octopod.Geometry.Vector2.Distance(
-            new Octopod.Geometry.Vector2(x,y) ,
-            new Octopod.Geometry.Vector2() 
-        )
-        // var c_angle = player.Transform.angle ;
 
-        var boundX = Math.cos(angleToMouse-Math.PI/2)*player.totalLengthBound ;
-        // var boundY = Math.sin(angleToMouse-Math.PI/2)*player.totalLengthBound ;
-        var boundY = Math.sin(angleToMouse-Math.PI/2)*player.wideLengthMultiplier ;
+        // player.mousePos = new Octopod.Geometry.Vector2(x,y) ;
+        player.focus = true ;
+        // var d1 = Octopod.Geometry.Vector2.Distance(
+        //     new Octopod.Geometry.Vector2(x,y) ,
+        //     new Octopod.Geometry.Vector2() 
+        // )
+        // // var c_angle = player.Transform.angle ;
 
-        var d2 = Octopod.Geometry.Vector2.Distance(
-            new Octopod.Geometry.Vector2(boundX, boundY) ,
-            new Octopod.Geometry.Vector2()
-        )
+        // var boundX = Math.cos(angleToMouse-Math.PI/2)*player.totalLengthBound ;
+        // // var boundY = Math.sin(angleToMouse-Math.PI/2)*player.totalLengthBound ;
+        // var boundY = Math.sin(angleToMouse-Math.PI/2)*player.wideLengthMultiplier ;
 
-        if(d1 > d2) {
-            x = boundX ;
-            y = boundY ;
-        }
+        // var d2 = Octopod.Geometry.Vector2.Distance(
+        //     new Octopod.Geometry.Vector2(boundX, boundY) ,
+        //     new Octopod.Geometry.Vector2()
+        // )
+
+        // if(d1 > d2) {
+        //     x = boundX ;
+        //     y = boundY ;
+        // }
         // console.log(x,y,d1,d2);
-        if(debug) {
-            socket.emit("debug-Bind-Tentacle" , player.totalLengthBound ,
-                                                player.wideLengthMultiplier ,
-                                                angleToMouse ,
-                                                x , y) ;
-        }
+        // if(debug) {
+        //     socket.emit("debug-Bind-Tentacle" , player.totalLengthBound ,
+        //                                         player.wideLengthMultiplier ,
+        //                                         angleToMouse ,
+        //                                         x , y) ;
+        // }
     });
     socket.on('MouseUpdate' , function(x,y) {
         // var oathid = S_GetOathId(oath) ;
@@ -210,7 +216,8 @@ fw.on('connection' , function(socket) {
         player.__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y) ; 
         // Players[socket.id].__angle = Octopod.OctoMath.Angle.MouseToAngle(x,y);
         // socket.emit('Direction' , Players[socket.id].Transform.angle , Players[socket.id].Transform.position);
-
+        player.mousePos.Renew(new Octopod.Geometry.Vector2(x,y)) ;
+        
         socket.emit('SyncPlayer' , player.getData() , true);
         
         // console.log(player.Camera.VisibleObjects);
@@ -320,7 +327,7 @@ function S_Disconnect(mapid , player) {
     );
 }
 var debug = true ;
-var update_rate = setInterval(Update , 3000);
+var update_rate = setInterval(Update , 1100); // ._. works with 0.11 sec per frame too
 function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
         // Maps[i].Update() ;

@@ -1,7 +1,7 @@
 "use strict" ;
 var Geometry = require("../module/geometry.js");
 var Interpolate = {
-     DotProduct : function(a,b) {
+    DotProduct : function(a,b) {
         var s = 0 ;
         for(var i = 0 ; i < a.length ; i++) {
             s += a[i] * b[i] ;

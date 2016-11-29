@@ -664,7 +664,7 @@ class Tentacle {
     }
 }
 class Camera {
-    constructor(xView , yView , canvasWidth , canvasHeight , worldWidth , worldHeight) { // canvas widht and height will constant depending upon server size
+    constructor(xView , yView , canvasWidth , canvasHeight , worldWidth , worldHeight) { // canvas width and height will constant depending upon server size
         this.xView = xView || 0;
         this.yView = yView || 0;
 
@@ -736,6 +736,9 @@ class Body {
 
         this.tentacles = [] ;
         this.Settings() ;
+
+        this.tentacle1 = {} ;
+        // this.extraData = {};
     }
     Settings() {
         this.gravity = 0 ;
@@ -750,7 +753,27 @@ class Body {
         // tentacle.Move(this.Transform.position , true);
         this.tentacles.push(tentacle);
     }
- 
+    // DrawTenta() {
+    //     if(this.tentacle1) {
+    //     var c , i ;
+    //     c=0;
+    //     i=0;
+    //     console.log(this.tentacle1[0]) ;
+    //     var ctx = elements.ctx ;
+    //     for (i in this.tentacle1) {
+    //         for (j in this.tentacle1.pos) {
+    //             var particles = this.tentacle1[i] ;
+            
+    //             ctx.save() ;
+    //             ctx.beginPath() ;
+    //             ctx.arc(particles[j].pos.x , particles[j].pos.y , 10,0,Math.PI*2,false) ;
+    //             ctx.stroke() ;
+    //             ctx.fill() ;
+    //             ctx.restore() ;
+    //         }
+    //     }
+    //     }
+    // }
     Translate(vec) {
         this.Transform.position.x = vec.x ;
         this.Transform.position.y = vec.y ;
@@ -793,8 +816,58 @@ class Body {
         ctx.stroke();
 
         ctx.restore();
-        ctx.save() ;
+        // ctx.save() ;
        
+        if(this.tentacle1) {
+            for (var i = 0 ; i < this.tentacle1.length ; i++) {
+                ctx.save() ;
+                ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                ctx.beginPath() ;
+                for (var j = 0 ; j < this.tentacle1[i].length ; j++) {
+                    var particles = this.tentacle1[i] ;
+                    if (j != 0)
+                        ctx.lineTo(particles[j].pos.x , particles[j].pos.y)
+                    // ctx.save() ;
+                    // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                    
+                    ctx.arc(particles[j].pos.x , particles[j].pos.y , 3,0,Math.PI*2,false) ;
+                    ctx.stroke() ;
+                    // ctx.restore() ;
+                }
+                ctx.restore() ;
+
+                // ctx.save() ;
+                // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                // ctx.beginPath() ;
+                // ctx.fillStyle = "#4d88ff" ;
+                // ctx.moveTo(this.extraData[i].origin.x , this.extraData[i].origin.y) ;
+                // ctx.arc(this.extraData[i].origin.x , this.extraData[i].origin.y , 5,0,Math.PI*2) ;
+                // ctx.fill() ;
+                // ctx.restore() ;
+
+
+                // ctx.save() ;
+                // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                // ctx.beginPath() ;
+                // ctx.fillStyle = "#003399" ;
+                // ctx.moveTo(this.extraData[i].constraint.x , this.extraData[i].constraint.y) ;
+                // ctx.arc(this.extraData[i].constraint.x , this.extraData[i].constraint.y , 5 , 0 , 2*Math.PI) ;
+                // ctx.fill() ;
+                // ctx.restore() ;
+
+
+                // ctx.save() ;
+                // ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , x , y);
+                // ctx.beginPath() ;
+                // ctx.fillStyle = "#ace600" ; //green
+                // ctx.moveTo(this.extraData[i].rotation.x , this.extraData[i].rotation.y) ;
+                // ctx.arc(this.extraData[i].rotation.x , this.extraData[i].rotation.y , 5 , 0 , Math.PI*2) ;
+                // // ctx.stroke() ;
+                // ctx.fill() ;
+                // ctx.restore() ;
+            }
+        }
+        ctx.save() ;
         // console.log(ctx.measureText(width));
         ctx.font="23px Georgia";
 
@@ -1009,71 +1082,6 @@ class Food {
         ctx.restore() ;
     }
 }
-// var daf = false ;
-class MouseTentatcle {
-    constructor(l,t1,t2,maxAngle) {
-        this.length = l ;
-        this.nodes = [] ;
-        for(var i = 0 ; i < this.length ; i++) {
-            this.nodes.push(new TentacleNode(0,0));
-        }
-        this.tension1 = t1 ;
-        this.tension2 = t2 ;
-        this.maxAngle = maxAngle ;
-
-        var x = this.length * Math.PI/180 ;
-        var y = Math.sin(Math.cos(x))*x ;
-
-        this.nodes[this.nodes.length-1].x = x ;
-        this.nodes[this.nodes.length-1].y = y ;
-    }
-    Update(posX , posY) {
-        d2 = d2 == 0 ? 1 : d2 ;
-        d1 = d1 == 0 ? 1 : d1 ;
-        
-        // var adf ;
-        for(var i=0 ; i < this.length ; i++) {
-            var angle = i * Math.PI/180 ;
-            var x = angle ;
-            var y = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2) ;
-            // adf = (Math.sin(Math.cos(angle- Math.PI/2)))*(angle - Math.PI/2) ;
-            this.nodes[i].x = x ;
-            this.nodes[i].y = y ;
-        }
-
-        var d1 = Vector2.Distance(new Vector2(0,0) , new Vector2(posX , 0));
-        var d2 = Vector2.Distance(new Vector2(0,0) , new Vector2(this.nodes[this.nodes.length-1].x,this.nodes[this.nodes.length-1].y)) ;
-
-        var m = d1/d2 ;
-
-        for(var i = 0 ; i < this.length ; i++) {
-            this.nodes[i].x *= m ;
-            this.nodes[i].y *= 90 ;
-            
-            var angle = Math.acos(posX/debugData.totalLengthBound) ;
-            var y = debugData.wideLengthMultiplier * Math.sin(angle) ;
-            
-            var angle1 = Math.atan2(posX,y) ;
-            angle1 = Math.asin(Math.cos(angle1));
-            this.nodes[i].y *= angle1 ;
-        }
-    }
-    Draw(ctx , x , y , xView , yView) {
-
-        x = x - xView ;
-        y = y - yView ;
-        ctx.save() ;
-
-        ctx.setTransform(1,0,0,1,x,y)
-        ctx.beginPath() ;
-        for(var i = 0 ; i < this.length ; i++) {
-            ctx.lineTo(this.nodes[i].x , this.nodes[i].y) ;
-        }
-        ctx.stroke() ;
-        ctx.restore() ;
-    }
-}
-
 
 //___________________________________________________________________End Classes
 var intervals = new Intervals() ;
@@ -1215,6 +1223,28 @@ function Init() {
                     data.Transform.position.y += elements.canvas.height ;
 
                     Players[data.id].newTransform.position = data.Transform.position ;
+
+
+                    Players[data.id].tentacle1 = data.tentacles ;
+                    // Players[data.id].extraData = data.extra;
+                    // var c , i ;
+                    // c=0;
+                    // i=0;
+                    // var ctx = elements.ctx ;
+                    // for (i in data.tentacles) {
+                    //     for (j in data.tentacles.pos) {
+                    //         var particles = data.tentacles[i] ;
+                        
+                    //         ctx.save() ;
+                    //         ctx.beginPath() ;
+                    //         ctx.arc(particles[j].pos.x , particles[j].pos.y , 10,0,Math.PI*2,false) ;
+                    //         ctx.stroke() ;
+                    //         ctx.fill() ;
+                    //         ctx.restore() ;
+                    //     }
+                    // }
+
+
                 }
                 else if(data.type == 'food') {
                     Foods[data.id].position = data.Transform.position ;
@@ -1239,7 +1269,7 @@ function Init() {
                 // if(data[i].id == socket.id) {
 
                 if(data[i].type == "player") {
-                    Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(1,1), 0) ;
+                    Players[data[i].id] = new Body(new Vector2(50,50) , new Vector2(elements.canvas.width/2,elements.canvas.height/2) , new Vector2(0.95,0.95), 0) ;
                     Players[data[i].id].Name = data[i].name ;
                     // console.log(data[i].name);
                 // }
@@ -1342,20 +1372,33 @@ window.onresize = function() {
         room.Draw(ctx , camera. xView , camera.yView);
 }
 
+// var sim  ; //= new VerletJS(width, height, canvas);
 window.onload = function() {
 
     var canvas = document.getElementById("game" );
     var ctx = canvas.getContext("2d");
     canvas.style.display = "flex" ;
 
-    canvas.width = window.innerWidth ;
-    canvas.height = window.innerHeight ;
+    var width , height ;
+
+    width = window.innerWidth ;
+    height = window.innerHeight ;
+
+    canvas.width = width ;
+    canvas.height = height ;
+
+    // sim = new VerletJS(width, width, canvas);
 
     MouseHandler = new Mouse(canvas) ;
     KeyboardHandler = new Keyboard(canvas) ;
     elements.canvas = canvas ;
     elements.ctx = ctx ;
 
+
+    // sim.gravity = new Vec2(0,0);
+    // sim.friction = 0.98;
+	
+    // var tree1 = sim.tree(new Vec2(width/2,height-120), 5, 70, 0.95, (Math.PI/2)/3);
     // var FPS =30 ;
     // var INTERVAL = 1000/FPS ;
     // var STEP = INTERVAL/1000 ;
@@ -1400,7 +1443,7 @@ function Loading() {
     elements.ctx.clearRect(0 , 0 , elements.canvas.width , elements.canvas.height);
 
 }
-var customTent = new MouseTentatcle(90,50,30 , 50);
+// var customTent = new MouseTentatcle();
 function Frame() {
     // console.log(event);
     
@@ -1417,8 +1460,7 @@ var __interpolateMoveSpeed = 1.2 ;
 // var __interpolateAngleSpeed = 2.5 ;
 
 function Draw() {
-
-    
+   
 
     room.Draw(elements.ctx , camera.xView , camera.yView) ;
     
@@ -1432,11 +1474,29 @@ function Draw() {
             Players[IDs[i]].tentacles[j].Draw(elements.ctx , camera.xView , camera.yView) ;
         }
         Players[IDs[i]].Draw(elements.ctx , camera.xView , camera.yView) ;
+        // Players[IDs[i]].DrawTenta() ;
         // console.log(IDs[i] +" , "+socket.id);
     }
 
-    
+    // var c , i ;
+    // c=0;
+    // i=0;
+    // var ctx = elements.ctx ;
+    // for (c in sim.composites) {
+	// 	for (i in sim.composites[c].particles) {
+	// 		var particles = sim.composites[c].particles;
+            
+    //         ctx.save() ;
+    //         ctx.beginPath() ;
+    //         ctx.arc(particles[i].pos.x , particles[i].pos.y , 10,0,Math.PI*2,false) ;
+    //         ctx.stroke() ;
+    //         ctx.fill() ;
+    //         ctx.restore() ;
+	// 	}
+	// }
+
 }
+
 function Update() {
     if(MouseHandler.left) {
         socket.emit("Bind-Tentacle" , MouseHandler.position.x - window.innerWidth/2 , MouseHandler.position.y - window.innerHeight/2) ;
@@ -1479,6 +1539,8 @@ function Update() {
                 5 , 4);
         }
     }
+    // sim.frame(16);
+    
     camera.Update();
 
     MouseHandler.Reset() ;
