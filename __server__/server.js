@@ -327,7 +327,7 @@ function S_Disconnect(mapid , player) {
     );
 }
 var debug = true ;
-var update_rate = setInterval(Update , 1100);
+var update_rate = setInterval(Update , 1100); // ._. works with 0.11 sec per frame too
 function Update() {
     for(var i = 0 ; i < Maps.length ;i++) {
         // Maps[i].Update() ;
