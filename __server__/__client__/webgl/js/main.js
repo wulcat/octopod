@@ -949,137 +949,164 @@ class Map {
 
 class Food {
     constructor(position , scale , radius , shear) {
-        this.position = position || new Vector2() ;
-        this.scale = scale || new Vector2() ;
-        this.angle = 0 ;
+        this.points = [] ;
+        var x , y ;
+        var m = Mathf.AngleToRad(36) ;
 
-        this.radius = radius || 0 ;
-        this.nodesRoot = [] ;
-        this.nodesJoint = [] ;
-        this.newNodesRoot = [] ;
-        this.newNodesJoint = [] ;
-        for(var i = 0 ; i < 6 ; i++) {
-            this.nodesRoot.push(new Vector2());
-            this.newNodesRoot.push(new Vector2());
+
+        for(var i = 0 ; i < 10 ; i++) {
+            x = Math.cos(m*n)*radius ;
+            y = Math.sin(m*n)*radius ;
+
+            if(i%2 != 0) {
+                x = x/2 ;
+                y = y/2 ;
+            }
+            x += position.x ;
+            y += position.y ;
+
+            this.points.push(new Vector2(x,y)) ;
         }
-        for(var i = 0 ; i <= this.nodesRoot.length ; i++) {
-            this.nodesJoint.push(new Vector2());
-            this.newNodesJoint.push(new Vector2());
-        }
-        this.tension = 1.8 ;
-        this.numOfSeg = 60 ;
-        this.newFormCount = 0 ;
+
+
+        // this.position = position || new Vector2() ;
+        // this.scale = scale || new Vector2() ;
+        // this.angle = 0 ;
+
+        // this.radius = radius || 0 ;
+        // this.nodesRoot = [] ;
+        // this.nodesJoint = [] ;
+        // this.newNodesRoot = [] ;
+        // this.newNodesJoint = [] ;
+        // for(var i = 0 ; i < 6 ; i++) {
+        //     this.nodesRoot.push(new Vector2());
+        //     this.newNodesRoot.push(new Vector2());
+        // }
+        // for(var i = 0 ; i <= this.nodesRoot.length ; i++) {
+        //     this.nodesJoint.push(new Vector2());
+        //     this.newNodesJoint.push(new Vector2());
+        // }
+        // this.tension = 1.8 ;
+        // this.numOfSeg = 60 ;
+        // this.newFormCount = 0 ;
     }
     Update() {
-        this.newFormCount += 1;
-        var nodeRoot , nodeJoint , prevnodeRoot , angle , amp , startAngle , length ,start , end;
+        // this.newFormCount += 1;
+        // var nodeRoot , nodeJoint , prevnodeRoot , angle , amp , startAngle , length ,start , end;
 
-        length = this.nodesRoot.length ;
-        amp = 10 ;
-        startAngle = Mathf.AngleToRad(Mathf.RandomFloat(4 , 45)) ;
-        nodeRoot = this.nodesRoot[0] ;
+        // length = this.nodesRoot.length ;
+        // amp = 10 ;
+        // startAngle = Mathf.AngleToRad(Mathf.RandomFloat(4 , 45)) ;
+        // nodeRoot = this.nodesRoot[0] ;
 
-        if(this.newFormCount > 30) {
-            this.newFormCount = 0 ;
-            for(var i = 0 ; i < length ; i++) {
-                if(i==0) angle = startAngle ;
-                else if (i==length -1) {
-                    angle = startAngle - (startAngle + Math.PI*2 - angle)/2 ;  
-                }
-                else {
-                    var eta = angle + Mathf.AngleToRad((360 - Mathf.RadToAngle(angle))/(length-i)) ;
-                    angle = Mathf.RandomFloat(angle , eta) + Mathf.AngleToRad(10) ;
-                }
-                var x = (this.radius + amp*Math.sin(angle) ) * Math.cos(angle) ;
-                var y = (this.radius + amp*Math.sin(angle) ) * Math.sin(angle) ;
+        // if(this.newFormCount > 30) {
+        //     this.newFormCount = 0 ;
+        //     for(var i = 0 ; i < length ; i++) {
+        //         if(i==0) angle = startAngle ;
+        //         else if (i==length -1) {
+        //             angle = startAngle - (startAngle + Math.PI*2 - angle)/2 ;  
+        //         }
+        //         else {
+        //             var eta = angle + Mathf.AngleToRad((360 - Mathf.RadToAngle(angle))/(length-i)) ;
+        //             angle = Mathf.RandomFloat(angle , eta) + Mathf.AngleToRad(10) ;
+        //         }
+        //         var x = (this.radius + amp*Math.sin(angle) ) * Math.cos(angle) ;
+        //         var y = (this.radius + amp*Math.sin(angle) ) * Math.sin(angle) ;
                 
-                nodeRoot.x = x ;
-                nodeRoot.y = y ;
+        //         nodeRoot.x = x ;
+        //         nodeRoot.y = y ;
 
-                nodeRoot = this.nodesRoot[i+1] ;
-            }
+        //         nodeRoot = this.nodesRoot[i+1] ;
+        //     }
             
-            start = this.nodesRoot[length-1] ;
-            end = this.nodesRoot[0];
+        //     start = this.nodesRoot[length-1] ;
+        //     end = this.nodesRoot[0];
 
-            for(var i = 1 ; i <= length ; i++) {
-                var amp , m , a ;
-                amp = 3 ;
-                m = new Vector2() ;
-                a = new Vector2() ;
+        //     for(var i = 1 ; i <= length ; i++) {
+        //         var amp , m , a ;
+        //         amp = 3 ;
+        //         m = new Vector2() ;
+        //         a = new Vector2() ;
 
-                m.x = ( start.x + end.x )*2/3 ;
-                m.y = ( start.y + end.y )*2/3 ;
+        //         m.x = ( start.x + end.x )*2/3 ;
+        //         m.y = ( start.y + end.y )*2/3 ;
                 
-                a.x = ( start.x + end.x )/2 ;
-                a.y = ( start.y + end.y )/2 ;
+        //         a.x = ( start.x + end.x )/2 ;
+        //         a.y = ( start.y + end.y )/2 ;
 
-                a.x = Mathf.RandomFloat(m.x , m.x+a.x) ;
-                a.y = Mathf.RandomFloat(m.y , m.y+a.y) ;
+        //         a.x = Mathf.RandomFloat(m.x , m.x+a.x) ;
+        //         a.y = Mathf.RandomFloat(m.y , m.y+a.y) ;
 
-                this.nodesJoint[i-1].x = a.x ;
-                this.nodesJoint[i-1].y = a.y ;
+        //         this.nodesJoint[i-1].x = a.x ;
+        //         this.nodesJoint[i-1].y = a.y ;
 
-                start = end ;
-                end = this.nodesRoot[i];
-            }
-        }
-        else {
-            var start , center , end ;
-            for(var i = 0 ; i < this.nodesRoot.length ; i++) {
-                this.newNodesRoot[i] = Vector2.Lerp(this.newNodesRoot[i] , this.nodesRoot[i] , 0.01);
-                this.newNodesRoot[i] = Vector2.Lerp(this.newNodesRoot[i] , this.nodesRoot[i] , 0.01);
-            }
-            for(var i = 0 ; i <= this.nodesRoot.length ; i++) {
-                this.newNodesJoint[i] = Vector2.Lerp(this.newNodesJoint[i] , this.nodesJoint[i] , 0.01);    
-            }
-            // this.newNodesRoot[0] = Vector2.Lerp(this.newNodesRoot[0] , this.nodesRoot[0] , 0.1);
-            // this.newNodesJoint[0] = Vector2.Lerp(this.newNodesJoint[0] , this.newNodesJoint[0] , 0.1);
-            // this.newNodesRoot[1] = Vector2.Lerp(this.newNodesRoot[1] , this.nodesRoot[1] , 0.1);
-        }
+        //         start = end ;
+        //         end = this.nodesRoot[i];
+        //     }
+        // }
+        // else {
+        //     var start , center , end ;
+        //     for(var i = 0 ; i < this.nodesRoot.length ; i++) {
+        //         this.newNodesRoot[i] = Vector2.Lerp(this.newNodesRoot[i] , this.nodesRoot[i] , 0.01);
+        //         this.newNodesRoot[i] = Vector2.Lerp(this.newNodesRoot[i] , this.nodesRoot[i] , 0.01);
+        //     }
+        //     for(var i = 0 ; i <= this.nodesRoot.length ; i++) {
+        //         this.newNodesJoint[i] = Vector2.Lerp(this.newNodesJoint[i] , this.nodesJoint[i] , 0.01);    
+        //     }
+        //     // this.newNodesRoot[0] = Vector2.Lerp(this.newNodesRoot[0] , this.nodesRoot[0] , 0.1);
+        //     // this.newNodesJoint[0] = Vector2.Lerp(this.newNodesJoint[0] , this.newNodesJoint[0] , 0.1);
+        //     // this.newNodesRoot[1] = Vector2.Lerp(this.newNodesRoot[1] , this.nodesRoot[1] , 0.1);
+        // }
     }
     Draw(ctx , xView , yView) {
-        this.angle += 0.01 ;
+
+        // this.angle += 0.01 ;
         var angle_sin = Math.sin(this.angle) * this.scale.x;
         var angle_cos = Math.cos(this.angle) * this.scale.y;
         
         ctx.save() ;
         ctx.setTransform(angle_cos, angle_sin , -angle_sin , angle_cos , this.position.x - xView , this.position.y - yView) ;
-      
-        var start , center , end ;
 
-        start = this.newNodesRoot[this.nodesRoot.length-1] ;
-        center = this.newNodesJoint[0] ;
-        end = this.newNodesRoot[0] ;
-
-        ctx.moveTo(start.x, start.y);
-        var points = [] ;
-        for(var i = 1 ; i < this.nodesJoint.length ; i++) {
-            // ctx.lineTo(start.x , start.y);
-            // ctx.lineTo(center.x , center.y);
-            // ctx.lineTo(end.x , end.y);
-
-            points.push(start.x);
-            points.push(start.y);
-
-            points.push(center.x);
-            points.push(center.y);
-            
-            points.push(end.x);
-            points.push(end.y);
-
-            start = end;
-            
-            center = this.newNodesJoint[i];
-            end = this.newNodesRoot[i];
-
+        for(var i = 0 ; i < this.points.length ; i++ ) {
+            ctx.lineTo(this.points[i].x , this.points[i].y ) ; 
         }
+
+
+        ctx.restore(); 
+        // var start , center , end ;
+
+        // start = this.newNodesRoot[this.nodesRoot.length-1] ;
+        // center = this.newNodesJoint[0] ;
+        // end = this.newNodesRoot[0] ;
+
+        // ctx.moveTo(start.x, start.y);
+        // var points = [] ;
+        // for(var i = 1 ; i < this.nodesJoint.length ; i++) {
+        //     // ctx.lineTo(start.x , start.y);
+        //     // ctx.lineTo(center.x , center.y);
+        //     // ctx.lineTo(end.x , end.y);
+
+        //     points.push(start.x);
+        //     points.push(start.y);
+
+        //     points.push(center.x);
+        //     points.push(center.y);
+            
+        //     points.push(end.x);
+        //     points.push(end.y);
+
+        //     start = end;
+            
+        //     center = this.newNodesJoint[i];
+        //     end = this.newNodesRoot[i];
+
+        // }
         
-        Drawf.Curve(ctx, points ,this.tension,this.numOfSeg,true);
+        // Drawf.Curve(ctx, points ,this.tension,this.numOfSeg,true);
         
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore() ;
+        // ctx.closePath();
+        // ctx.fill();
+        // ctx.restore() ;
     }
 }
 
@@ -1210,7 +1237,28 @@ function Init() {
         player.newTransform.position = position ;
     });
     // socket.on('')
-    socket.on('SyncPlayer' , function(data , single) {
+    // var Players = {}  ;
+    // var Foods = {} ;
+    var GameObjects = {} ;
+    var GUID = [] ; 
+
+    function Dictionary() {}
+    Dictionary.prototype = Object ;
+    // var  
+    socket.on('Update' , function(type , data) {
+        if(type == "Food") {
+
+        }
+        else if(type == "Player") {
+            
+            Player[0] == "ID" ;//Player["dsfa"] ;
+            Player[Player[0]] = data ;
+            for(var i=0 ; i < Player.length ; i++) {
+                Player[Player[i]] = 
+            }
+        } 
+    }) ;
+    socket.on('SyncPlayer' , function(data , single) { //obsolete
         // var result = Logged() ;
         if(single) {
             // console.log(data.id +" , "+ socket.id);
@@ -1291,7 +1339,7 @@ function Init() {
         // console.log(single) ;
         // console.log(data) ;
     });
-    socket.on('SyncFood' , function(data) {
+    socket.on('SyncFood' , function(data) { //obsolete
         Food[data.id] = data.Transform ;
     });
     //___________________________________________________________________
@@ -1305,7 +1353,7 @@ function Init() {
     //___________________________________________________________________
 }
 //___________________________________________________________________
-class DebugData {
+class DebugData { // obsolete
     constructor() {
         this.totalLengthBound = 0 ;
         this.wideLengthMultiplier = 0 ;
@@ -1467,7 +1515,7 @@ function Draw() {
     for(var i = 0 ; i < IDsFood.length ; i++) {
         Foods[IDsFood[i]].Draw(elements.ctx , camera.xView , camera.yView) ;
     }
-    
+    console.log(Foods.length) ;
 
     for(var i=0 ; i < IDs.length ;i++) {
         for(var j = 0 ; j < Players[IDs[i]].tentacles.length ; j++) { 

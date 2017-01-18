@@ -5,7 +5,7 @@ class Food {
     constructor(id , position , size) {
         this.id = id ;
         this.mass = 1 ;
-        this.Transform = new Component.Transform();
+        this.Transform = new Component.Transform(id,"star");
 
         this.Transform.position = position || new Geometry.Vector2() ;
         this.Transform.scale = size || new Geometry.Vector2(1,1); 

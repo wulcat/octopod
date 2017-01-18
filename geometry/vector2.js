@@ -9,6 +9,9 @@ class Vector2 {
         this.x = vec.x || 0 ;
         this.y = vec.y || 0 ;
     }
+    static MoveTowards(start , dir , magnitude) {
+        
+    }
     static Distance(vec1 , vec2) {
         var a = vec1.x - vec2.x ;
         a *= a ;

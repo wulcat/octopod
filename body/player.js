@@ -2,6 +2,7 @@
 // var Octopod = require('../module/octopod.js');
 var Geometry = require('../module/geometry.js');
 var Component = require('../module/component.js');
+var Camera = require('../body/camera.js');
 // var Geometry = require('../module/geometry.js');
 var OctoMath = require('../module/octomath.js');
 
@@ -11,9 +12,10 @@ class Player {
         this.oath = oath ;
         this.id = id ;
         this.name = "mystry" ;
-        this.Transform = new Component.Transform() ;
+        this.Transform = new Component.Transform(id , "player") ;
+        // console.log(Camera) ;
         // this.Camera = new Geometry.Rect(0,0,700,550);
-        this.Camera = new Component.Camera(0,0,700,550);
+        this.Camera = new Camera(0,0,700,550);
         this.status = false ;
         
         this.tentacles = [] ;
@@ -22,6 +24,7 @@ class Player {
         // this.range = 0 ;
         this.wideLengthMultiplier = 120;
         this.totalLengthBound = 150 ;
+        this.shiftCenterX = 50 ;
         // this.mapid ; //= rank ;
         //this.maptype ; //= type ;
         this.mousePos = new Geometry.Vector2(0,0) ;
@@ -86,9 +89,6 @@ class Player {
 
     }       
     Update() {
-
-        
-        
         if(this.Jerk > this.JerkMax) {
             this.JerkSpeed = -Math.abs(this.JerkSpeed) ;
         }
@@ -142,8 +142,8 @@ class Player {
         this.focus = false ;
     }
     UpdateCamera() {
-        this.Camera.Rect.x = this.Transform.position.x - this.Camera.Rect.width/2 ;
-        this.Camera.Rect.y = this.Transform.position.y - this.Camera.Rect.height/2 ;
+        this.Camera.Transform.position.x = this.Transform.position.x - this.Camera.Transform.scale.x/2 ;
+        this.Camera.Transform.position.y = this.Transform.position.y - this.Camera.Transform.scale.y/2 ;
     }
     Stop() {
         if(this.Updating != null || this.Updating != undefined) clearInterval(this.Updating);

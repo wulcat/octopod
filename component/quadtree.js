@@ -46,46 +46,46 @@ class Quadtree {
             nextLevel) ;
     }
 
-    getIndex(player , camera) {
+    getIndex(transform) {
         var index = -1 ;
 		// var	verticalMidpoint 	= this.rect.x + (this.rect.width / 2) ;
 		var	verticalMidpoint 	= this.rect.x + (this.rect.width / 2) ;
 		var	horizontalMidpoint 	= this.rect.y + (this.rect.height / 2) ;
 		
-		if(camera) {
-			var topQuadrant = (player.Camera.Rect.y < horizontalMidpoint && player.Camera.Rect.y < horizontalMidpoint) ;
+		// if(camera) {
+		// 	var topQuadrant = (transform.Camera.Rect.y < horizontalMidpoint && transform.Camera.Rect.y < horizontalMidpoint) ;
 
 				
-				//rect can completely fit within the bottom quadrants
-			var bottomQuadrant = (player.Camera.Rect.y+player.Camera.Rect.height > horizontalMidpoint);
+		// 		//rect can completely fit within the bottom quadrants
+		// 	var bottomQuadrant = (transform.Camera.Rect.y+transform.Camera.Rect.height > horizontalMidpoint);
 			
-			//rect can completely fit within the left quadrants
-			if( player.Camera.Rect.x < verticalMidpoint && player.Camera.Rect.x + player.Camera.Rect.width < verticalMidpoint ) {
-				if( topQuadrant ) {
-					index = 1;
-				} else if( bottomQuadrant ) {
-					index = 2;
-				}
+		// 	//rect can completely fit within the left quadrants
+		// 	if( transform.Camera.Rect.x < verticalMidpoint && transform.Camera.Rect.x + transform.Camera.Rect.width < verticalMidpoint ) {
+		// 		if( topQuadrant ) {
+		// 			index = 1;
+		// 		} else if( bottomQuadrant ) {
+		// 			index = 2;
+		// 		}
 				
-			//rect can completely fit within the right quadrants	
-			} else if( player.Camera.x > verticalMidpoint ) {
-				if( topQuadrant ) {
-					index = 0;
-				} else if( bottomQuadrant ) {
-					index = 3;
-				}
-			}
-		}
-		else {
+		// 	//rect can completely fit within the right quadrants	
+		// 	} else if( transform.Camera.x > verticalMidpoint ) {
+		// 		if( topQuadrant ) {
+		// 			index = 0;
+		// 		} else if( bottomQuadrant ) {
+		// 			index = 3;
+		// 		}
+		// 	}
+		// }
+		// else {
 			//rect can completely fit within the top quadrants
-			var topQuadrant = (player.Transform.position.y-player.Transform.scale.y/2 < horizontalMidpoint && player.Transform.position.y + player.Transform.scale/2 < horizontalMidpoint) ;
+			var topQuadrant = (transform.position.y-transform.scale.y/2 < horizontalMidpoint && transform.position.y + transform.scale.y/2 < horizontalMidpoint) ;
 			// var topQuadrant = (rect.y < horizontalMidpoint && rect.y + rect.height < horizontalMidpoint) ;
 				
 				//rect can completely fit within the bottom quadrants
-			var bottomQuadrant = (player.Transform.position.y+player.Transform.scale.y > horizontalMidpoint);
+			var bottomQuadrant = (transform.position.y+transform.scale.y > horizontalMidpoint);
 			
 			//rect can completely fit within the left quadrants
-			if( player.Transform.position.x - player.Transform.scale.x/2 < verticalMidpoint && player.Transform.position.x + player.Transform.scale.x/2 < verticalMidpoint ) {
+			if( transform.position.x - transform.scale.x/2 < verticalMidpoint && transform.position.x + transform.scale.x/2 < verticalMidpoint ) {
 				if( topQuadrant ) {
 					index = 1;
 				} else if( bottomQuadrant ) {
@@ -93,33 +93,33 @@ class Quadtree {
 				}
 				
 			//rect can completely fit within the right quadrants	
-			} else if( player.Transform.position.x - player.Transform.scale.x/2 > verticalMidpoint ) {
+			} else if( transform.position.x - transform.scale.x/2 > verticalMidpoint ) {
 				if( topQuadrant ) {
 					index = 0;
 				} else if( bottomQuadrant ) {
 					index = 3;
 				}
 			}
-		}
+		// }
 	 
 		return index;
     }
 
-    Insert(player) { //player with transform
+    Insert(transform) { //transform with transform
         var i = 0 ;
         var index ;
 	 	
 	 	//if we have subnodes ...
 		if( typeof this.nodes[0] !== 'undefined' ) {
-			index = getIndex( player );
+			index = getIndex( transform );
 	 
 		  	if( index !== -1 ) {
-				this.nodes[index].Insert( player );	 
+				this.nodes[index].Insert( transform );	 
 			 	return;
 			}
 		}
 	 
-	 	this.objects.push( player );
+	 	this.objects.push( transform );
 		
 		if( this.objects.length > this.max_objects && this.level < this.max_levels ) {
 			
@@ -142,8 +142,8 @@ class Quadtree {
 		}
     }
 
-    Retrieve(player , camera) {
-        var index = this.getIndex( player , camera) ;
+    Retrieve(transform) {
+        var index = this.getIndex(transform) ;
 		var	returnObjects = this.objects ;
 		// console.log(this.objects);
 		// console.log("returned objects - "+returnObjects);
@@ -152,12 +152,12 @@ class Quadtree {
 			
 			//if rect fits into a subnode ..
 			if( index !== -1 ) {
-				returnObjects = returnObjects.concat( this.nodes[index].Retrieve( player  , camera) );
+				returnObjects = returnObjects.concat( this.nodes[index].Retrieve(transform) );
 				
 			//if rect does not fit into a subnode, check it against all subnodes
 			} else {
 				for( var i=0; i < this.nodes.length; i=i+1 ) {
-					returnObjects = returnObjects.concat( this.nodes[i].Retrieve( player , camera) );
+					returnObjects = returnObjects.concat( this.nodes[i].Retrieve(transform) );
 				}
 			}
 		}

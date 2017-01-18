@@ -304,6 +304,7 @@ function S_Connect(player ,name , type) {
             for(var i = 0 ; i < Maps[mapid][rank].players.length ; i++) {
                 object_data.push( Players["/#"+Maps[mapid][rank].players[i] ].getData() );
             }
+            Maps[mapid][rank].quadTree.Insert(player.Transform) ;
             // console.log(player.id);
             fw.sockets.connected["/#"+player.id].emit('SyncPlayer' , object_data , false) ;
             return true ;
@@ -325,6 +326,9 @@ function S_Disconnect(mapid , player) {
             player.id
         ) , 1
     );
+
+    // There is no broadcasted mesg afte player leaves
+    //socket.leave(Players[socket.zu_id].getMap) ;
 }
 var debug = true ;
 var update_rate = setInterval(Update , 1100); // ._. works with 0.11 sec per frame too
@@ -333,31 +337,81 @@ function Update() {
         // Maps[i].Update() ;
         for(var j = 0 ; j < Maps[i].length ; j++) {
             // Maps[i][j].Update() ;
-            Maps[i][j].quadTree.Clear() ;
-            for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
-                Maps[i][j].quadTree.Insert(Players["/#"+Maps[i][j].players[k]] ) ;
-            }
-            for(var k = 0 ; k < Maps[i][j].foods.length ; k++) {
-                Maps[i][j].quadTree.Insert(Maps[i][j].foods[k] ) ;
-            }
+            // Maps[i][j].quadTree.Clear() ;
+            // for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
+            //     Maps[i][j].quadTree.Insert(Players["/#"+Maps[i][j].players[k]] ) ;
+            // }
+            // for(var k = 0 ; k < Maps[i][j].foods.length ; k++) {
+            //     Maps[i][j].quadTree.Insert(Maps[i][j].foods[k] ) ;
+            // }
             // var food = new Octopod.Body.Food() ;
 
             // for(var m = 0 ; m< 20 ; m++) {
             //     Maps[i][j].AddFood(
-            //         new Octopod.Body.Food()
+            //         new Octopod.Body.Food(-1)
             //     ) ;
             // }
 
-
+            // CollisionCheck(Players)
             // var x , y ;
             // x = Math
             // Maps[i][j].AddFood() ;
-            // fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getFood() ) ;
+            // fw.to( S_GetMapType(i) + j).emit('SyncFood' , Maps[i][j].foods[Maps[i][j].foods.length-1].getData() ) ;
         }
         // var food = Maps[i].AddFood() ;   
     }
 }
-var send_rate = setInterval(Send , 1000);
+// var send_rate = setInterval(Send , 1000);
+function CollisionCheck(transPlayer , transPoints , indexType , indexId) {
+    var map = Maps[indexType][indexId] ;
+
+    var transforms = map.quadTree.Retrieve(transPlayer) ; 
+    for(var i = 0 ; i < transforms.length ; i++) {
+        // var players = map.quadTree.Retrieve(player) ;
+        if(transPlayer.id != transforms[i].id) {
+            var dis = Octopod.Geometry.Vector2.Distance(transPlayer.position , transforms[i].position) ;
+            if(dis < (transform.size+transforms[i].size)/2) {
+                //kill him
+                console.log("Collision betwenn "+transPlayer.id+" : "+transforms[i].id) ;
+            }
+        }
+    }
+
+    // Calculate the distance between all points create a new transform forming a rect :) :/ <3 
+    // var transforms = map.quadTree.Retrieve(camera) ;
+
+}
+function C2Collision(pos1 , rad1 , pos2 , rad2 ) {
+    var  dis = Octopod.Geometry.Vector2.Distance(pos1 , pos2) ;
+    if(dis < (rad1+rad2)/2)
+        return true ;
+    else 
+        return false ;
+}
+function RCCollision(rect1 , trans1) {
+    var d1 , d2 , d3 , d4 ;
+    d1 = Vector2.Distance(rect1.topLeft , trans1.position) ;
+    d2 = Vector2.Distance(rect1.topRight , trans1.position) ;
+    d3 = Vector2.Distance(rect1.bottomLeft , trans1.position) ;
+    d4 = Vector2.Distance(rect1.bottomRight , trans1.position) ;
+
+    if(d1 - trans1.size < 0) 
+        return true ;
+    else if(d2 - trans1.size < 0) 
+        return true ;
+    else if(d3 - trans1.size < 0) 
+        return true ;
+    else if(d4 - trans1.size < 0) 
+        return true ;
+    else return false ;
+}
+
+function VisibleObjects(transform , indexType , indexId) {
+    var map = Maps[indexType][indexId] ;
+
+    var transforms = map.quadTree.Retrieve(transform) ; 
+    return transforms ;
+}
 function Send() {
     // for(var i = 0 ; i < Maps.length ; i++) { // Sends  players custom object
     //     for(var j = 0 ; j < Maps[i].length ; j++) {
@@ -373,9 +427,112 @@ function Send() {
         for(var j = 0 ; j < Maps[i].length ; j++) {
             for(var k = 0 ; k < Maps[i][j].players.length ; k++) {
                 var player = Players[ "/#"+Maps[i][j].players[k] ] ;
-                var gameObjects = Maps[i][j].getObjectsInFieldView(player) ;
+
+                var transform = player.Transform ;
+
+                var map = Maps[i][j] ;
+
+                // var transforms = map.quadTree.Retrieve(transform) ;
+                var newTrans = new Octopod.Component.Transform(-1) ;
+                newTrans.position.x = player.shiftCenterX + player.Transform.position.x ;
+                newTrans.position.y = player.Transform.position.y ;
+
+                newTrans.scale.x = player.wideLengthMultiplier ;
+                newTrans.scale.y = player.totalLengthBound ;
+
+                var transforms = map.quadTree.Retrieve(newTrans) ;
+
+                var check = false ;
+
+                for(var m = 0 ; m < transforms.length ; m++) { // dosn't makes sense :/ 
+                    if(transform.id != transforms[m].id)
+                        check = C2Collision(transform.position , transform.size , 
+                                            transforms[m].position , transforms[m].size) ;
+                    
+                    console.log(transforms[m].id) ;
+                    //take later
+                }
+                var balls = [] ;
+                // var newTrans = new Octopod.Component.Transform(-1) ;
+                // newTrans.position.x = player.shiftCenterX + player.transform.position.x ;
+                // newTrans.position.y = player.transform.position.y ;
+
+                // newTrans.size.x = player.wideLengthMultiplier ;
+                // newTrans.size.y = player.totalLengthBound ;
+
+                // transforms = map.quadTree.Retrieve(newTrans) ; //
+                // var dir = 
+                for(var m = 0 ; m < player.tentacles.length ; m++) {
+                    var pars = player.tentacles[m].particles ;
+                    for(var n = 0 ; n < pars.length ; n++) {
+                        var dis , dir , angle , parts;
+                        if(n == 0) {
+                            dis = Vector2.Distance(transform.position , pars[n].pos) ;
+                            dis -= transform.size/2 ;
+                            dir = Vector2.Sub(transform.position , pars[n-1].pos) ; 
+                        } 
+                        else {
+                            dis = Vector2.Distance(pars[n-1].pos , pars[n].pos) ;
+                            // dis -= 2*player.tentacles[m].size ;
+                            dir = Vector2.Sub(pars[n].pos,pars[n-1].pos) ;
+                        }
+                        parts = Math.round(dis/player.tentacles[n].size) + 1;
+                        angle = Octopod.OctoMath.Angle.MouseToAngle(dir.x , dir.y) ;
+                        
+                        // for(var l = 0 ; l < )
+                        for(var o = 1 ; o < parts ; o++) {
+                            // var dir ;
+                            // if (n==0)
+                            //     dir = Vector2.Sub(pars[n].pos,pars[n-1].pos) ; 
+                            // else
+                            //     dir = Vekctor2.Sub(pars[n].pos,pars[n-1].pos) ;
+                            var pos = Octopod.OctoMath.Angle.MoveOver(pars[n].pos.x , pars[n].pos.y , angle , o*dis) ;
+                            // var trans = new Octopod.Component.Transform(-1) ;
+                            // trans.pos = 
+                            balls.push(pos) ;
+                        }
+
+                    }
+                }
+                for(var n = 0 ; n < transforms.length ; n++) {
+                    for(var m = 0 ; m < balls.length ; m++) {
+                        check = C2Collision(balls[m] , 2 , transforms[n].position , transforms[n].size) ;
+                        console.log(transforms[n].id) ;
+                        // fw.sockets.connnected[["/#"+player.id]].emit("Update" , transforms)
+                        if (check) break ;
+                    }
+                }
+
+
+                for(var o = 0 ; o < transforms.length ;o++) {
+                    fw.sockets.connnected[["/#"+player.id]].emit('Update' , transforms[o]) ;
+                    // or later combine with broadcast ;
+                    //socket.to( Maps[Rank].getMap() ).broadcast.emit('Update',data ) ;
+                }
+                // for(var m = 0 ; m < transforms.length ; m++) {
+                //     for(var n = 0 ; n < rects.length ; n++) {
+                //         check = RCCollision(rect[n] , transforms[m]) ;
+
+                //         if(check) break ;
+                //     }
+                // }
+                // first find the anglel between
+                // secondly rotate the the y axis two points by the angle 
+                // then create a new rect by joinng two points 
+
+                // Create big transform having scale of range as dia. 
+                // retrieve all the transform from the quadTree
+                // check
+
                 
-                player.Camera.VisibleObjects = gameObjects ;
+
+
+                // var gameObjects = Maps[i][j].getObjectsInFieldView(player) ;
+                // console.log(player);
+                // CollisionCheck(player.Transform , i, j);
+
+                // player.Camera.VisibleObjects = gameObjects ;
+
                 // console.log(gameObjects);
                 // plae
                 // for(var m = 0 ; m < gameObjects.length ; m++) {
