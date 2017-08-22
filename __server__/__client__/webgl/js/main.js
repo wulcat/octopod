@@ -1253,8 +1253,8 @@ function Init() {
             
             Player[0] == "ID" ;//Player["dsfa"] ;
             Player[Player[0]] = data ;
-            for(var i=0 ; i < Player.length ; i++) {
-                Player[Player[i]] = 
+            for(var i=0 ; i < Player.length ; i++) { //incomplete 
+                // Player[Player[i]] =
             }
         } 
     }) ;

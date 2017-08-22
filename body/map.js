@@ -19,8 +19,8 @@ class Map {
         this.quadTree = new Component.QuadTree(rect) ;
         this.foodLength = 0 ;
 
-        for(var i = 0 ; i < 50 ; i++) 
-            this.AddFood(new Food()) ;
+        // for(var i = 0 ; i < 50 ; i++) // error on finding module Food
+            // this.AddFood(new Food()) ;
     }
    
     AddFood(food) {
