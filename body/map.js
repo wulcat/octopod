@@ -8,8 +8,8 @@ var Geometry = require('../module/geometry.js');
 var Component = require('../module/component.js');
 var Mathfw = require('../module/mathfw.js');
 
-var Body = require('../module/body.js');
-
+// var Body = require('../module/body.js');
+var Food = require('../module/body.js').Food ;
 class Map {
     constructor(rect , type) {
         this.rect = rect ;
@@ -18,24 +18,30 @@ class Map {
         this.players = [] ;
         this.quadTree = new Component.QuadTree(rect) ;
         this.foodLength = 0 ;
+
+        // for(var i = 0 ; i < 50 ; i++) // error on finding module Food
+            // this.AddFood(new Food()) ;
     }
    
     AddFood(food) {
         var x , y ;
         x = Mathfw.RandomFloat(0,this.rect.width) ;
         y = Mathfw.RandomFloat(0,this.rect.height) ;
-        console.log(x,y);
+
+        // console.log(x,y);
         // var food = new Body.Food(this.foodLength , new Geometry.Vector2(x,y) ,
         //     new Geometry.Vector2(1,1)
         // )
         // food.x = x ;
         // food.y = y ;
+
         food.id = this.foodLength ;
-        food.Transform.position = new Geometry.Vector2(x,y);
-        food.Transform.scale = new Geometry.Vector2(1,1);
+        food.Transform.position.Renew(new Geometry.Vector2(x,y)) ;
+        food.Transform.scale.Renew(new Geometry.Vector2(1,1)) ;
+        food.Transform.id = food.id ;
 
         this.foods.push(food) ;
-
+        this.quadTree.Insert(food.Transform);
         this.foodLength++ ;
     }
     UpdateFood() {
@@ -45,7 +51,7 @@ class Map {
     }
     Update() {
 
-        this.UpdateFood() ;
+        // this.UpdateFood() ;
 
         // for(var i = 0 ; i < this.players.length ; i++) {
         //     this.quadTree.Insert(this.players[i]) ;
