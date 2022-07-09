@@ -1,6 +1,8 @@
 # Descripting
 > Octopod is top down mmo game, where you born as a octopus with a tentacle and you have to eat fish and other octopus players to grow bigger and have more tentacles
 
+# Demo [(Single player)](https://www.wulcat.com/apps/constraint-tentacle/index.html)
+
 # How to install and start
 - Install NodeJs 12.14.0 LTS (Latest/Stable) from Nodejs.org/en/
 - Open Terminal/CMD and change directory to root folder of this project.
