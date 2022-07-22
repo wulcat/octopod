@@ -1,4 +1,4 @@
-# Descripting
+# Description
 > Octopod is top down mmo game, where you born as a octopus with a tentacle and you have to eat fish and other octopus players to grow bigger and have more tentacles
 
 # Demo [(Single player)](https://www.wulcat.com/apps/constraint-tentacle/index.html)
